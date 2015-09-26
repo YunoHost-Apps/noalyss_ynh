@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>sFPDF</title>
+<style type="text/css">
+body {font-family:"Times New Roman",serif}
+h1 {font:bold 135% Arial,sans-serif; color:#4000A0; margin-bottom:0.9em}
+h2 {font:bold 95% Arial,sans-serif; color:#900000; margin-top:1.5em; margin-bottom:1em}
+</style>
+</head>
+<body>
+<h1>sFPDF</h1>
+<h2>Informations</h2>
+Author: <a href="mailto:ian@bpm1.com?subject=sFPDF">Ian Back</a><br>
+License: LGPL
+<h2>Description</h2>
+This class is a modified version of FPDF that adds UTF-8 support. Moreover, it embeds only
+the necessary parts of the fonts that are used in the document, making the file size much
+smaller than if the whole fonts were embedded. These features were originally developed
+for the <a href="http://mpdf.bpm1.com" target="_blank">mPDF</a> project.<br>
+<br>
+Before you can use UTF-8, you have to install at least one Unicode font in the font/unifont directory.
+Some free font packages are available for download (extract them into font/unifont):
+
+<p>Fonts from the <a href="http://dejavu-fonts.org" target="_blank">DejaVu</a> family:</p>
+<ul style="margin-left:0; padding-left:1.5em">
+<li><a href="http://www.fpdf.org/dl.php?id=115">DejaVu Sans</a></li>
+<li><a href="http://www.fpdf.org/dl.php?id=116">DejaVu Sans Condensed</a></li>
+<li><a href="http://www.fpdf.org/dl.php?id=117">DejaVu Serif</a></li>
+<li><a href="http://www.fpdf.org/dl.php?id=118">DejaVu Serif Condensed</a></li>
+<li><a href="http://www.fpdf.org/dl.php?id=119">DejaVu Sans Mono</a></li>
+</ul>
+
+<p>Fonts from the <a href="http://www.gnu.org/software/freefont/" target="_blank">GNU FreeFont</a> family:</p>
+<ul style="margin-left:0; padding-left:1.5em">
+<li><a href="http://www.fpdf.org/dl.php?id=120">FreeSans</a></li>
+<li><a href="http://www.fpdf.org/dl.php?id=121">FreeSerif</a></li>
+<li><a href="http://www.fpdf.org/dl.php?id=122">FreeMono</a></li>
+</ul>
+
+You can also make your own fonts by pointing your browser to font/unifont/makefonts/makefonts.php
+and following instructions (if you're on Windows).<br>
+<br>
+Then, to use a Unicode font in your script, pass <code>true</code> as the fourth parameter of <code>AddFont()</code>.<br>
+<br>
+<strong>Note:</strong> this class requires the mbstring extension.
+</body>
+</html>

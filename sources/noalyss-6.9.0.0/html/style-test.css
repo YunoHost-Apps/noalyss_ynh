@@ -1,0 +1,74 @@
+span.tmenu {
+	   padding-left:20px;
+	   padding-right:20px;
+	   border:solid 1px blue;
+	   background-color: #6699dd ;
+}
+.topmenu {
+	    background:url('/FR/wcompta/image/bg1.jpg');
+	    color:white;
+	    text-align:center;
+	<!--   border:solid 1px blue;-->
+	   }
+.menuitem {
+	  width:150px;
+}
+a.tmenu:link {
+	   background-color: #6699dd ;
+	    color:white;
+	    }
+a.tmenu:visited {
+//	   background-color:black ;
+	    color:#683af2;
+	    color:white;
+	    }
+a.tmenu:active{
+	   background-color:#6699dd ;
+	    color:#683af2;
+	    color:white;
+	    }
+a.tmenu:hover{
+	   background-color:#6699dd ;
+	    color:#d1ffb9;
+	    }
+div.dtitle {
+	   width:150px;
+	   color:#6699dd;
+	   background:#cccccc;
+	   text-align:center;
+	   font-size:20px;
+}
+div.dcontent {
+	     color:black;
+	     background-color:white;
+	     margin: 5% 5%;
+
+}
+div.ddownload {
+	      color:white;
+	      background-color:#6699dd ;
+}
+div.content {
+	    margin-left:10%;
+            margin-right:10%;
+            padding:2%;
+}
+H2 {
+   font-size:16pt;
+   color:blue;
+   background-color:white;
+}
+table.sortable td,table.result td
+{
+	padding-left:5px;
+	padding-right:5px;
+}
+#info_div {
+	display:none;
+	background-color: yellow;
+	color:red;
+	z-index: 15;
+	position: absolute;
+	top:0;
+	left:0;
+}

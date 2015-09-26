@@ -1,0 +1,4 @@
+"Nom client1","Prénom","C1","Rue de la boite,55"
+"Nom client2","Prénom","C2","Rue du couvercle,55"
+"Nom client3","Prénom","C3","Rue de la chaussure,55"
+"Nom client4","Prénom","C4","Rue de la couleur,55"

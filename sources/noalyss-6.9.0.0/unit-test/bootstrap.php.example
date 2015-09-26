@@ -1,0 +1,154 @@
+<?php
+
+/*
+ *   This file is part of NOALYSS.
+ *
+ *   NOALYSS is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   NOALYSS is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with NOALYSS; if not, write to the Free Software
+ *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+// Copyright Author Dany De Bontridder danydb@aevalys.eu
+
+$path='/home/dany/developpement/phpcompta/noalyss/include:..:../include:/home/dany/Program/phpunit.phar';
+$old_path=  get_include_path();
+set_include_path($old_path.':'.$path);
+
+define ("DOSSIER",37);
+
+/**
+ * Class to include, 
+ */
+require_once 'class_acc_account.php';
+require_once 'class_acc_balance.php';
+require_once 'class_acc_bilan.php';
+require_once 'class_acc_compute.php';
+require_once 'class_acc_ledger_fin.php';
+require_once 'class_acc_ledger_info.php';
+require_once 'class_acc_ledger.php';
+require_once 'class_acc_ledger_purchase.php';
+require_once 'class_acc_ledger_sold.php';
+require_once 'class_acc_operation.php';
+require_once 'class_acc_parm_code.php';
+require_once 'class_acc_payment.php';
+require_once 'class_acc_reconciliation.php';
+require_once 'class_acc_report.php';
+require_once 'class_acc_report_row.php';
+require_once 'class_acc_tva.php';
+require_once 'class_admin.php';
+require_once 'class_anc_acc_link.php';
+require_once 'class_anc_acc_list.php';
+require_once 'class_anc_account.php';
+require_once 'class_anc_balance_double.php';
+require_once 'class_anc_balance_simple.php';
+require_once 'class_anc_grandlivre.php';
+require_once 'class_anc_group_operation.php';
+require_once 'class_anc_group.php';
+require_once 'class_anc_key.php';
+require_once 'class_anc_key_sql.php';
+require_once 'class_anc_listing.php';
+require_once 'class_anc_operation.php';
+require_once 'class_anc_plan.php';
+require_once 'class_anc_print.php';
+require_once 'class_anc_table.php';
+require_once 'class_anticipation.php';
+require_once 'class_bank.php';
+require_once 'class_calendar.php';
+require_once 'class_contact.php';
+require_once 'class_customer.php';
+require_once 'class_database.php';
+require_once 'class_default_menu.php';
+require_once 'class_default_menu_sql.php';
+require_once 'class_document_export.php';
+require_once 'class_document_modele.php';
+require_once 'class_document.php';
+require_once 'class_document_type.php';
+require_once 'class_dossier.php';
+require_once 'class_exercice.php';
+require_once 'class_extension.php';
+require_once 'class_fiche_attr.php';
+require_once 'class_fiche_def.php';
+require_once 'class_fiche_def_ref.php';
+require_once 'class_fiche.php';
+require_once 'class_filetosend.php';
+require_once 'class_follow_up_detail.php';
+require_once 'class_follow_up.php';
+require_once 'class_forecast_cat.php';
+require_once 'class_forecast_item.php';
+require_once 'class_forecast.php';
+require_once 'class_gestion_purchase.php';
+require_once 'class_gestion_sold.php';
+require_once 'class_gestion_table.php';
+require_once 'class_html_input.php';
+require_once 'class_html_table.php';
+require_once 'class_iaction.php';
+require_once 'class_ianccard.php';
+require_once 'class_ibutton.php';
+require_once 'class_icard.php';
+require_once 'class_icheckbox.php';
+require_once 'class_iconcerned.php';
+require_once 'class_idate.php';
+require_once 'class_ifile.php';
+require_once 'class_ihidden.php';
+require_once 'class_impress.php';
+require_once 'class_inum.php';
+require_once 'class_iperiod.php';
+require_once 'class_ipopup.php';
+require_once 'class_iposte.php';
+require_once 'class_iradio.php';
+require_once 'class_irelated_action.php';
+require_once 'class_iselect.php';
+require_once 'class_ispan.php';
+require_once 'class_itextarea.php';
+require_once 'class_itext.php';
+require_once 'class_itva_popup.php';
+require_once 'class_jrn_def_sql.php';
+require_once 'class_lettering.php';
+require_once 'class_manager.php';
+require_once 'class_menu_ref.php';
+require_once 'class_menu_ref_sql.php';
+require_once 'class_noalyss_sql.php';
+require_once 'class_own.php';
+require_once 'class_pdf.php';
+require_once 'class_periode.php';
+require_once 'class_pre_op_ach.php';
+require_once 'class_pre_op_advanced.php';
+require_once 'class_pre_operation.php';
+require_once 'class_pre_op_fin.php';
+require_once 'class_pre_op_ods.php';
+require_once 'class_pre_op_ven.php';
+require_once 'class_print_ledger_detail_item.php';
+require_once 'class_print_ledger_detail.php';
+require_once 'class_print_ledger_fin.php';
+require_once 'class_print_ledger_misc.php';
+require_once 'class_print_ledger.php';
+require_once 'class_print_ledger_simple.php';
+require_once 'class_print_ledger_simple_without_vat.php';
+require_once 'class_profile_menu.php';
+require_once 'class_profile_menu_sql.php';
+require_once 'class_profile_sql.php';
+require_once 'class_sendmail.php';
+require_once 'class_sort_table.php';
+require_once 'class_stock_goods.php';
+require_once 'class_stock_goods_sql.php';
+require_once 'class_stock.php';
+require_once 'class_stock_sql.php';
+require_once 'class_supplier.php';
+require_once 'class_tag.php';
+require_once 'class_tag_sql.php';
+require_once 'class_todo_list.php';
+require_once 'class_tool_uos.php';
+require_once 'class_user.php';
+require_once 'class_zip_extended.php';
+
+

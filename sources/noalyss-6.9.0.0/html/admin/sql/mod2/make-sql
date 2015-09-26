@@ -1,0 +1,2 @@
+pg_dump -O -U phpcompta -D -a -O ${DOMAIN}mod2 |sed -e "/^--/d" > data.sql
+

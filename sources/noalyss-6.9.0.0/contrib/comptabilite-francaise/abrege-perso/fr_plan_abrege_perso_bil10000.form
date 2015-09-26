@@ -1,0 +1,179 @@
+# Bilan (Système abrégé personnalisé)
+# version 2007/10/23 02:55 (en compte) 
+
+# Liste des comptes utilisés
+$C101=round([101%],2)
+$C105=round([105%],2)
+$C1061=round([1061%],2)
+$C1063=round([1063%],2)
+$C1064=round([1064%],2)
+$C1068=round([1068%],2)
+$C108=round([108%],2)
+### REPORT A NOUVEAU
+$C11=round([11%],2)
+$C12=round([12%],2)
+### RESULTAT DE L'EXERCICE
+$C145=round([145%],2)
+$C146=round([146%],2)
+$C147=round([147%],2)
+$C148=round([148%],2)
+$C15=round([15%],2)
+$C16=round([16%],2)
+$C201=round([201%],2)
+$C206=round([206%],2)
+$C207=round([207%],2)
+$C208=round([208%],2)
+$C21=round([21%],2)
+$C23=round([23%],2)
+$C27=round([27%],2)
+$C280=round([280%],2)
+$C281=round([281%],2)
+$C290=round([290%],2)
+$C291=round([291%],2)
+$C297=round([297%],2)
+$C31=round([31%],2)
+$C33=round([33%],2)
+$C34=round([34%],2)
+$C35=round([35%],2)
+$C37=round([37%],2)
+$C391=round([391%],2)
+$C393=round([393%],2)
+$C394=round([394%],2)
+$C395=round([395%],2)
+$C397=round([397%],2)
+$C400=round([400%],2)
+$C409=round([409%],2)
+$C410=round([410%],2)
+$C419=round([419%],2)
+$C421=round([421%],2)
+$C428=round([428%],2)
+$C43D=round([43%],2)
+$C43C=round([43%],2)
+$C444D=round([444%],2)
+$C444C=round([444%],2)
+$C445D=round([445%],2)
+$C445C=round([445%],2)
+$C447=round([447%],2)
+$C487=round([487%],2)
+$C455D=round([455%],2)
+$C455C=round([455%],2)
+$C46=round([46%],2)
+$C486=round([486%],2)
+$C491=round([491%],2)
+$C496=round([496%],2)
+$C50=round([50%],2)
+$C51D=round([51%],2)
+$C53=round([53%],2)
+$C54=round([54%],2)
+$C58=round([58%],2)
+$C590=round([590%],2)
+
+# --- ACTIF ---
+## Actif immobilisé
+### immobilisations incorporelles 
+$S10001=$C206+$C207 
+$S10002=$C201+$C208 
+$S10003=$C280+$C290 
+### immobilisations corporelles
+$S10004=$C21+$C23
+$S10005=$C281+$C291
+### immobilisations financières
+$S10006=$C27
+$S10007=$C297
+## Actif circulant
+### Stock et en-cours (autres)
+$S10011=$C31+$C33+$C34+$C35
+$S10012=$C391+$C393+$C394+$C395
+### Stock et en-cours (marchandises)
+$S10013=$C37
+$S10014=$C397
+### Avances et acomptes versés
+$S10015=$C409
+### Créances clients
+$S10016=$C410
+$S10017=$C491
+### Créances autres
+$S10018=$C428+$C43D+$C444D+$C445D+$C455D+$C46
+$S10019=$C496
+### Valeurs mobilières
+$S10020=$C50
+$S10021=$C590
+### Disponibilités
+$S10022=$C51D+$C54+$C58
+### Caisse
+$S10023=$C53
+### Charges constatées d'avance
+$S10031=$C486
+
+## Total I
+$S10111=$S10001+$S10002+$S10004+$S10006
+$S10112=$S10003+$S10005+$S10007
+$S10113=$S10111-$S10112
+# N-1
+$S10114=0
+## Total II
+$S10121=$S10011+$S10013+$S10015+$S10016+$S10018+$S10020+$S10022+$S10023
+$S10122=$S10012+$S10014+$S10017+$S10019+$S10021
+$S10123=$S10121-$S10122
+# N-1
+$S10124=0
+## Total III
+$S10131=$S10031
+## Total I+II+III
+$S10991=$S10111+$S10121+$S10131
+$S10992=$S10112+$S10122
+$S10993=$S10113+$S10123
+# N-1
+$S10994=0
+
+
+# --- PASSIF ---
+## Capitaux propres
+### Capital	
+$S11001=$C101+$C108
+### Ecarts de réévaluation
+$S11002=$C105 
+### Réserves
+### Réserve légale
+$S11003=$C1061
+### Réserves réglementées
+$S11004=$C1064 
+### Autres réserves
+$S11005=$C1063+$C1068 
+### REPORT A NOUVEAU
+$S11006=$C11
+# RESULTAT DE L'EXERCICE
+$S11007=$C12 
+### Provisions réglementées
+$S11008=$C145+$C146+$C147+$C148
+## Provisions
+$S11011=$C15
+## Dettes
+### Emprunts et dettes assimilées
+$S11021=$C16 
+### Avances et acomptes reçus
+$S11022=$C419 
+### Fournisseurs et comptes rattachés
+$S11023=$C400
+### Autres dettes
+$S11024=$C421+$C428+$C43C+$C444C+$C445C+$C447+$C455C+$C46
+## Produits constatés d'avance
+$S11031=$C487
+
+## Total I
+$S11111=$S11001+$S11002+$S11003+$S11004+$S11005+$S11007+$S11008
+$S11112=0
+# N-1
+## Total II
+$S11121=$S11011
+$S11122=0 
+# N-1
+## Total III
+$S11131=$S11021+$S11022+$S11023+$S11024
+$S11132=0 
+# N-1
+## Total IV
+$S11141=$S11031
+## Total I+II+III+IV
+$S11991=$S11111+$S11121+$S11131+$S11141
+$S11992=0

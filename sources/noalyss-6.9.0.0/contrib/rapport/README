@@ -1,0 +1,8 @@
+En règle générale, il suffit d'executer le script
+sql dans la base de données où le rapport doit être
+ajouté.
+
+IMPORTANT: le numéro (fr_id) du rapport est réservé et
+unique
+
+exemple fr_id=3000000 est réservé au déclaration TVA belge

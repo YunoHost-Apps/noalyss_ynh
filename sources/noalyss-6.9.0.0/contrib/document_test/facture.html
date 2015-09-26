@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>Facture</title>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" >
+		<meta http-equiv="Content-Script-Type" content="text/javascript" >
+		<meta http-equiv="Content-Style-Type" content="text/css" >
+	</head>
+	<body bgcolor="#21605f" text="#d0d1d1">
+		<p align="right">
+		Client <<CUST_NAME>><br>
+		Adresse <<CUST_ADDR_1>><br>
+		 <<CUST_CP>> <<CUST_CITY>><br>
+		</P>
+		<h2>FACTURE </h2>
+		<div style="float:left;clear:both;width:75%">
+		<h2>Détail</h2>
+	<table border="0" align="left" cellspacing="1" cellpadding="1" width="75%">
+<caption>marchandises </caption>
+<tr><th>Article</th>
+<th>Prix unitaire</th>
+<th>Quantit&eacute;</th>
+<th>Code TVA</th>
+<th>Montant TVA</th>
+<th>Montant TVAC</th>
+</tr>
+<tr>
+<td><<VEN_ART_NAME>> </td>
+<td><<VEN_ART_PRICE>> </td>
+<td><<VEN_ART_QUANT>></td>
+<td><<TVA_LABEL>> </td>
+<td> <<TVA_AMOUNT>> </td>
+<td><<VEN_TVAC>><<MARCH_NEXT>></td>
+</tr>
+<tr>
+<td><<VEN_ART_NAME>> </td>
+<td><<VEN_ART_PRICE>> </td>
+<td><<VEN_ART_QUANT>></td>
+<td><<TVA_LABEL>> </td>
+<td> <<TVA_AMOUNT>> </td>
+<td><<VEN_TVAC>><<MARCH_NEXT>></td>
+</tr>
+<tr>
+<td><<VEN_ART_NAME>> </td>
+<td><<VEN_ART_PRICE>> </td>
+<td><<VEN_ART_QUANT>></td>
+<td><<TVA_LABEL>> </td>
+<td> <<TVA_AMOUNT>> </td>
+<td><<VEN_TVAC>><<MARCH_NEXT>></td>
+</tr>
+<tr>
+<td><<VEN_ART_NAME>> </td>
+<td><<VEN_ART_PRICE>> </td>
+<td><<VEN_ART_QUANT>></td>
+<td><<TVA_LABEL>> </td>
+<td> <<TVA_AMOUNT>> </td>
+<td><<VEN_TVAC>><<MARCH_NEXT>></td>
+</tr>
+<tr>
+<td><<VEN_ART_NAME>> </td>
+<td><<VEN_ART_PRICE>> </td>
+<td><<VEN_ART_QUANT>></td>
+<td><<TVA_LABEL>> </td>
+<td> <<TVA_AMOUNT>> </td>
+<td><<VEN_TVAC>><<MARCH_NEXT>></td>
+</tr>
+<tr>
+<td><<VEN_ART_NAME>> </td>
+<td><<VEN_ART_PRICE>> </td>
+<td><<VEN_ART_QUANT>></td>
+<td><<TVA_LABEL>> </td>
+<td> <<TVA_AMOUNT>> </td>
+<td><<VEN_TVAC>><<MARCH_NEXT>></td>
+</tr>
+</table>
+</div>
+<div style="float:left;clear:left">
+<p>
+Prix total HTVA = <<TOTAL_VEN_HTVA>>
+</p>
+<p>
+Total TVA = <<TOTAL_TVA>>
+</p>
+
+<p>
+Prix total TVAC = <<TOTAL_VEN_TVAC>>
+</p>
+<input type="button" onclick="window.print()" value="Imprime moi">
+</div>
+	</body>
+</html>

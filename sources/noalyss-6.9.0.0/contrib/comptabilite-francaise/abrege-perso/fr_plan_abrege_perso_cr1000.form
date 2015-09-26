@@ -1,0 +1,129 @@
+# Compte de résultat (Système abrégé personnalisé)
+# version 2007/10/23 14:00 (en compte)
+
+# Liste des comptes utilisés
+$C60=round([60],2)
+$C607=round([607%],2)
+$C6031=round([6031%],2)
+$C6032=round([6032%],2)
+$C6037=round([6037%],2)
+$C61=round([61%],2)
+$C62=round([62%],2)
+$C63=round([63%],2)
+$C641=round([641%],2)
+$C644=round([644%],2)
+$C645=round([645%],2)
+$C646=round([646%],2)
+$C65=round([65%],2)
+$C66=round([66%],2)
+$C67=round([67%],2)
+$C6811=round([6811%],2)
+$C6815=round([6815%],2)
+$C6816=round([6816%],2)
+$C6817=round([6817%],2)
+$C686=round([686%],2)
+$C687=round([687%],2)
+$C691=round([691%],2)
+$C695=round([695%],2)
+$C697=round([697%],2)
+$C701=round([701%],2)
+$C706=round([706%],2)
+$C707=round([707%],2)
+$C708=round([708%],2)
+$C709=round([709%],2)
+$C713=round([713%],2)
+$C72=round([72%],2)
+$C74=round([74%],2)
+$C75=round([75%],2)
+$C76=round([76%],2)
+$C77=round([77%],2)
+$C781=round([781%],2)
+$C786=round([786%],2)
+$C787=round([787%],2)
+$C79=round([79%],2)
+
+# --- CHARGES ---
+## Charges d'exploitation
+### Achats marchandises 
+$S10001=$C607
+### Variation stocks marchandises
+$S10002=$C6037 
+### Achats approvisionnements sauf 607
+$S10003=$C60 
+### Variation stocks approvisionnements
+$S10004=$C6031+$C6032 
+### Autres charges externes
+$S10005=$C61+$C62 
+### Impôts et taxes assimilés
+$S10006=$C63 
+### Rémunérations du personnel
+$S10007=$C641+$C644 
+### Charges sociales
+$S10008=$C645+$C646 
+### Dotation amortissements
+$S10009=$C6811 
+### Dotation provisions
+$S10010=$C6815+$C6816+$C6817 
+### Autres charges
+$S10011=$C65 
+## Charges financières
+$S10012=$C66+$C686
+## Charges exceptionnelles
+$S10021=$C67+$C687+$C691
+## Impôts sur les bénéfices
+$S10031=$C695+$C697
+### Bénéfice
+$F1001=$S11131-$S10141
+$S10151=($F1001>=0)?$F1001:0
+$S10152=0 # N-1
+
+## Total I
+$S10111=$S10001+$S10002+$S10003+$S10004+$S10005+$S10006+$S10007+$S10008+$S10009+$S10010+$S10011+$S10012
+# N-1
+$S10112=0
+## Total II
+$S10121=$S10021
+## Total III
+$S10131=$S10031
+## Total I+II+III
+$S10141=$S10111+$S10121+$S10131
+## Total
+$S10991=$S10141+$S10151
+# N-1
+$S10992=0 
+
+# --- PRODUITS ---
+## Produits d'exploitation
+### Vente marchandises
+$S11001=$C707-$C709
+### Production vendue
+$S11002=$C701+$C706+$C708 
+### Production stockée
+$S11003=$C713
+### Production immobilisée 
+$S11004=$C72 
+### Subventions
+$S11005=$C74
+###Autres produits
+$S11006=$C75+$C781 
+## Produits financiers
+$S11007=$C76+$C786
+## Produits exceptionnels
+$S11021=$C77+$C787+$C79
+### Perte
+$F1002=$S10141-$S11131
+$S11141=($F1002>=0)?$F1002:0
+$S11142=0 # N-1
+
+## Total I
+$S11111=$S11001+$S11002+$C11003+$C11004+$C11005+$S11006+$S11007
+# N-1
+$S11112=0 
+## Total II
+$S11121=$S11021
+## Total I+II
+$S11131=$S11111+$S11121
+## Total
+$S11991=$S11131+$S11141
+# N-1
+$S11992=0 
