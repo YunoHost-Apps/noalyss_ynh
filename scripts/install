@@ -17,4 +17,6 @@ sudo mkdir -p $final_path
 sudo cp -a ../sources/html/ $final_path
 sudo cp -a ../sources/include/ $final_path
 
+sudo chown -R www-data: $final_path
+
 sudo yunohost app setting noalyss version -v "6.9.0.0"
