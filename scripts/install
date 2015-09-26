@@ -32,3 +32,5 @@ if [[ "$path" == "" ]]; then
 else
   sed -i "s@LOCATIONTOCHANGE@$path@g" ../conf/nginx.conf
 fi
+
+sed -i "s@NAMETOCHANGE@noalyss@g" ../conf/php-fpm.conf
