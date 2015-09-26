@@ -23,10 +23,6 @@ sudo chown -R www-data: $final_path
 
 sudo yunohost app setting noalyss version -v "6.9.0.0"
 
-# Reload Nginx and regenerate SSOwat conf
-sudo service nginx reload
-sudo yunohost app ssowatconf
-
 if [[ "$path" == "" ]]; then
   sed -i "s@LOCATIONTOCHANGE@/@g" ../conf/nginx.conf
 else
@@ -42,3 +38,7 @@ finalphpconf=/etc/php5/fpm/pool.d/noalyss.conf
 sudo cp ../conf/php-fpm.conf $finalphpconf
 sudo chown root: $finalphpconf
 sudo chmod 644 $finalphpconf
+
+# Reload Nginx and regenerate SSOwat conf
+sudo service nginx reload
+sudo yunohost app ssowatconf
