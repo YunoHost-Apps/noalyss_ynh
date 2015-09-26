@@ -36,3 +36,9 @@ fi
 sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/noalyss.conf
 
 sed -i "s@NAMETOCHANGE@noalyss@g" ../conf/php-fpm.conf
+
+finalphpconf=/etc/php5/fpm/pool.d/noalyss.conf
+
+sudo cp ../conf/php-fpm.conf $finalphpconf
+sudo chown root: $finalphpconf
+sudo chmod 644 $finalphpconf
