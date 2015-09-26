@@ -33,4 +33,6 @@ else
   sed -i "s@LOCATIONTOCHANGE@$path@g" ../conf/nginx.conf
 fi
 
+sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/noalyss.conf
+
 sed -i "s@NAMETOCHANGE@noalyss@g" ../conf/php-fpm.conf
