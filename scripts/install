@@ -26,3 +26,9 @@ sudo yunohost app setting noalyss version -v "6.9.0.0"
 # Reload Nginx and regenerate SSOwat conf
 sudo service nginx reload
 sudo yunohost app ssowatconf
+
+if [[ "$path" == "" ]]; then
+  sed -i "s@LOCATIONTOCHANGE@/@g" ../conf/nginx.conf
+else
+  sed -i "s@LOCATIONTOCHANGE@$path@g" ../conf/nginx.conf
+fi
