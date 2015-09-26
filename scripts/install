@@ -14,6 +14,7 @@ sudo apt-get install postgresql php5 php5-pgsql php5-gd php-gettext p7zip-full l
 
 final_path=/var/www/noalyss
 sudo mkdir -p $final_path
-sudo cp -a ../sources/* $final_path
+sudo cp -a ../sources/html/ $final_path
+sudo cp -a ../sources/include/ $final_path
 
 sudo yunohost app setting noalyss version -v "6.9.0.0"
