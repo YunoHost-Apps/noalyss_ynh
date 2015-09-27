@@ -51,3 +51,6 @@ sudo chmod 644 $finalphpconf
 sudo service php5-fpm restart
 sudo service nginx reload
 sudo yunohost app ssowatconf
+
+# TODO curl on the good page
+# su postgres -c "psql account_repository -c 'delete from ac_users;'"
