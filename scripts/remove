@@ -1,0 +1,6 @@
+final_path=/var/www/noalyss
+
+sudo rm -rf $final_path
+
+su postgres -c "dropdb account_repository"
+su postgres -c "dropuser noalyss"
