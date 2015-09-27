@@ -12,7 +12,7 @@ fi
 
 path=${path%/}
 
-sudo apt-get install postgresql php5 php5-pgsql php5-gd php-gettext p7zip-full libgd2-xpm-dev
+sudo apt-get install postgresql php5 php5-pgsql php5-gd php-gettext p7zip-full libgd2-xpm-dev -y
 
 final_path=/var/www/noalyss
 sudo mkdir -p $final_path
