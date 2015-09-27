@@ -2,5 +2,9 @@ final_path=/var/www/noalyss
 
 sudo rm -rf $final_path
 
-su postgres -c "dropdb account_repository"
+for i in $(psql -l | grep "\<noalyss\>" | awk '{print $1}')
+do
+    su postgres -c "dropdb $i"
+done
+
 su postgres -c "dropuser noalyss"
