@@ -24,10 +24,12 @@ sudo chown -R www-data: $final_path
 sudo yunohost app setting noalyss version -v "6.9.0.0"
 
 if [[ "$path" == "" ]]; then
-  sed -i "s@LOCATIONTOCHANGE@/@g" ../conf/nginx.conf
+  sed -i "s@PATHTOCHANGE@/@g" ../conf/nginx.conf
 else
-  sed -i "s@LOCATIONTOCHANGE@$path@g" ../conf/nginx.conf
+  sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
 fi
+
+sed -i "s@ALIASTOCHANGE@$final_path/@g" ../conf/nginx.conf
 
 sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/noalyss.conf
 
