@@ -53,4 +53,5 @@ sudo service nginx reload
 sudo yunohost app ssowatconf
 
 # TODO curl on the good page
+curl -kL -H "Host: $domain" -X POST https://127.0.0.1$path/admin/setup.php --data "go=yolo" > /dev/null 2>&1
 # su postgres -c "psql account_repository -c 'delete from ac_users;'"
