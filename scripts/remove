@@ -9,4 +9,4 @@ do
     sudo "su postgres -c \"dropdb $i\""
 done
 
-su postgres -c "dropuser noalyss"
+sudo "su postgres -c 'dropuser noalyss'"
