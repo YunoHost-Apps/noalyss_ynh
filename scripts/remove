@@ -4,9 +4,9 @@ final_path=/var/www/noalyss
 
 sudo rm -rf $final_path
 
-for i in $(sudo "su postgres -c 'psql -l | grep \"\<noalyss\>\" | awk \'{print $1}\''")
+for i in $(sudo su postgres -c "psql -l | grep \"\<noalyss\>\" | awk '{print $1}'")
 do
-    sudo "su postgres -c \"dropdb $i\""
+    sudo su postgres -c "dropdb $i"
 done
 
-sudo "su postgres -c 'dropuser noalyss'"
+sudo su postgres -c 'dropuser noalyss'
