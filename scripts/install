@@ -18,7 +18,6 @@ final_path=/var/www/noalyss
 sudo mkdir -p $final_path
 sudo cp -a ../sources/html/ $final_path
 sudo cp -a ../sources/include/ $final_path
-sudo cp ../conf/noalyss.conf $final_path/include/config.inc.php
 
 sudo chown -R www-data: $final_path
 
@@ -42,6 +41,8 @@ sudo su postgres -c "createuser -S -R --createdb noalyss"
 sudo su postgres -c "psql -c \"ALTER USER noalyss with PASSWORD '$db_pwd';\""
 
 sed -i "s@DATABASE_PASSWORD@$db_pwd@g" ../conf/noalyss.conf
+sudo cp ../conf/noalyss.conf $final_path/include/config.inc.php
+
 finalphpconf=/etc/php5/fpm/pool.d/noalyss.conf
 
 sudo cp ../conf/php-fpm.conf $finalphpconf
