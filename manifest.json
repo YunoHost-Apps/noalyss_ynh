@@ -1,0 +1,34 @@
+{
+    "name": "NOALYSS (phpcompta)",
+    "id": "noalyss",
+    "description": {
+        "en": "Accounting free software (Beligum and French accounting)",
+        "fr": "Logiciel libre de comptabilité (comptabilité Belge et Française)"
+    },
+    "license": "GPL-2",
+    "maintainer": {
+        "name": "bram",
+        "email": "cortex@worlddomination.be",
+        "url": "http://worlddomination.be"
+    },
+    "multi_instance": "false",
+    "arguments": {
+        "install" : [
+            {
+                "name": "domain",
+                "ask": {
+                    "en": "Choose a domain for NOALYSS"
+                },
+                "example": "domain.org"
+            },
+            {
+                "name": "path",
+                "ask": {
+                    "en": "Choose a path for NOALYSS"
+                },
+                "example": "/compta",
+                "default": "/compta"
+            }
+        ]
+    }
+}
