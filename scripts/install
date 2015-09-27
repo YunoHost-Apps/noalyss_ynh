@@ -36,6 +36,11 @@ sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/noalyss.conf
 
 sed -i "s@NAMETOCHANGE@noalyss@g" ../conf/php-fpm.conf
 
+db_pwd=$(dd if=/dev/urandom bs=1 count=200 2> /dev/null | tr -c -d '[A-Za-z0-9]' | sed -n 's/\(.\{24\}\).*/\1/p')
+
+sudo -i -u postgres -c "echo \"$db_pwd\n$db_pwd\" | createuser -P -S -R --createdb noalyss"
+
+sed -i "s@DATABASE_PASSWORD@$db_pwd@g" ../conf/noalyss.conf
 finalphpconf=/etc/php5/fpm/pool.d/noalyss.conf
 
 sudo cp ../conf/php-fpm.conf $finalphpconf
