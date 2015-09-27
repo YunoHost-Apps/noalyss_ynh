@@ -1,3 +1,5 @@
+set -e
+
 final_path=/var/www/noalyss
 
 sudo rm -rf $final_path
