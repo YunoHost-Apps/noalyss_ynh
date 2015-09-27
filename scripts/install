@@ -18,6 +18,7 @@ final_path=/var/www/noalyss
 sudo mkdir -p $final_path
 sudo cp -a ../sources/html/ $final_path
 sudo cp -a ../sources/include/ $final_path
+sudo cp ../conf/noalyss.conf $final_path/include/config.inc.php
 
 sudo chown -R www-data: $final_path
 
