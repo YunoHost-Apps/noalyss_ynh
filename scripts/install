@@ -29,7 +29,7 @@ else
   sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
 fi
 
-sed -i "s@ALIASTOCHANGE@$final_path/@g" ../conf/nginx.conf
+sed -i "s@ALIASTOCHANGE@$final_path/html/@g" ../conf/nginx.conf
 
 sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/noalyss.conf
 
