@@ -7,3 +7,10 @@ sudo rm -rf $final_path
 sudo su postgres -c "psql -l | grep \"\<noalyss\>\" | awk '{print \$1}' | xargs -l dropdb"
 
 sudo su postgres -c 'dropuser noalyss'
+
+finalphpconf=/etc/php5/fpm/pool.d/noalyss.conf
+
+rm $finalphpconf
+rm /etc/nginx/conf.d/$domain.d/noalyss.conf
+
+domain=$(sudo yunohost app setting noalyss domain)
