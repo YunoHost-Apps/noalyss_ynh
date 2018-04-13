@@ -43,6 +43,14 @@ if ( !defined("NOALYSS_HOME")) define ("NOALYSS_HOME",dirname($dirname)."/html")
 if ( !defined("NOALYSS_PLUGIN")) define ("NOALYSS_PLUGIN",$g_ext_dir);
 if ( !defined("NOALYSS_INCLUDE")) define ("NOALYSS_INCLUDE",$g_include_dir);
 if ( !defined("NOALYSS_TEMPLATE")) define ("NOALYSS_TEMPLATE",$g_template_dir);
+// pdftk can deal with all the PDF , for some of them it is preferable to fix it
+// with convert , see also PDF2PS and PS2PDF if yes
+if ( !defined("FIX_BROKEN_PDF")) define ("FIX_BROKEN_PDF",'NO');
+
+// version < 6.9.1.4 , the default administrator was phpcompta
+if ( !defined('NOALYSS_ADMINISTRATOR')) {
+    define ('NOALYSS_ADMINISTRATOR','phpcompta');
+}
 
 require_once NOALYSS_INCLUDE.'/constant.security.php';
 
@@ -54,12 +62,16 @@ if ( strpos($inc_path,";") != 0 ) {
   $os=1;			/* $os is 1 for unix */
 }
 set_include_path($new_path);
-ini_set ('session.use_cookies',1);
-ini_set ('session.use_only_cookies','on');
-ini_set ('magic_quotes_gpc','off');
-ini_set ('max_execution_time',240);
-ini_set ('memory_limit','256M');
 ini_set ('default_charset',"UTF-8");
+ini_set ('session.use_cookies',1);
+ini_set ('magic_quotes_gpc','off');
+ini_set ('session.use_only_cookies','on');
+ini_set ('session.use_cookies',1);
+
+if ( ! defined('OVERRIDE_PARAM')) {
+    ini_set ('max_execution_time',240);
+    ini_set ('memory_limit','256M');
+}
 @ini_set ('session.use_trans_sid','on');
 @session_start();
 
@@ -75,15 +87,8 @@ $g_succeed="<span style=\"font-size:18px;color:green\">&#x2713;</span>";
 define ('SMALLX','&#x2D5D;');
 define ('BUTTONADD',"&#10010;");
 
-/* uncomment for development */
 
-// define ('SVNINFO',6800);
-//define ("DEBUG",true);
-//define ("LOGINPUT",true);
-
-
-
-define ('SVNINFO',6900);
+define ('SVNINFO',7001);
 if ( ! defined  ('DEBUG')) {
     define ("DEBUG",false);
 }
@@ -98,15 +103,20 @@ if ( !defined("SITE_UPDATE"))
     define ("SITE_UPDATE",'http://www.noalyss.eu/last_version.txt');
 if ( !defined("SITE_UPDATE_PLUGIN"))
     define ("SITE_UPDATE_PLUGIN",'http://www.noalyss.eu/plugin_last_version.txt');
-
-
-define ("DBVERSION",121);
+if ( !defined ("NOALYSS_PACKAGE_REPOSITORY")) {
+    define ("NOALYSS_PACKAGE_REPOSITORY","https://package.noalyss.eu/");
+}
+// If you don't want that the system information  is accessible
+if ( ! defined ("SYSINFO_DISPLAY")) {
+    define ("SYSINFO_DISPLAY",TRUE);
+}
+define ("DBVERSION",128);
 define ("MONO_DATABASE",25);
-define ("DBVERSIONREPO",16);
+define ("DBVERSIONREPO",18);
 define ('NOTFOUND','--not found--');
 define ("MAX_COMPTE",4);
 define ('MAX_ARTICLE',5);
-define ('MAX_ARTICLE_STOCK',20);
+define ('MAX_ARTICLE_STOCK',10);
 define ('MAX_CAT',15);
 define ('MAX_CARD_SEARCH',550);
 define ('MAX_FORECAST_ITEM',10);
@@ -117,7 +127,7 @@ define ('COMPTA_MIN_YEAR',1900);
 define ('MAX_RECONCILE',25);
 define ('MAX_QCODE',4);
 define ('MAX_SEARCH_CARD',20);
-define ('MAX_FOLDER_TO_SHOW',20);
+define ('MAX_FOLDER_TO_SHOW',80);
 define ('MAX_ACTION_SHOW',20);
 
 if ( DEBUG ) {
@@ -153,7 +163,7 @@ define ("LAST",1);
 define ("FIRST",0);
 define ("ERROR",12);
 
-//!\enum ACTION  defines document_type for action
+//!<ACTION  defines document_type for action
 define('ACTION','1,5,6,7,8');
 
 //valeurs standardd
@@ -223,8 +233,8 @@ define ("FICHE_TYPE_MATERIAL",7);
  * ou
  *  unoconv -l -v -s localhost
  */
-define ('OFFICE','unoconv ');
-define ('GENERATE_PDF','YES');
+if ( ! defined ('OFFICE')) define ('OFFICE','');
+if ( ! defined ('GENERATE_PDF') ) define ('GENERATE_PDF','NO');
 
 /**
  * Pour conversion GIF en PDF
@@ -237,7 +247,26 @@ if (file_exists($convert_gif_pdf))
     define ('CONVERT_GIF_PDF','NOT');
     
 }
+/**
+ * PDF2PS is used when the PDF is broken , used with FIX_BROKEN_PDF
+ */
+$pdf2ps='/usr/bin/pdf2ps';
 
+if ( ! file_exists($pdf2ps) ) 
+    define ('PDF2PS','NOT');
+ else
+    define ('PDF2PS',$pdf2ps);
+/**
+ * PS2PDF is used when the PDF is broken , used with FIX_BROKEN_PDF
+ */
+$ps2pdf='/usr/bin/ps2pdf';
+
+if ( ! file_exists($ps2pdf) ) 
+    define ('PS2PDF','NOT');
+ else
+    define ('PS2PDF',$ps2pdf);
+
+ 
 /**
  * Outil pour manipuler les PDF 
  */
@@ -251,6 +280,10 @@ else
     define ('PDFTK','NOT');  
 }
 
+// If it is not a mono folder it is a multi one
+if ( !defined('MULTI')) {
+    define('MULTI',1);
+}
 
 define ('JS_INFOBULLE','
         <DIV id="bulle" class="infobulle"></DIV>
@@ -269,4 +302,28 @@ define ("SQL_LIST_UNPAID_INVOICE_DATE_LIMIT" ,"
         where (jr_rapt is null or jr_rapt = '')
         and to_date(to_char(jr_ech,'DD.MM.YYYY'),'DD.MM.YYYY') < to_date(to_char(now(),'DD.MM.YYYY'),'DD.MM.YYYY')
         and jr_valid = true" );
-?>
+
+/**
+ * Exception
+ */
+// Limit email exceeds parameter
+define ('EMAIL_LIMIT',1002);
+define ('EXC_PARAM_VALUE',1005);
+define ('EXC_PARAM_TYPE',1006);
+define ('EXC_DUPLICATE',1200);
+define ("UNPINDG","&#xf047;");
+define ("PINDG","&#xe809;");
+
+// Url of NOALYSS (http://...) 
+// 
+if ( ! defined ("NOALYSS_URL")) {
+    $protocol="http";
+    if ( isset ($_SERVER['REQUEST_SCHEME'] ))  {
+        $protocol=$_SERVER['REQUEST_SCHEME'];
+    }
+    $base=$protocol.'://'.
+            $_SERVER['HTTP_HOST'].
+            ":".$_SERVER['SERVER_PORT'].
+            dirname($_SERVER['PHP_SELF']);
+    define ("NOALYSS_URL",$base);
+}

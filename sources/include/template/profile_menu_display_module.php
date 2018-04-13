@@ -23,11 +23,13 @@
  * @brief display the module, used to setup the module and menu, included from
  * Profile_Menu
  */
+$http=new HttpInput();
 ?>
- <div id="module_setting">
+ <div id="module_setting" class="content">
 	<table class="result">
 	    <tr>
 		<?php
+                $dep=$http->post("dep","string", 0);
 		foreach ($ap_module as $row):
 			$js="";
 		    $style="";
@@ -36,7 +38,7 @@
 			echo "</tr><tr>";
 			continue;
 		    }
-                    $style=" tool ";
+                    $style=($dep == $row['pm_id'])?" selectedcell":" tool ";
                     $url="XX";
 		    if ( $row['me_url']!='')
 		    {
@@ -53,14 +55,14 @@
                     else
 		    {
 			$url=HtmlInput::anchor(_('Menu'),'',
-                                sprintf(" onclick = \" \$('menu_table').innerHTML='';display_sub_menu(%d,%d,%d,%d)\" ",
+                                sprintf(" onclick = \" \$('menu_table').innerHTML='';display_sub_menu(%d,%d,%d,%d);menu_select('".$row['pm_id']."')\" ",
                                         Dossier::id(),
                                         $this->p_id,
                                         $row['pm_id'],0));
 		    }
 		    ?>
 		<td class="<?php echo $style?>" id="sub<?php echo $row['pm_id']?>">
-                        <?php echo HtmlInput::anchor(gettext($row['me_menu']),'',sprintf(" onclick =\"mod_menu (%d,%d) \" ",Dossier::id(),$row['pm_id']),' class="line" ')?>
+                        <?php echo HtmlInput::anchor($row['me_code']." ".gettext($row['me_menu']),'',sprintf(" onclick =\"mod_menu (%d,%d) \" ",Dossier::id(),$row['pm_id']),' class="line" ')?>
                         <span>
                             <?php echo HtmlInput::anchor(SMALLX, "", 
                                     sprintf (" onclick = \"remove_sub_menu(%d,%d)\"", Dossier::id(),$row['pm_id']),
@@ -101,3 +103,4 @@
 
     </table>
 </div>
+  

@@ -23,12 +23,12 @@
  * some variable are already defined ($cn, $g_user ...)
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class_ihidden.php';
-require_once NOALYSS_INCLUDE.'/class_iselect.php';
-require_once NOALYSS_INCLUDE.'/class_idate.php';
-require_once NOALYSS_INCLUDE.'/class_acc_report.php';
-require_once NOALYSS_INCLUDE.'/class_exercice.php';
-global $g_user;
+require_once NOALYSS_INCLUDE.'/lib/ihidden.class.php';
+require_once NOALYSS_INCLUDE.'/lib/iselect.class.php';
+require_once NOALYSS_INCLUDE.'/lib/idate.class.php';
+require_once NOALYSS_INCLUDE.'/class/acc_report.class.php';
+require_once NOALYSS_INCLUDE.'/class/exercice.class.php';
+global $g_user,$http;
 //-----------------------------------------------------
 // If print is asked
 // First time in html
@@ -36,30 +36,55 @@ global $g_user;
 //-----------------------------------------------------
 if ( isset( $_GET['bt_html'] ) )
 {
-    $Form=new Acc_Report($cn,$_GET['form_id']);
-    $Form->get_name();
+    
     // step asked ?
     //--
-    $type_periode=HtmlInput::default_value_get("type_periode", -1);
-    if ( $type_periode == 1 )
-        $array=$Form->get_row( $_GET['from_date'],$_GET['to_date'], $type_periode);
-
-    if ($type_periode == 0   && $_GET['p_step'] == 0)
-        $array=$Form->get_row( $_GET['from_periode'],$_GET['to_periode'], $type_periode);
-
-
-    if ($type_periode  == 0  && $_GET['p_step'] == 1 )
+    try
     {
-        // step are asked
-        //--
-        for ($e=$_GET['from_periode'];$e<=$_GET['to_periode'];$e+=$_GET['p_step'])
+        $Form=new Acc_Report($cn,$http->get('form_id',"number"));
+        $Form->get_name();
+        $type_periode=$http->get("type_periode", "number", -1);
+        
+        if ($type_periode==1)
         {
-
-            $periode=getPeriodeName($cn,$e);
-            if ( $periode == null ) continue;
-            $array[]=$Form->get_row($e,$e,$_GET['type_periode']);
-            $periode_name[]=$periode;
+            $from_date=$http->get("from_date", "date");
+            $to_date=$http->get("to_date", "date");
+            $array=$Form->get_row(
+                    $from_date,
+                    $to_date,
+                    $type_periode);
         }
+        // Printing asked by range of date
+        if ($type_periode==0)
+        {
+            $from_periode=$http->get("from_periode");
+            $to_periode=$http->get("to_periode");
+            $p_step=$http->get('p_step');
+            if ( $http->get("p_step","number")==1) {
+                // step are asked
+                //--
+                for ($e=$from_periode; $e<=$to_periode;
+                            $e+=$p_step)
+                {
+
+                    $periode=getPeriodeName($cn, $e);
+                    if ($periode==null)
+                        continue;
+                    $array[]=$Form->get_row($e, $e, $type_periode);
+                    $periode_name[]=$periode;
+                }
+            } else {
+                 $array=$Form->get_row(
+                    $http->get('from_periode',"number"), 
+                    $http->get('to_periode',"number"),
+                    $type_periode);
+            }
+        }
+    }
+    catch (Exception $ex)
+    {
+        alert($ex->getMessage());;
+        
     }
 
 
@@ -68,11 +93,11 @@ if ( isset( $_GET['bt_html'] ) )
 
     $hid=new IHidden();
     echo '<div class="content">';
-    if ( $_GET['type_periode'] == 0)
+    if ($type_periode == 0)
     {
-        $t=($_GET['from_periode']==$_GET['to_periode'])?"":" -> ".getPeriodeName($cn,$_GET['to_periode'],'p_end');
+        $t=($from_periode==$to_periode)?"":" -> ".getPeriodeName($cn,$to_periode,'p_end');
         echo '<h2 class="info">'.$Form->id." ".$Form->name.
-        " - ".getPeriodeName($cn,$_GET['from_periode'],'p_start').
+        " - ".getPeriodeName($cn,$from_periode,'p_start').
         " ".$t.
         '</h2>';
     }
@@ -80,9 +105,9 @@ if ( isset( $_GET['bt_html'] ) )
     {
         echo '<h2 class="info">'.$Form->id." ".$Form->name.
         ' Date :'.
-        $_GET['from_date'].
+        $from_date.
         " au ".
-        $_GET['to_date'].
+        $to_date.
         '</h2>';
     }
     echo '<table >';
@@ -99,12 +124,12 @@ if ( isset( $_GET['bt_html'] ) )
     $hid->input("type","rapport").
     $hid->input("ac",$_GET['ac']).
     $hid->input("form_id",$Form->id);
-    if ( isset($_GET['from_periode'])) echo $hid->input("from_periode",$_GET['from_periode']);
-    if ( isset($_GET['to_periode'])) echo $hid->input("to_periode",$_GET['to_periode']);
-    if (isset($_GET['p_step'])) echo $hid->input("p_step",$_GET['p_step']);
-    if ( isset($_GET['from_date'])) echo $hid->input("from_date",$_GET['from_date']);
-    if ( isset($_GET['to_date'])) echo $hid->input("to_date",$_GET['to_date']);
-    echo $hid->input("type_periode",$_GET['type_periode']);
+    if ( isset($from_periode)) echo $hid->input("from_periode",$from_periode);
+    if ( isset($to_periode)) echo $hid->input("to_periode",$to_periode);
+    if (isset($p_step)) echo $hid->input("p_step",$p_step);
+    if ( isset($from_date)) echo $hid->input("from_date",$from_date);
+    if ( isset($to_date)) echo $hid->input("to_date",$to_date);
+    echo $hid->input("type_periode",$type_periode);
 
 
 
@@ -117,11 +142,11 @@ if ( isset( $_GET['bt_html'] ) )
     $hid->input("type","form").
     $hid->input("ac",$_GET['ac']).
     $hid->input("form_id",$Form->id);
-    if ( isset($_GET['from_periode'])) echo $hid->input("from_periode",$_GET['from_periode']);
-    if ( isset($_GET['to_periode'])) echo $hid->input("to_periode",$_GET['to_periode']);
-    if (isset($_GET['p_step'])) echo $hid->input("p_step",$_GET['p_step']);
-    if ( isset($_GET['from_date'])) echo $hid->input("from_date",$_GET['from_date']);
-    if ( isset($_GET['to_date'])) echo $hid->input("to_date",$_GET['to_date']);
+    if ( isset($from_periode)) echo $hid->input("from_periode",$from_periode);
+    if ( isset($to_periode)) echo $hid->input("to_periode",$to_periode);
+    if (isset($p_step)) echo $hid->input("p_step",$p_step);
+    if ( isset($from_date)) echo $hid->input("from_date",$from_date);
+    if ( isset($to_date)) echo $hid->input("to_date",$to_date);
     echo	$hid->input("type_periode",$_GET['type_periode']);
 
 
@@ -132,9 +157,9 @@ if ( isset( $_GET['bt_html'] ) )
     echo "</table>";
     if ( count($Form->row ) == 0 )
         exit;
-    if ( $_GET['type_periode']== 0 )
+    if ( $type_periode== 0 )
     {
-        if ( $_GET['p_step'] == 0)
+        if ( $p_step == 0)
         { // check the step
             // show tables
             ShowReportResult($Form->row);
@@ -161,7 +186,7 @@ if ( isset( $_GET['bt_html'] ) )
 //-----------------------------------------------------
 // Show the jrn and date
 //-----------------------------------------------------
-require_once NOALYSS_INCLUDE.'/class_database.php';
+require_once NOALYSS_INCLUDE.'/lib/database.class.php';
 $ret=$cn->make_array("select fr_id,fr_label
                      from formdef
                      order by fr_label");

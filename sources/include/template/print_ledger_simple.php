@@ -40,40 +40,60 @@ $tot['dna']=0;
 $tot['tva_nd']=0;
 $tot['tvac']=0;
 $tot['tva']=array();
-bcscale(2);
+bcscale(4);
 foreach ($Row as $line) {
     $i++;
     /*
      * Get date of reconcile operation
      */
     $ret_reconcile=$cn->execute('reconcile_date',array($line['jr_id']));
-   
     $class = ($i % 2 == 0) ? ' class="even" ' : ' class="odd" ';
     echo "<tr $class>";
+    
+    // Receipt number
     echo "<TD>" . h($line['jr_pj_number']) . "</TD>";
+    
+    // Date
     echo "<TD>" . smaller_date($line['date']) . "</TD>";
     echo "<TD>" . smaller_date($line['date_paid']) . "</TD>";
+    
+    // Internal with detail
     echo "<TD>" . HtmlInput::detail_op($line['jr_id'], $line['jr_internal']) . "</TD>";
+    
+    // find the tiers (normally in $Row ! 
     $tiers = $Jrn->get_tiers($line['jrn_def_type'], $line['jr_id']);
     echo td($tiers);
+    
+    // Label
     echo "<TD>" . h($line['comment']) . "</TD>";
-    $dep_priv=($line['dep_priv']==0)?"":nbm($line['dep_priv']);
+    
+    // Private expense
+    $dep_priv=($line['dep_priv']==0)?"":nbm(round($line['dep_priv'],2),2);
     $tot['dep_priv']=bcadd($tot['dep_priv'],  floatval($line['dep_priv']));
-    $dna=($line['dna']==0)?"":nbm($line['dna']);
-    $tot['dna']=bcadd($tot['dna'],floatval($line['dna']));
-    echo "<TD class=\"num\">" . nbm($line['HTVA']) . "</TD>";
-    $tot['htva']=bcadd($tot['htva'],  floatval($line['HTVA']));
+    
+    // No deductible
+    $dna=($line['dna']==0)?"":nbm(round($line['dna'],2),2);
+    $tot['dna']=bcadd($tot['dna'],round(floatval($line['dna'])),2);
+
+    // HTVA amount 
+    echo "<TD class=\"num\">" . nbm(round($line['HTVA'],2),2) . "</TD>";
+    $tot['htva']=bcadd($tot['htva'],  round(floatval($line['HTVA']),2));
     
     echo "<TD class=\"num\">" .$dep_priv . "</TD>";
     echo "<TD class=\"num\">" . $dna . "</TD>";
+    
+    //--------------------------------------------------------------------------
+    // If VAT then display it
+    //--------------------------------------------------------------------------
     if ($own->MY_TVA_USE == 'Y' )
     {
-        $tva_dna=($line['tva_dna']==0)?"":nbm($line['tva_dna']);
-        $tot['tva_nd']=bcadd($tot['tva_nd'],  floatval($line['tva_dna']));
+        $tva_dna=($line['tva_dna']==0)?"":nbm(round($line['tva_dna']),2);
+        $tot['tva_nd']=bcadd($tot['tva_nd'],  round(floatval($line['tva_dna']),2));
         echo "<TD class=\"num\">" . $tva_dna. "</TD>";
         $a_tva_amount=array();
+        
         foreach ($line['TVA'] as $lineTVA)
-            {
+        {
                 foreach ($a_Tva as $idx=>$line_tva)
                 {
 
@@ -87,16 +107,17 @@ foreach ($Row as $line) {
         foreach ($a_Tva as $line_tva)
         {
             $a=$line_tva['tva_id'];
-            if ( isset($a_tva_amount[$a])) {
-                echo '<td class="num">'.nb($a_tva_amount[$a]).'</td>';
-                $tot['tva'][$a]=(isset($tot['tva'][$a]))?bcadd($tot['tva'][$a],floatval($a_tva_amount[$a])):floatval($a_tva_amount[$a]);
+            if ( isset($a_tva_amount[$a]) && $a_tva_amount[$a] != 0) {
+                echo '<td class="num">'.nb(round($a_tva_amount[$a],2)).'</td>';
+                $tot['tva'][$a]=(isset($tot['tva'][$a]))?bcadd($tot['tva'][$a],round(floatval($a_tva_amount[$a]),2)):round(floatval($a_tva_amount[$a]),2);
             }
             else
                 printf("<td class=\"num\"></td>");
         }
     }
-    echo '<td class="num">'.$line['TVAC'].'</td>';
-    $tot['tvac']=bcadd($tot['tvac'], floatval($line['TVAC']));
+    
+    echo '<td class="num">'.round($line['TVAC'],2).'</td>';
+    $tot['tvac']=bcadd($tot['tvac'], round(floatval($line['TVAC']),2));
     /*
      * If reconcile print them
      */

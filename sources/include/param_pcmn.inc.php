@@ -21,27 +21,27 @@
  * \brief concerns the management of the "Plan Comptable"
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once  NOALYSS_INCLUDE.'/class_acc_account.php';
-require_once  NOALYSS_INCLUDE.'/ac_common.php';
+require_once  NOALYSS_INCLUDE.'/class/acc_account.class.php';
+require_once  NOALYSS_INCLUDE.'/lib/ac_common.php';
 require_once NOALYSS_INCLUDE.'/constant.php';
-require_once NOALYSS_INCLUDE.'/class_dossier.php';
-require_once NOALYSS_INCLUDE.'/function_javascript.php';
-
+require_once NOALYSS_INCLUDE.'/class/dossier.class.php';
+require_once NOALYSS_INCLUDE.'/lib/function_javascript.php';
+$http=new HttpInput();
 $gDossier=dossier::id();
 
-require_once NOALYSS_INCLUDE.'/class_database.php';
+require_once NOALYSS_INCLUDE.'/lib/database.class.php';
 
 /* Admin. Dossier */
-$cn=new Database($gDossier);
+$cn=Dossier::connect();
 
-require_once  NOALYSS_INCLUDE.'/class_user.php';
+require_once  NOALYSS_INCLUDE.'/class/user.class.php';
 
-require_once  NOALYSS_INCLUDE.'/user_menu.php';
-echo '<div id="acc_update" class="inner_box" style="display:none;position:absolute;text-align:left;z-index:1"></div>';
+require_once  NOALYSS_INCLUDE.'/lib/user_menu.php';
+echo '<div id="acc_update" class="inner_box" style="display:none;position:absolute;text-align:left;width:auto;z-index:1"></div>';
 
 /* Store the p_start parameter */
 
-$g_start=HtmlInput::default_value_get('p_start',1);
+$g_start=$http->get('p_start',"number",1);
 ?>
 <a  id="top"></a>
 
@@ -53,109 +53,37 @@ $g_start=HtmlInput::default_value_get('p_start',1);
 
 <DIV CLASS="myfieldset" style="width:auto">
 <?php
-$Ret=$cn->exec_sql("select pcm_val,pcm_lib,pcm_val_parent,pcm_type,array_to_string(array_agg(j_qcode) , ',') as acode
-	from tmp_pcmn left join vw_poste_qcode on (j_poste=pcm_val) where substr(pcm_val::text,1,1)='".$g_start."'".
-		"  group by pcm_val,pcm_lib,pcm_val_parent, pcm_type  order by pcm_val::text");
-$MaxRow=Database::num_row($Ret);
+require_once NOALYSS_INCLUDE."/class/acc_plan_mtable.class.php";
+require_once NOALYSS_INCLUDE."/lib/manage_table_sql.class.php";
+/**
+ * @file
+ * @brief Test the Acc_Plan_MTable
+ */
+$obj=new Acc_Plan_SQL($cn);
+/**
+ * Test $obj
+ */
 
-?>
-<span style="display:inline;margin: 15px 15px 15px 15px">
-<input type="button" id="pcmn_update_add_bt" class="smallbutton" value="<?php echo _('Ajout poste comptable'); ?>">
-</span>
-<?php echo _('Filtre')." ".HtmlInput::filter_table("account_tbl_id", "0,1,2,3,4", 1);?>
-             <?php
-             echo HtmlInput::hidden('p_action','pcmn');
-//echo HtmlInput::hidden('sa','detail');
-echo dossier::hidden();
-$limite=MAX_QCODE;
-?>
-<TABLE  id="account_tbl_id" class="result">
-     <TR>
-     <TH> <?php echo _('Poste comptable') ?> </TH>
-     <TH> <?php echo _('Libellé') ?> </TH>
-     <TH> <?php echo _('Poste comptable Parent') ?> </TH>
-     <TH> <?php echo _('Type') ?> </TH>
-     <TH> <?php echo _('Fiche') ?></TH>
-     </TR>
+$mtable=new Acc_Plan_MTable($obj);
+$mtable->add_json_param("op", "accounting");
+$obj->set_limit_fiche_qcode(5);
+$mtable->set_callback("ajax_misc.php");
+$mtable->create_js_script();
 
-<?php
-$str_dossier=dossier::id();
-for ($i=0; $i <$MaxRow; $i++):
-    $A=Database::fetch_array($Ret,$i);
-   $class=( $i%2 == 0 )?"even":"odd";
+echo $mtable->display_table(" where pcm_val::text like '{$g_start}%' order by pcm_val::text ");
+/* it will override the classic onscroll (see scripts.js)
+ * @see scripts.js
+*/
 
-?>
-     <tr id="row_<?php echo $A['pcm_val']?>" class="<?php echo $class;?>">
-    <td class="<?php echo $class;?>">
-        <?php
-        echo HtmlInput::history_account($A['pcm_val'], $A['pcm_val']);
-        ?>
-    </td>
-    <td class="<?php echo $class;?>">
-    <?php
-    printf ("<A style=\"text-decoration:underline\" HREF=\"javascript:void(0)\" onclick=\"pcmn_update(%d,'%s')\">",
-            $str_dossier, $A['pcm_val']);
-    echo h($A['pcm_lib']);
     ?>
-    </td>
-    <td class="<?php echo $class;?>">
-        <?php echo $A['pcm_val_parent']; ?>
-    </TD>
-    <td class="<?php echo $class;?>">
-        <?php    echo $A['pcm_type'];?>
-    </TD>
-    <td class="<?php echo $class;?>">
-    <?php	
-        if ( strlen($A['acode']) >0 ) :
-            if (strpos($A['acode'], ",") >0 ) :
-                $det_qcode=  explode(",", $A['acode']);
-		echo '<ul style="display:inline;paddding:0;margin:0px;padding-left:0px;list-style-type:none;padding-start-value:0px">';
-		$max=(count($det_qcode)>MAX_QCODE)?MAX_QCODE:count($det_qcode);
-		for ($e=0;$e<$max;$e++) :
-			echo '<li style="padding-start-value:0;margin:2px;display:inline">'.HtmlInput::card_detail($det_qcode[$e],'',' style="display:inline"').'</li>';
-		endfor;
-		echo '</ol>';
-		if ($max < count($det_qcode)) :
-			echo "...";
-		else :
-			echo HtmlInput::card_detail($A['acode']);
-		endif;
-            endif;
-	endif;
-        ?>
-	</td>
-  </tr>
-<?php
-endfor;
-?>
-</TABLE>
-    <?php
-    /* it will override the classic onscroll (see scripts.js)
-     * @see scripts.js
-     */
-    ?>
-    <div id="go_up" class="inner_box" style="padding:0px;left:auto;width:250px;height: 100px;display:none;position:fixed;top:5px;right:20px">
-        <?php echo HtmlInput::title_box(_('Navigation'), 'go_up', "hide");?>
+    <div id="go_up" class="inner_box" style="padding:0px;left:auto;width:250px;height: 100px;display:none;position:fixed;bottom:5px;right:20px">
         <div style="margin:3%;padding:3%">
-            <a class="button" href="#top" ><?php echo "&#8679";?></a>
-            <input type="button" id="pcmn_update_add_bt3" class="smallbutton"  value="<?php echo _('Ajout poste comptable'); ?>">
+            <a class="icon" href="#up_top" >&#xe81a;</a><a href="javascript:show_calc()" class="icon">&#xf1ec;</a>
+            <input type="button" id="pcmn_update_add_bt3"  value="<?php echo _('Ajout poste comptable'); ?>">
         </div>
     </div>
- <input type="button" id="pcmn_update_add_bt2" class="smallbutton"  value="<?php echo _('Ajout poste comptable'); ?>">
  </div>
  <script>
-     $('pcmn_update_add_bt').onclick = function () 
-     {
-         pcmn_update(<?php echo Dossier::id()?>,'');
-     }
-     $('pcmn_update_add_bt2').onclick = function () 
-     {
-         pcmn_update(<?php echo Dossier::id()?>,'');
-     }
-     $('pcmn_update_add_bt3').onclick = function () 
-     {
-         pcmn_update(<?php echo Dossier::id()?>,'');
-     }
      window.onscroll=function () {
          if ( document.viewport.getScrollOffsets().top> 0) {
              if ($('go_up').visible() == false) {
@@ -165,6 +93,9 @@ endfor;
         } else {
             $('go_up').hide();
         }
+     }
+     $('pcmn_update_add_bt3').onclick=function() {
+         <?php printf("%s.input(-1,'%s')",$mtable->get_object_name(),$mtable->get_object_name());?>
      }
 </script>
 <?php

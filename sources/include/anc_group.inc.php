@@ -24,9 +24,9 @@
  *
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class_itext.php';
-require_once NOALYSS_INCLUDE.'/class_iselect.php';
-require_once NOALYSS_INCLUDE.'/class_anc_group.php';
+require_once NOALYSS_INCLUDE.'/lib/itext.class.php';
+require_once NOALYSS_INCLUDE.'/lib/iselect.class.php';
+require_once NOALYSS_INCLUDE.'/class/anc_group.class.php';
 $r=new Anc_Group($cn);
 
 

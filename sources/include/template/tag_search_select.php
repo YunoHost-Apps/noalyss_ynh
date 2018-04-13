@@ -9,7 +9,9 @@ if ( $max == 0 ) {
     return;
 }
 ?>
-Filtrer = <?php echo HtmlInput::filter_table($p_prefix.'tag_tb_id', '0,1', 1); ?>
+<?php echo _("Cherche")." ".HtmlInput::filter_table($p_prefix.'tag_tb_id', '0,1', 1); ?>
+<?php echo HtmlInput::button_action(_('Uniquement actif'), 'show_only_row(\''.$p_prefix.'tag_tb_id'.'\',\'tag_status\',\'Y\')');?>
+<?php echo HtmlInput::button_action(_('Tous'), 'show_all_row(\''.$p_prefix.'tag_tb_id'.'\')');?>
 <table class="result" id="<?php echo $p_prefix;?>tag_tb_id">
     <tr>
         <th>
@@ -23,8 +25,9 @@ Filtrer = <?php echo HtmlInput::filter_table($p_prefix.'tag_tb_id', '0,1', 1); ?
 $gDossier=Dossier::id();
     for ($i=0;$i<$max;$i++):
         $row=Database::fetch_array($ret, $i);
+    $attr=sprintf('tag_status="%s"',$row['t_actif']);
 ?>
-    <tr class="<?php echo (($i%2==0)?'even':'odd');?>">
+    <tr <?=$attr?> class="<?php echo (($i%2==0)?'even':'odd');?>">
         <td>
             <?php
             $js=sprintf("search_add_tag('%s','%s','%s')",$gDossier,$row['t_id'],$p_prefix);
@@ -36,8 +39,19 @@ $gDossier=Dossier::id();
             echo $row['t_description'];
             ?>
         </td>
+         <td>
+            <?php
+            if ( $row['t_actif'] == 'N') { 
+                echo _('non actif');
+            }
+            ?>
+        </td>
     </tr>
 <?php
  endfor;
  ?>
 </table>
+<script>
+    show_only_row('<?=$p_prefix?>tag_tb_id','tag_status','Y');
+</script>    
+<?=HtmlInput::button_close($p_prefix.'tag_div')?>

@@ -1,0 +1,23 @@
+begin;
+alter table jnt_fic_attr add column jnt_order int;
+update jnt_fic_attr set jnt_order = 1;
+alter table jnt_fic_attr alter jnt_order set not null;
+update jnt_fic_attr set jnt_order = 4 where ad_id=5;
+update jnt_fic_attr set jnt_order = 120 where ad_id=6;
+update jnt_fic_attr set jnt_order = 130 where ad_id=7;
+update jnt_fic_attr set jnt_order = 20 where ad_id=9;
+update jnt_fic_attr set jnt_order = 30 where ad_id=13;
+update jnt_fic_attr set jnt_order = 40 where ad_id=14;
+update jnt_fic_attr set jnt_order = 70 where ad_id=16;
+update jnt_fic_attr set jnt_order = 80 where ad_id=17;
+update jnt_fic_attr set jnt_order = 90 where ad_id=18;
+update jnt_fic_attr set jnt_order = 400 where ad_id=23;
+update jnt_fic_attr set jnt_order = 60 where ad_id=24;
+update jnt_fic_attr set jnt_order = 100 where ad_id=26;
+update jnt_fic_attr set jnt_order = 110 where ad_id=27;
+update jnt_fic_attr set jnt_order = 50 where ad_id=15;
+update jnt_fic_attr set jnt_order = 30 where ad_id=5;
+update jnt_fic_attr set jnt_order = 0 where ad_id=1;
+
+update version set val=50;
+commit;

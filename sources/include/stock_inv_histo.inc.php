@@ -25,7 +25,9 @@
  *
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class_exercice.php';
+require_once NOALYSS_INCLUDE.'/class/exercice.class.php';
+require_once NOALYSS_INCLUDE.'/lib/http_input.class.php';
+$http=new HttpInput();
 
 if ( isset($_POST['del']))
 {
@@ -48,7 +50,7 @@ if ( isset($_POST['del']))
 $profile=$g_user->get_profile();
 $gDossier=dossier::id();
 $default_exercice=$g_user->get_exercice();
-$p_exercice=HtmlInput::default_value_get("p_exercice", $default_exercice);
+$p_exercice=$http->get("p_exercice", "string",$default_exercice);
 
 $a_change=$cn->get_array("select *,to_char(c_date,'DD.MM.YY') as str_date from stock_change as sc
 			join stock_repository as sr on (sc.r_id=sr.r_id)

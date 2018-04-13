@@ -1,19 +1,19 @@
 <?php
 /*
- *   This file is part of PhpCompta.
+ *   This file is part of NOALYSS.
  *
- *   PhpCompta is free software; you can redistribute it and/or modify
+ *   NOALYSS isfree software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation; either version 2 of the License, or
  *   (at your option) any later version.
  *
- *   PhpCompta is distributed in the hope that it will be useful,
+ *   NOALYSS isdistributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with PhpCompta; if not, write to the Free Software
+ *   along with NOALYSS; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 // Copyright (2014) Author Dany De Bontridder <dany@alchimerys.be>
@@ -23,7 +23,8 @@ if (!defined('RECOVER'))
 define('SIZE_REQUEST', 70);
 
 
-require_once NOALYSS_INCLUDE.'/class_html_input.php';
+require_once NOALYSS_INCLUDE.'/lib/html_input.class.php';
+require_once NOALYSS_INCLUDE.'/lib/http_input.class.php';
 /**
  * @brief generate a random string of char
  * @param $car int length of the string
@@ -39,13 +40,13 @@ function generate_random($car)
     }
     return $string;
 }
-
+$http=new HttpInput();
 /**
  * @file
  * @brief 
  * @param type $name Descriptionara
  */
-$action=HtmlInput::default_value_request("id", "");
+$action=$http->request("id","string", "");
 if ($action=="") :
     /*
      * Display dialog box
@@ -62,13 +63,13 @@ if ($action=="") :
     </form>
     <?php
 elseif ($action=="send_email") :
-    require_once NOALYSS_INCLUDE.'/class_sendmail.php';
-    require_once NOALYSS_INCLUDE.'/class_database.php';
+    require_once NOALYSS_INCLUDE.'/lib/sendmail.class.php';
+    require_once NOALYSS_INCLUDE.'/lib/database.class.php';
     /*
      * Check if user exists, if yes save a recover request
      */
-    $login_input=HtmlInput::default_value_request("login", "");
-    $email_input=HtmlInput::default_value_request("email", "");
+    $login_input=$http->request("login", "string","");
+    $email_input=$http->request("email", "string","");
     $cn=new Database(0);
     $valid=false;
     if (trim($login_input)!=""):
@@ -119,7 +120,7 @@ Suivez ce lien pour activer le changement ou ignorer ce message si vous n'êtes 
 Ce lien ne sera actif que 12 heures.
    
    
-   https://{$_SERVER['SERVER_NAME']}{$_SERVER['SCRIPT_NAME']}?recover&id=req&req={$request_id}
+   https://{$_SERVER['SERVER_NAME']}{$_SERVER['REQUEST_URI']}?recover&id=req&req={$request_id}
    
    Merci d'utiliser NOALYSS
    
@@ -135,9 +136,10 @@ EOF;
 L\'email a été envoyé avec un lien et le nouveau mot de passe, vérifiez vos spams</p>';
     endif;
 elseif ($action=="req") :
-    $request_id=HtmlInput::default_value_request("req", "");
+    $http=new HttpInput();
+    $request_id=$http->request("req","string", "");
     if (strlen(trim($request_id))==SIZE_REQUEST) :
-        require_once NOALYSS_INCLUDE.'/class_database.php';
+        require_once NOALYSS_INCLUDE.'/lib/database.class.php';
         $cn=new Database(0);
 
         $value=$cn->get_value("select password from recover_pass where request=$1 and created_on > now() - interval '12 hours' and recover_on is null", array($request_id));

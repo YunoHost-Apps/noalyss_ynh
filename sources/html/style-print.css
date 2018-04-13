@@ -14,12 +14,13 @@ form {
 .print {
 	font-size:10pt;
 	display: block;
+        visibility: visible;
 	}
 .noprint  {
   display:none;
  }
 
-.button, .smallbutton{
+.button, .smallbutton,.icon{
 	display:none;
 	}
 div.recherche_form {
@@ -32,17 +33,17 @@ table.result {
   }
 
 table.result th {
-	font-size:105%;
+	font-size:10pt;
 	font-family:sans-serif;
 }
 h3,h4 {
-	font-size:110%;
+	font-size:12pt;
 	text-decoration: underline;
 	font-family:sans-serif;
 }
 
 h2 {
-	font-size:110%;
+	font-size:12pt;
 	font-weight:bold;
 	font-family:sans-serif;
 }
@@ -53,7 +54,7 @@ div.info {
 	font-size:10pt;
 }
 h1.content,h1,h2.info,legend {
-	font-size:120%;
+	font-size:12pt;
 	font-weight:bold;
 	font-family:sans-serif;
 }
@@ -257,40 +258,65 @@ a.detail:hover
 	font-size:10pt;
 }
 h1.title {
-	font-size:120%;
+	font-size:12pt;
 	font-style: italic;
 }
 h2.title {
-	font-size:110%;
+	font-size:12pt;
 	font-style: italic;
 	margin-left: 3em;
 }
 h3.title {
-	font-size:110%;
+	font-size:12pt;
 	margin-left: 3em;
 }
 h4.title {
 	color: blue;
-	font-size:110%;
-	margin-left: 3em;
+	font-size:12pt;
+	margin-left: 10pt;
 	text-decoration: underline;
 }
 h5.title {
 	color: blue;
-	font-size:110%;
-	margin-left: 3em;
+	font-size:11pt;
+	margin-left: 10pt;
 	text-decoration: none;
 	font-style: italic;
 }
 /* </style> */
 div.myfieldset
 {
-	margin-top: 3em;
-	margin-left:3em;
-	margin-right: 3em;
-	border:lightgrey 2px groove;
+	margin-top: 20pt;
+	margin-left:20pt;
+	margin-right: 20pt;
+	border:lightgrey 0.5pt groove;
 }
 #info_div ,div#error_div ,div#close_div{
 	display:none;
 }
 p#breakhere {page-break-before: always}
+
+.field_follow_up
+{
+    font-size:9pt;
+    margin-top:10pt;
+    word-break: normal;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    
+    
+}
+.tinybutton {
+    display:none;
+}
+/*
+ * Style for the Inplace Edit element
+ */
+span.inplace_edit
+{
+    text-decoration: none;
+}
+span.inplace_edit_input
+{
+    text-decoration: none;
+}

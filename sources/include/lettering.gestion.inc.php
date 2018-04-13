@@ -3,7 +3,7 @@
 //see licence.txt
 
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class_lettering.php';
+require_once NOALYSS_INCLUDE.'/class/lettering.class.php';
 global $g_user;
 echo '<div class="content">';
 

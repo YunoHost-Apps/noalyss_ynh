@@ -22,14 +22,16 @@
 
 // Copyright Author Dany De Bontridder danydb@aevalys.eu
 require_once '../include/constant.php';
-include_once NOALYSS_INCLUDE.'/ac_common.php';
-require_once NOALYSS_INCLUDE.'/class_database.php';
-require_once NOALYSS_INCLUDE.'/class_itext.php';
-require_once NOALYSS_INCLUDE.'/function_javascript.php';
+include_once NOALYSS_INCLUDE.'/lib/ac_common.php';
+require_once NOALYSS_INCLUDE.'/lib/database.class.php';
+require_once NOALYSS_INCLUDE.'/lib/itext.class.php';
+require_once NOALYSS_INCLUDE.'/lib/http_input.class.php';
+require_once NOALYSS_INCLUDE.'/lib/function_javascript.php';
+require_once NOALYSS_INCLUDE.'/lib/icon_action.class.php';
 
-@html_page_start($_SESSION['g_theme']);
+html_page_start($_SESSION['g_theme']);
 $rep=new Database();
-include_once NOALYSS_INCLUDE.'/class_user.php';
+require_once NOALYSS_INCLUDE.'/class/user.class.php';
 $User=new User($rep);
 
 $User->Check();
@@ -60,60 +62,78 @@ EOF;
     exit();
 }
 $ac=new Database();
+$hi=new HttpInput();
 
 /* check if repo valid */
 if ( $ac->exist_table('version') == false)
 {
     echo '<h2 class="error" style="font-size:12px">'._("Base de donnée invalide").'</h2>';
-    $base=dirname($_SERVER['REQUEST_URI']);
+    echo '<a hreF="'.NOALYSS_URL.'/user_login.php">'._("Retour").'</a></h2>';
     exit();
 }
 
 /* check repo version */
-$version = $ac->get_value('select val from version');
+if (!defined("MULTI")||(defined("MULTI")&&MULTI==1))
+{
+    $version = $ac->get_value('select max(val) from version');
+} else {
+    $version = $ac->get_value('select max(val) from repo_version');
+    
+}
 if ( $version < DBVERSIONREPO )
 {
     echo '<h2 class="error" style="font-size:12px">'._("Votre base de données n'est pas à jour").'   ';
     $a=_("cliquez ici pour appliquer le patch");
-    $base = dirname($_SERVER['REQUEST_URI']);
-    if ($base == '/') { $base = ''; }
-    $base .= '/admin/setup.php';
+    $base =NOALYSS_URL.'/admin-noalyss.php';
     echo '<a hreF="'.$base.'">'.$a.'</a></h2>';
 
 }
 if ( $User->Admin()  == 1)
 {
-	if (SITE_UPDATE !="") {
-	 $update=@file_get_contents(SITE_UPDATE);
+    if (SITE_UPDATE !="") {
+     $update=@file_get_contents(SITE_UPDATE);
 	 if ($update > $version_noalyss ) {
-		 echo '<div id="version_div" class="inner_box" style="width:25%;margin-left:10%;margin-top:3px;">';
-		 echo '<p class="notice">';
-		 echo "Mise à jour disponible de NOALYSS version actuelle : $update votre version $version_noalyss";
-		 echo '</p>';
-                 echo '<p style="text-align:center"> <a class="button" onclick="document.body.removeChild(document.getElementById(\'version_div\'))">'.
-                         _('Fermer').
-                         "</a></p>";
-		 echo '</div>';
-	 }
-	}
+            echo '<div id="version_div" class="inner_box" style="width:25%;margin-left:10%;margin-top:3px;">';
+            echo '<p class="notice">';
+            printf ( "Mise à jour disponible de NOALYSS version actuelle : %s  votre version %s ",$update,$version_noalyss);
+
+            // Link to admin_repo : upgrade application
+            $base =NOALYSS_URL."/admin-noalyss.php?action=upgrade&sb=application";
+
+           echo '<a hreF="' . $base . '">' . _("Cliquez ici pour mettre à jour") . '</a>';
+           echo '</p>';
+           echo '<p style="text-align:center"> <a class="button" onclick="document.body.removeChild(document.getElementById(\'version_div\'))">'.
+                   _('Fermer').
+                   "</a></p>";
+           echo '</div>';
+        }
+    }
 }
 
-include_once("user_menu.php");
+include_once NOALYSS_INCLUDE."/lib/user_menu.php";
+
 $priv=($User->admin==1)?_("Administrateur"):_("Utilisateur");
 load_all_script();
 if ( isset ($_POST['set_preference'])) {
     //// Save value
-    extract($_POST);
-
+    $pass_1=$hi->post("pass_1","string", "");
+    $pass_2=$hi->post("pass_2","string", "");
+    $style_user=$hi->post("style_user","string", "");
+    $lang=$hi->post("lang", "string","");
+    $p_email=$hi->post("email","string", "");
     if (strlen(trim($pass_1)) != 0 && strlen(trim($pass_2)) != 0)
     {
 	$User->save_password($pass_1,$pass_2);
         
     }
-    $User->save_global_preference('THEME', $style_user);
-    $User->save_global_preference('LANG', $lang);
-    $_SESSION['g_theme']=$style_user;
-    $_SESSION['g_lang']=$lang;
+    if (trim($style_user) != "") {
+        $User->save_global_preference('THEME',$style_user);
+        $_SESSION['g_theme']=$style_user;   
+    }
+    if (trim($lang) != "") {
+        $User->save_global_preference('LANG', $lang);
+        $_SESSION['g_lang']=$lang;
+    }
     $User->load();
     $User->save_email($p_email);
 }
@@ -121,37 +141,29 @@ echo '<div class="welcome"> ';
 /**
  *
  * If the user is NOT admin and can access only ONE folder,
- * so it will be directly redirected to this folder or to the plugins of this
+ * OR for a One Folder Installation
+ * he will be directly redirected to his folder or to the plugins of this
  * folder if he's an "plugin user"
  */
 
-if ( $User->admin == 0 )
+if ( $User->admin == 0 || (defined("MULTI")&& MULTI == 0 ) )
 {
     // how many folder ?
     $folder=$User->get_available_folder();
     if ( $folder != null  && count($folder) == 1 )
     {
 
-        if ( $User->check_dossier($folder[0]['dos_id']) == 'P')
-        {
-            redirect('extension.php?gDossier='.$folder[0]['dos_id']);
+            redirect(NOALYSS_URL.'/do.php?gDossier='.$folder[0]['dos_id']);
             exit();
-        }
-        else
-        {
-            redirect('do.php?gDossier='.$folder[0]['dos_id']);
-            exit();
-        }
     }
 
 }
-
 $result="";
 $result.="<table border=\"0\">";
 $result.='<TR>';
 if ( $User->Admin()  == 1 )
 {
-    $result.="<TD  class=\"tool\" ><A class=\"cell\" HREF=\"admin_repo.php\"> Administration  </A></TD>";
+    $result.="<TD  class=\"tool\" ><A class=\"cell\" HREF=\"admin-noalyss.php\">"._("Administration")."  </A></TD>";
 }
 $result.='<TD class="tool">';
 $result.='<a onclick="set_preference(0)" title="Préférence" href="javascript:void(0)" class="cell">'._('Préférence').'</a>';
@@ -164,12 +176,12 @@ echo '<div id="module">'.$result.'</div>';
 echo '</div>';
 ?>
 <div class="foldercontent">
-	<span style="display:block;margin:2%">
+	<span style="margin:2%" class="visible_gt800">
  <?php
-                        echo _('Filtre').HtmlInput::infobulle(23);
+                        echo _('Cherche').Icon_Action::infobulle(23);
 ?>
 <?php
-	echo HtmlInput::filter_table("folder", '1,2',1);
+	echo HtmlInput::filter_table("folder", '0,1,2',1);
 ?>
 </span>
 <?php

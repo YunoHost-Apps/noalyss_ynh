@@ -1,9 +1,12 @@
 <?php
 //This file is part of NOALYSS and is under GPL 
 //see licence.txt
-
+/**
+ * @file
+ * @brief Module Balance Accountancy - Analyc
+ */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class_anc_acc_list.php';
+require_once NOALYSS_INCLUDE.'/class/anc_acc_list.class.php';
 echo '<div class="content">';
 $tab = new Anc_Acc_List($cn);
 $tab->get_request();

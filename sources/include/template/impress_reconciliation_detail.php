@@ -22,6 +22,9 @@
             <?php echo _("Tva ND")?>
         </th>
         <th style="text-align:right">
+           <?php echo _("Autoliquidation")?>
+        </th>
+        <th style="text-align:right">
            <?php echo _("TVAC")?>
         </th>
     </tr>
@@ -33,6 +36,7 @@ $tot_cum_vat=0;
 $tot_cum_nd=0;
 $tot_cum_nd_tva=0;
 $tot_cum_tvac=0;
+$tot_autoliquidation=0;
 for ($i=0;$i < $nb_record;$i++)    :
     $row=Database::fetch_array($p_ret,$i);
     $tot_cum_price=bcadd($tot_cum_price,$row['price']);
@@ -67,8 +71,15 @@ for ($i=0;$i < $nb_record;$i++)    :
         </td>
         <td class="num">
             <?php 
+            $tot_autoliquidation=bcadd($tot_autoliquidation, $row['vat_sided']);
+            echo nbm($row['vat_sided']);
+            ?>
+        </td>    
+        <td class="num">
+            <?php 
             $tot=bcadd($tot_vat,$row['price']);
             $tot=bcadd($tot,$row['vat_amount']);
+            $tot=bcsub($tot,$row['vat_sided']);
             $tot_cum_tvac=bcadd($tot_cum_tvac,$tot);
             echo nbm($tot);
             ?>
@@ -95,6 +106,9 @@ for ($i=0;$i < $nb_record;$i++)    :
     </td>
     <td class="num">
         <?php echo nbm($tot_cum_nd_tva); ?>
+    </td>
+    <td class="num">
+        <?php echo nbm($tot_autoliquidation); ?>
     </td>
     <td class="num">
         <?php 

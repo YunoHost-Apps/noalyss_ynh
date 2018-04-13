@@ -17,38 +17,42 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 // Copyright Author Dany De Bontridder danydb@aevalys.eu
-
+/*!
+ * \file
+ *\brief Manage the company setting  : address, vat number, Check period, VAT,
+ * CA ....
+ */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
 global $g_user;
+$http=new HttpInput();
 echo '<div class="content">';
-require_once NOALYSS_INCLUDE.'/class_own.php';
+require_once NOALYSS_INCLUDE.'/class/noalyss_parameter_folder.class.php';
 if (isset($_POST['record_company']))
 {
-	$m = new Own($cn);
-	extract($_POST);
-	$m->MY_NAME = $p_name;
-	$m->MY_TVA = $p_tva;
-	$m->MY_STREET = $p_street;
-	$m->MY_NUMBER = $p_no;
-	$m->MY_CP = $p_cp;
-	$m->MY_COMMUNE = $p_Commune;
-	$m->MY_TEL = $p_tel;
-	$m->MY_FAX = $p_fax;
-	$m->MY_PAYS = $p_pays;
-	$m->MY_CHECK_PERIODE = $p_check_periode;
-	$m->MY_DATE_SUGGEST = $p_date_suggest;
-	$m->MY_ANALYTIC = $p_compta;
-	$m->MY_STRICT = $p_strict;
-	$m->MY_TVA_USE = $p_tva_use;
-	$m->MY_PJ_SUGGEST = $p_pj;
-	$m->MY_ALPHANUM = $p_alphanum;
-	$m->MY_UPDLAB = $p_updlab;
-	$m->MY_STOCK = $p_stock;
+	$m = new Noalyss_Parameter_Folder($cn);
+	$m->MY_NAME = $http->post("p_name");
+	$m->MY_TVA = $http->post("p_tva");
+	$m->MY_STREET = $http->post("p_street");
+	$m->MY_NUMBER = $http->post("p_no");
+	$m->MY_CP = $http->post("p_cp");
+	$m->MY_COMMUNE = $http->post("p_Commune");
+	$m->MY_TEL = $http->post("p_tel");
+	$m->MY_FAX = $http->post("p_fax");
+	$m->MY_PAYS = $http->post("p_pays");
+	$m->MY_CHECK_PERIODE =$http->post("p_check_periode");
+	$m->MY_DATE_SUGGEST = $http->post("p_date_suggest");
+	$m->MY_ANALYTIC =$http->post("p_compta");
+	$m->MY_STRICT = $http->post("p_strict");
+	$m->MY_TVA_USE = $http->post("p_tva_use");
+	$m->MY_PJ_SUGGEST = $http->post("p_pj");
+	$m->MY_ALPHANUM = $http->post("p_alphanum");
+	$m->MY_UPDLAB = $http->post("p_updlab");
+	$m->MY_STOCK =$http->post("p_stock");
 
 	$m->Update();
 }
 
-$my = new Own($cn);
+$my = new Noalyss_Parameter_Folder($cn);
 ///// Compta analytic
 $array = array(
 	array("value" => "ob", 'label' => _("obligatoire")),

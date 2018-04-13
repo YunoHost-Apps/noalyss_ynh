@@ -27,9 +27,9 @@
  *
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class_menu_ref.php';
-require_once NOALYSS_INCLUDE.'/class_sort_table.php';
-require_once NOALYSS_INCLUDE.'/class_extension.php';
+require_once NOALYSS_INCLUDE.'/class/menu_ref.class.php';
+require_once NOALYSS_INCLUDE.'/lib/sort_table.class.php';
+require_once NOALYSS_INCLUDE.'/class/extension.class.php';
 
 
 echo '<div class="content">';
@@ -38,7 +38,7 @@ echo '<div class="content">';
  */
 if ( isset($_POST['save_plugin']))
 {
-	extract($_POST);
+	extract($_POST, EXTR_SKIP);
 	$plugin=new Extension($cn);
 	$plugin->me_code=$me_code;
 	$plugin->me_menu=$me_menu;
@@ -52,7 +52,7 @@ if ( isset($_POST['save_plugin']))
  */
 if (isset($_POST['mod_plugin']))
 {
-	extract ($_POST);
+	extract ($_POST, EXTR_SKIP);
 	$plugin=new Extension($cn);
 	$plugin->me_code=strtoupper($me_code);
 	$plugin->me_menu=$me_menu;
@@ -73,7 +73,7 @@ if (isset($_POST['mod_plugin']))
  */
 if ( isset($_POST['create_menu'])|| isset($_POST['modify_menu']))
 {
-	extract($_POST);
+	extract($_POST, EXTR_SKIP);
 	$menu_ref=new Menu_Ref($cn);
 	$menu_ref->me_code=strtoupper($me_code);
 	$menu_ref->me_menu=$me_menu;
@@ -155,7 +155,7 @@ echo '<tr>';
 echo '<th>'.$table->get_header(0).'</th>';
 echo '<th>'.$table->get_header(1).'</th>';
 echo '<th>'.$table->get_header(2).'</th>';
-echo '<th>'.$table->get_header(3).HtmlInput::infobulle(33).'</th>';
+echo '<th>'.$table->get_header(3).Icon_Action::infobulle(33).'</th>';
 echo '<th>'.$table->get_header(4).'</th>';
 echo '<th>'.$table->get_header(5).'</th>';
 echo '<th>'.$table->get_header(6).'</th>';

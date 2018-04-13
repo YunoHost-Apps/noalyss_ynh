@@ -2,13 +2,13 @@
 //This file is part of NOALYSS and is under GPL 
 //see licence.txt
 $str_anc="";
-?><?php require_once NOALYSS_INCLUDE.'/template/ledger_detail_top.php'; ?>
+?><?php require_once NOALYSS_TEMPLATE.'/ledger_detail_top.php'; ?>
 <div class="content" style="padding:0;">
 <?php 
-  require_once NOALYSS_INCLUDE.'/class_own.php';
-  $owner=new Own($cn);
-require_once  NOALYSS_INCLUDE.'/class_anc_plan.php';
-require_once NOALYSS_INCLUDE.'/class_anc_operation.php';
+  require_once NOALYSS_INCLUDE.'/class/noalyss_parameter_folder.class.php';
+  $owner=new Noalyss_Parameter_Folder($cn);
+require_once  NOALYSS_INCLUDE.'/class/anc_plan.class.php';
+require_once NOALYSS_INCLUDE.'/class/anc_operation.class.php';
 
 ?>
     <?php if ( $access=='W') : ?>
@@ -129,7 +129,7 @@ echo td(_('Pièce')).td($itext->input());
             $str_anc.=td($qcode);
             $str_anc.=td(nbm($q[$e]['j_montant']));
             $str_anc.='<td>';
-	    $str_anc.= HtmlInput::hidden('op[]',$anc_op->j_id);
+	    $str_anc.= HtmlInput::hidden('opanc[]',$anc_op->j_id);
             $montant=($q[$e]['j_debit'] == "t")?$q[$e]['j_montant']:bcmul($q[$e]['j_montant'], -1);
 	    $str_anc.=$anc_op->display_table(1,$montant,$div);
             $str_anc.='</td>';
@@ -141,6 +141,6 @@ echo td(_('Pièce')).td($itext->input());
 ?>
 </div>
 <?php 
-require_once NOALYSS_INCLUDE.'/template/ledger_detail_bottom.php';
+require_once NOALYSS_TEMPLATE.'/ledger_detail_bottom.php';
 ?>
 </div>

@@ -11,13 +11,15 @@
              'jr_id'=>$obj->det->jr_id,
              'act'=>'de',
              'div'=>$div,
+             'op'=>'ledger',
             'ajax'=>$callback));
      $msg_close=_('Fermer');
      $msg_pop=_('Ouvrir dans une fenêtre séparée');
      
-     echo '<A id="close_div" title="'.$msg_pop.'" onclick="var a=window.open(\'popup.php?'.$str.'\',\'\',\'titlebar=no,location=no,statusbar=no,menubar=no,toolbar=no,fullscreen=yes,scrollbars=yes,resizable=yes,status=no\'); a.focus();removeDiv(\''.$div.'\')">&#11036;
-</A>';
-     echo '<A id="close_div" title="'.$msg_close.'"  onclick="removeDiv(\''.$div.'\');">&#10761;</A>';
+     $js="a=window.open('popup.php?{$str}','','titlebar=no,location=no,statusbar=no,menubar=no,toolbar=no,fullscreen=yes,scrollbars=yes,resizable=yes,status=no'); a.focus();removeDiv('{$div}')";
+     echo Icon_Action::zoom($div, $js);
+     echo Icon_Action::draggable($div);
+     echo Icon_Action::close($div);
    }
 ?>
 </div>
@@ -26,5 +28,5 @@
 </div>
 <?php echo _("Opération ID")."=".hb($obj->det->jr_internal); ?>
 <div id="<?php echo $div.'info'?>" class="divinfo"></div>
-<?php require_once NOALYSS_INCLUDE.'/class_itextarea.php';
+<?php require_once NOALYSS_INCLUDE.'/lib/itextarea.class.php';
 ?>
