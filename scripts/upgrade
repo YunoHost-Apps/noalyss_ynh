@@ -19,11 +19,11 @@ ynh_clean_setup () {
 }
 ynh_abort_if_errors
 
+#save database qnd config before replace all files
 sudo -i -u postgres
-
 pg_dumpall > noalyss_backup.dmp
-
 sudo cp -a noalyss/include/config.inc.php etc/tmp/
+
 
 #=================================================
 # RELOAD NGINX
