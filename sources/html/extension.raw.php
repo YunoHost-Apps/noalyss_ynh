@@ -24,18 +24,18 @@
  * the security. Load several javascript files
  */
 require_once '../include/constant.php';
-require_once NOALYSS_INCLUDE.'/class_database.php';
-require_once NOALYSS_INCLUDE.'/class_dossier.php';
-require_once NOALYSS_INCLUDE.'/ac_common.php';
-require_once NOALYSS_INCLUDE.'/function_javascript.php';
-require_once NOALYSS_INCLUDE.'/class_extension.php';
-require_once  NOALYSS_INCLUDE.'/class_html_input.php';
-require_once NOALYSS_INCLUDE.'/class_iselect.php';
-require_once  NOALYSS_INCLUDE.'/class_user.php';
+require_once NOALYSS_INCLUDE.'/lib/database.class.php';
+require_once NOALYSS_INCLUDE.'/class/dossier.class.php';
+require_once NOALYSS_INCLUDE.'/lib/ac_common.php';
+require_once NOALYSS_INCLUDE.'/lib/function_javascript.php';
+require_once NOALYSS_INCLUDE.'/class/extension.class.php';
+require_once  NOALYSS_INCLUDE.'/lib/html_input.class.php';
+require_once NOALYSS_INCLUDE.'/lib/iselect.class.php';
+require_once  NOALYSS_INCLUDE.'/class/user.class.php';
 
 global $g_user,$cn,$g_parameter;
 
-$cn=new Database(dossier::id());
+$cn=Dossier::connect();
 $g_user=new User($cn);
 $g_user->check();
 $only_plugin=$g_user->check_dossier(dossier::id());

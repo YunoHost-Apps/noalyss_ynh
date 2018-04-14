@@ -19,13 +19,13 @@
 // Copyright Author Dany De Bontridder danydb@aevalys.eu
 require_once '../include/constant.php';
 
-include_once NOALYSS_INCLUDE.'/ac_common.php';
+include_once NOALYSS_INCLUDE.'/lib/ac_common.php';
 
 /*! \file
  * \brief Login page
  */
 
-require_once NOALYSS_INCLUDE.'/class_database.php';
+require_once NOALYSS_INCLUDE.'/lib/database.class.php';
 // Verif if User and Pass match DB
     // if no, then redirect to the login page
 $rep=new Database();
@@ -37,10 +37,11 @@ if (defined('MULTI') && MULTI == 0)
 
 if (  isset ($_POST["p_user"] ) )
 {
-    $g_user=sql_string($_POST["p_user"]);
+    $g_user=strtolower(sql_string($_POST["p_user"]));
     $g_pass=$_POST["p_pass"];
     $_SESSION['g_user']=$g_user;
     $_SESSION['g_pass']=$g_pass;
+
 
 
     /*
@@ -50,10 +51,10 @@ if (  isset ($_POST["p_user"] ) )
 	if ($version != DBVERSIONREPO)
 	{
 		echo alert(_('Version de base de données incorrectes, vous devez mettre à jour'));
-		echo "<META HTTP-EQUIV=\"REFRESH\" content=\"0;url=admin/setup.php\">";
+		echo "<META HTTP-EQUIV=\"REFRESH\" content=\"0;url=admin-noalyss.php\">";
 		exit();
 	}
-    include_once NOALYSS_INCLUDE."/class_user.php";
+    require_once NOALYSS_INCLUDE."/class/user.class.php";
     $User=new User($rep);
     $User->Check(false,'LOGIN');
     if ($g_captcha == true)
@@ -87,12 +88,12 @@ else
     if ( $version != DBVERSIONREPO)
       {
 	echo alert(_('Version de base de données incorrectes, vous devez mettre à jour'));
-	echo "<META HTTP-EQUIV=\"REFRESH\" content=\"1;url=admin/setup.php\">";
+	echo "<META HTTP-EQUIV=\"REFRESH\" content=\"1;url=admin-noalyss.php\">";
 	exit();
 
       }
 
-    include_once ("class_user.php");
+    include_once ("class/user.class.php");
 
     $User=new User($rep);
     $User->Check();

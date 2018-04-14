@@ -21,7 +21,7 @@
 /**\file
  * \brief this file respond to an ajax request to modify a type of document
  */
-require_once NOALYSS_INCLUDE.'/class_document_type.php';
+require_once NOALYSS_INCLUDE.'/class/document_type.class.php';
 echo HtmlInput::title_box(_('Type de document'),'change_doc_div');
 
 $doc_type=new Document_type($cn,$dt_id);
@@ -70,7 +70,7 @@ $doc_type->get();
   <tr>
   <td><?php echo _('Prochain numéro')?>
 	  <?php echo 
-		HtmlInput::infobulle(15);
+		Icon_Action::infobulle(15);
 	?>
   </td>
    <td>

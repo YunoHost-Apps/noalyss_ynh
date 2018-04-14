@@ -19,7 +19,8 @@
 
 // Copyright Author Dany De Bontridder danydb@aevalys.eu
 
-/**\file
+/**
+ * \file
  *
  *
  * \brief to write directly into the ledgers,the stock and the tables
@@ -27,17 +28,17 @@
  *
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class_icheckbox.php';
-require_once  NOALYSS_INCLUDE.'/class_acc_ledger.php';
-require_once  NOALYSS_INCLUDE.'/class_acc_reconciliation.php';
-require_once NOALYSS_INCLUDE.'/ac_common.php';
-require_once NOALYSS_INCLUDE.'/class_periode.php';
-require_once NOALYSS_INCLUDE.'/function_javascript.php';
-require_once NOALYSS_INCLUDE.'/class_ipopup.php';
+require_once NOALYSS_INCLUDE.'/lib/icheckbox.class.php';
+require_once  NOALYSS_INCLUDE.'/class/acc_ledger.class.php';
+require_once  NOALYSS_INCLUDE.'/class/acc_reconciliation.class.php';
+require_once NOALYSS_INCLUDE.'/lib/ac_common.php';
+require_once NOALYSS_INCLUDE.'/class/periode.class.php';
+require_once NOALYSS_INCLUDE.'/lib/function_javascript.php';
+require_once NOALYSS_INCLUDE.'/lib/ipopup.class.php';
 
-global $g_user;
+global $g_user,$http;
 
-$cn = new Database(dossier::id());
+$cn = Dossier::connect();
 
 $id_predef = (isset($_REQUEST['p_jrn_predef'])) ? $_REQUEST['p_jrn_predef'] : -1;
 $id_ledger = (isset($_REQUEST['p_jrn'])) ? $_REQUEST['p_jrn'] : $id_predef;
@@ -64,7 +65,7 @@ if ($g_user->check_jrn($ledger->id) == 'X')
 $p_msg="";
 if (!isset($_POST['summary']) && !isset($_POST['save']))
 {
-	require('operation_ods_new.inc.php');
+	require NOALYSS_INCLUDE.'/operation_ods_new.inc.php';
 	return;
 }
 elseif (isset($_POST['summary']))
@@ -76,7 +77,7 @@ elseif (isset($_POST['summary']))
 	{
 		echo alert($e->getMessage());
                 $p_msg=$e->getMessage();
-		require('operation_ods_new.inc.php');
+		require_once NOALYSS_INCLUDE.'/operation_ods_new.inc.php';
 
 	}
 	return;
@@ -103,13 +104,14 @@ elseif (isset($_POST['save']))
                  // extourne
                 if (isset($_POST['reverse_ck']))
                 {
-                    $p_date=HtmlInput::default_value_post('reverse_date', '');
+                    $p_date=$http->post('reverse_date',"string", '');
+                    $p_msg=$http->post("ext_label");
                     if (isDate($p_date)==$p_date)
                     {
                         // reverse the operation
                         try
                         {
-                            $ledger->reverse($p_date);
+                            $ledger->reverse($p_date,$p_msg);
                             echo '<p>';
                             echo _('Extourné au ').$p_date;
                             echo '</p>';
@@ -128,13 +130,18 @@ elseif (isset($_POST['save']))
                         echo '<p class="notice">'._('Date invalide, opération non extournée').'</p>';
                     }
                 }
-                
+                echo '<ul class="aligned-block">';
+                echo "<li>";
                 echo $ledger->button_new_operation();
-
+                echo "</li>";
+                echo "<li>";
+                echo $ledger->button_copy_operation();
+                echo "</li>"; 
+                echo "</ul>";
 	}
 	catch (Exception $e)
 	{
-		require('operation_ods_new.inc.php');
+		require NOALYSS_INCLUDE.'/operation_ods_new.inc.php';
 		alert($e->getMessage());
                 $p_msg=$e->getMessage();
 	}

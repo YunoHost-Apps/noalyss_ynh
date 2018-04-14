@@ -2,8 +2,8 @@
 //This file is part of NOALYSS and is under GPL 
 //see licence.txt
 ?><?php
-require_once NOALYSS_INCLUDE.'/class_html_input.php';
-require_once NOALYSS_INCLUDE.'/class_itext.php';
+require_once NOALYSS_INCLUDE.'/lib/html_input.class.php';
+require_once NOALYSS_INCLUDE.'/lib/itext.class.php';
 echo HtmlInput::title_box($msg,"divmenu");
 $str_code=new IText('me_code',$m->me_code);
 if ( $m->me_code != -1) $str_code->setReadOnly (true);

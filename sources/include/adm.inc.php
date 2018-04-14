@@ -21,25 +21,22 @@
  * the customer category
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class_iselect.php';
-require_once NOALYSS_INCLUDE.'/class_ihidden.php';
-require_once NOALYSS_INCLUDE.'/class_customer.php';
-require_once NOALYSS_INCLUDE.'/class_ibutton.php';
-require_once NOALYSS_INCLUDE.'/class_fiche_def.php';
-require_once NOALYSS_INCLUDE.'/class_fiche_def.php';
-require_once NOALYSS_INCLUDE.'/class_admin.php';
+require_once NOALYSS_INCLUDE.'/lib/iselect.class.php';
+require_once NOALYSS_INCLUDE.'/lib/ihidden.class.php';
+require_once NOALYSS_INCLUDE.'/class/customer.class.php';
+require_once NOALYSS_INCLUDE.'/lib/ibutton.class.php';
+require_once NOALYSS_INCLUDE.'/class/fiche_def.class.php';
+require_once NOALYSS_INCLUDE.'/class/fiche_def.class.php';
+require_once NOALYSS_INCLUDE.'/class/admin.class.php';
 
-global $g_user;
+global $g_user,$http;
 
-$low_action=(isset($_REQUEST['sb']))?$_REQUEST['sb']:"list";
+$low_action=$http->request('sb',"string","list");
 /*! \file
  * \brief Called from the module "Gestion" to manage the customer
  */
 $href=basename($_SERVER['PHP_SELF']);
 
-// by default open liste
-if ( $low_action  == "" )
-    $low_action="list";
 
 
 //-----------------------------------------------------
@@ -55,7 +52,7 @@ if ( isset($_POST['action_fiche'] ) )
             return;
         }
 
-        $f_id=$_REQUEST['f_id'];
+        $f_id=$hi->request('f_id',"number");
 
         $fiche=new Admin($cn,$f_id);
         $fiche->remove();
@@ -65,7 +62,7 @@ if ( isset($_POST['action_fiche'] ) )
 }
 
 //-----------------------------------------------------
-//    list of customer
+//    list of Admin
 //-----------------------------------------------------
 if ( $low_action == "list" )
 {
@@ -78,10 +75,10 @@ if ( $low_action == "list" )
 	echo '<h2>' . "Exercice " . $g_user->get_exercice() . '</h2>';
 	echo dossier::hidden();
         $a=(isset($_GET['query']))?$_GET['query']:"";
-        printf (_('Recherche').' <input class="input_text" type="text" name="query" value="%s">',
-                $a);
+        echo _("Cherche ").HtmlInput::filter_table_form("tiers_tb", '0,1,2', 1,"query",$a);
+
         echo HtmlInput::request_to_hidden(array('ac'));
-        $choice_cat=HtmlInput::default_value_request("choice_cat", 1);
+        $choice_cat=$http->request("choice_cat","string", 1);
         if ( $choice_cat == 1 )
         {
             $sel_card=new ISelect('cat');
@@ -93,7 +90,7 @@ if ( $low_action == "list" )
             echo _('Catégorie :').$sel_card->input();
         } else
         {
-            $cat=HtmlInput::default_value_request('cat', '');
+            $cat=$http->request('cat', 'string','');
             echo HtmlInput::hidden("cat",$cat);
             echo HtmlInput::hidden('choice_cat', 0);
         }
@@ -106,12 +103,13 @@ if ( $low_action == "list" )
                                                                      </div>
                                                                      <?php
                                                                      $adm=new Admin($cn);
-    $search=(isset($_GET['query']))?$_GET['query']:"";
+    $search=$http->get("query","string","");
     $sql="";
-    if ( isset($_GET['cat']))
-	{
-        if ( $_GET['cat'] != -1) $sql=sprintf(" and fd_id = %d",$_GET['cat']);
-    }
+    $cat=$http->request("cat","number",-1);
+    if ( $cat != -1)
+     {
+             $sql=sprintf(" and fd_id = %d",$_GET['cat']);
+     }
 
     echo '<div class="content">';
     echo $adm->Summary($search,'adm',$sql);

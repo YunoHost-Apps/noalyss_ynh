@@ -28,7 +28,7 @@
  * @param $dossier = Dossier::id()
  * 
  */
-echo _('Filtre')." ".HtmlInput::filter_table("todo_user_table", "0,1,2", 1);
+echo _('Cherche')." ".HtmlInput::filter_table("todo_user_table", "0,1,2", 1);
 ?>
 
 <table id="todo_user_table<?php echo $this->tl_id?>" class="result">

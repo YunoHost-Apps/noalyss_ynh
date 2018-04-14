@@ -7,7 +7,10 @@ export PGDATABASE=rel671mod1
 export PGPORT=5432
 (
 echo "<?php "
-psql -A -F"  " -t -c "select '\$menu[]=_('''||replace(me_menu,'''',E'\\\\''')||''');' , '\$desc[]=_('''||replace(me_description,'''',E'\\\\''')||''');' from menu_ref ;"
+psql -A -F"  " -t -c "select '\$menu[]=_('''||replace(me_menu,'''',E'\\\\''')||''');' ,
+ '\$desc[]=_('''||replace(me_description,'''',E'\\\\''')||''');'
+ '\$desc_long[]=_('''||replace(me_description_etendue,'''',E'\\\\''')||''');'
+ from menu_ref ;"
 echo "?>"  ) > ../include/database.item.php
 (
 echo "<?php "
@@ -32,6 +35,10 @@ echo "?>"  ) >> ../include/database.item.php
 (
 echo "<?php "
 psql -A -F"  " -t -c "select '\$jrn_def_description[]=_('''||replace(jrn_def_description,'''',E'\\\\''')||''');' from jrn_def ;"
+echo "?>"  ) >> ../include/database.item.php
+(
+echo "<?php "
+psql -A -F"  " -t -c "select '\$jrn_type[]=_('''||replace(jrn_desc,'''',E'\\\\''')||''');' from jrn_type ;"
 echo "?>"  ) >> ../include/database.item.php
 
 echo "File ../include/database.item.php is created"

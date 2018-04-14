@@ -21,7 +21,7 @@ sudo cp -a ../sources/include/ $final_path
 
 sudo chown -R www-data: $final_path
 
-sudo yunohost app setting noalyss version -v "6.9.0.0"
+sudo yunohost app setting noalyss version -v "7.0.1.0"
 
 if [[ "$path" == "" ]]; then
   sed -i "s@PATHTOCHANGE@/@g" ../conf/nginx.conf

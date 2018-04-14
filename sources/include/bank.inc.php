@@ -21,13 +21,13 @@
  * the supplier category
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class_iselect.php';
-require_once NOALYSS_INCLUDE.'/class_ihidden.php';
-require_once NOALYSS_INCLUDE.'/class_bank.php';
-require_once NOALYSS_INCLUDE.'/class_ibutton.php';
-global $g_user;
+require_once NOALYSS_INCLUDE.'/lib/iselect.class.php';
+require_once NOALYSS_INCLUDE.'/lib/ihidden.class.php';
+require_once NOALYSS_INCLUDE.'/class/bank.class.php';
+require_once NOALYSS_INCLUDE.'/lib/ibutton.class.php';
+global $g_user  , $http;
 
-$low_action=(isset($_REQUEST['sb']))?$_REQUEST['sb']:'list';
+$low_action=$http->request('sb',"string",'list');
 /*! \file
  * \brief Called from the module 'Gestion' to manage the supplier
  */
@@ -71,9 +71,9 @@ if ( $low_action == "list" )
 	echo dossier::hidden();
 	echo '<h2>' ._( "Exercice")." " . $g_user->get_exercice() . '</h2>';
     $a=(isset($_GET['query']))?$_GET['query']:"";
-    printf (_('Recherche').' <input class="input_text" type="text" name="query" value="%s">',
-            $a);
-     $choice_cat=HtmlInput::default_value_request("choice_cat", 1);
+    echo _("Cherche ").HtmlInput::filter_table_form("tiers_tb", '0,1,2', 1,"query",$a);
+
+     $choice_cat=$http->request("choice_cat", "string",1);
 
     if ( $choice_cat == 1 )
     {
@@ -87,7 +87,7 @@ if ( $low_action == "list" )
     }
     else
     {
-        $cat=HtmlInput::default_value_request('cat', '');
+        $cat=$http->request('cat',"string", '');
         echo HtmlInput::hidden("cat", $cat);
         echo HtmlInput::hidden('choice_cat', 0);
     }

@@ -23,33 +23,42 @@ if ( !defined ('ALLOWED')) die('Forbidden');
 * \brief Management of the folder
  *
  */
-require_once NOALYSS_INCLUDE.'/class_itext.php';
-require_once NOALYSS_INCLUDE.'/class_icheckbox.php';
-require_once NOALYSS_INCLUDE.'/class_itextarea.php';
-require_once NOALYSS_INCLUDE.'/class_html_input.php';
+require_once NOALYSS_INCLUDE.'/lib/itext.class.php';
+require_once NOALYSS_INCLUDE.'/lib/icheckbox.class.php';
+require_once NOALYSS_INCLUDE.'/lib/itextarea.class.php';
+require_once NOALYSS_INCLUDE.'/lib/html_input.class.php';
+global $http;
 
-$sa=(isset($_REQUEST['sa']))?$_REQUEST['sa']:'list';
+$sa=$http->request('sa','string','list');
 //---------------------------------------------------------------------------
 // Update
-$dossier_id=HtmlInput::default_value_request('d', -1);
+$dossier_id=$http->request('d', "string",-1);
 
 if ( isset ($_POST['upd']) && isNumber($dossier_id) == 1 && $dossier_id != -1)
 {
     $dos=new dossier($dossier_id);
-    $name=HtmlInput::default_value_post('name', "--vide--");
-    $desc=HtmlInput::default_value_post('desc', "--vide--");
+    $name=$http->post('name');
+    $desc=$http->post('desc');
+    $max_email=$http->post("max_email");
     $dos->set_parameter('name',$name);
     $dos->set_parameter('desc',$desc);
+    $dos->set_parameter("max_email", $max_email);
     $dos->save();
 }
-echo '<div class="content" style="width:80%;margin-left:10%">';
+echo '<div class="content">';
 /*
  *  check and add an new folder
  */
 if ( isset ($_POST["DATABASE"]) )
 {
     $repo=new Database();
-    $dos=HtmlInput::default_value_post('DATABASE', "");
+    try {
+        $dos=$http->post('DATABASE');
+        $template=$http->post("FMOD_ID","number");
+    } catch (Exception $ex) {
+        echo $ex->getMessage();
+        return;
+    }
     $dos=sql_string($dos);
     if (strlen($dos)==0)
     {
@@ -61,9 +70,7 @@ if ( isset ($_POST["DATABASE"]) )
      */
     
     // Get the modeledef.mod_id
-    $template=HtmlInput::default_value_post("FMOD_ID",-1);
-    if ( $template == -1 || isNumber($template ) == 0) 
-        die (_('Parametre invalide'));
+
     /*
      * If template is not empty
      */
@@ -81,20 +88,21 @@ if ( isset ($_POST["DATABASE"]) )
             echo '<span class="error">';
             echo _('le modele ').domaine.'mod'.$_POST["FMOD_ID"]._(" doit être migré en unicode.");
             echo _('Pour le passer en unicode, faites-en un backup puis restaurez le fichier reçu').'</span>';
-            echo HtmlInput::button_anchor('Retour','admin_repo.php?action=dossier_mgt');
+            echo HtmlInput::button_anchor('Retour','admin-noalyss.php?action=dossier_mgt');
             return;
         }
     }
     /*
      * Insert new dossier with description
      */
-    $desc=HtmlInput::default_value_post("DESCRIPTION","");
+    $desc=$http->post("DESCRIPTION");
+    $max_email=$http->post("max_email","number");
     try
     {
         $repo->start();
-
-        $Res=$repo->exec_sql("insert into ac_dossier(dos_name,dos_description)
-                           values ($1,$2)",array($dos,$desc));
+        if (isNumber($max_email) == 0) $max_email=-1;
+        $Res=$repo->exec_sql("insert into ac_dossier(dos_name,dos_description,dos_email)
+                           values ($1,$2,$3)",array($dos,$desc,$max_email));
         $l_id=$repo->get_current_seq('dossier_id');
         $repo->commit();
     }
@@ -172,6 +180,7 @@ if ( isset ($_POST["DATABASE"]) )
                 $Res=$cn->exec_sql($sql);
 
                 Dossier::synchro_admin($l_id);
+                User::remove_inexistant_user($l_id);
 
 
             }
@@ -208,7 +217,7 @@ if ( isset ($_POST["DATABASE"]) )
 // List of folder
 if ( $sa == 'list' )
 {
-	require_once NOALYSS_INCLUDE.'/class_sort_table.php';
+	require_once NOALYSS_INCLUDE.'/lib/sort_table.class.php';
         echo '<p>';
         echo HtmlInput::button(_('Ajouter'),_('Ajouter un dossier')," onclick=\$('folder_add_id').show()");
         echo '</p>';
@@ -227,7 +236,7 @@ if ( $sa == 'list' )
         $template="";
 	echo '<div class="content">';
 	echo '<span style="display:block">';
-	echo _('Filtre').HtmlInput::infobulle(23);
+	echo _('Cherche').Icon_Action::infobulle(23);
 	echo HtmlInput::filter_table("t_dossier", "0,1,2","1");
 	echo '</span>';
     echo '<TABLE id="t_dossier" class="table_large" >';
@@ -274,7 +283,7 @@ if ( $sa == 'list' )
                 echo td(HtmlInput::anchor(_('Modifier'),'?action=dossier_mgt&sa=mod&d='
                                                  .$Dossier['dos_id']," onclick=\"folder_modify('".$Dossier['dos_id']."')\""));
 
-                echo td(HtmlInput::anchor(_('Backup'),'backup.php?action=backup&sa=b&t=d&d='
+                echo td(HtmlInput::anchor(_('Backup'),'?action=backup&sa=b&t=d&d='
                                               .$Dossier['dos_id']));
             } else
             {
@@ -315,7 +324,7 @@ if ( $sa == 'list' )
             $mod=Database::fetch_array($Res,$i);
             $template.='<OPTION VALUE="'.$mod['mod_id'].'"> '.h($mod['mod_name']." - ".mb_substr($mod['mod_desc'],0,30));
         }// for
-         $template.='<option value="0" >'._('Aucun modèle (dossier vide, devant être restauré manuellement)');
+         $template.='<option value="0" > ** '._('Aucun modèle (dossier vide, devant être restauré manuellement)').' ** ';
         $template.="</SELECT>";
     }// if count = 0
     $m_date=date('Y');
@@ -324,7 +333,7 @@ if ( $sa == 'list' )
 
     </TABLE>
 
-    <FORM ACTION="admin_repo.php?action=dossier_mgt" METHOD="POST">
+    <FORM ACTION="admin-noalyss.php?action=dossier_mgt" METHOD="POST">
                  <TABLE>
                  <TR>
                  <TD><?php echo _('Nom du dossier');
@@ -333,6 +342,19 @@ if ( $sa == 'list' )
                                          <TD><?php echo _('Description');
     ?></td><td>  <TEXTAREA  class="input_text"  COLS="60" ROWS="2" NAME="DESCRIPTION" ></TEXTAREA> </TD>
                                           </TR>
+<tr>
+    <td>
+    <?php echo _('Max. email / jour (-1 = illimité)')    ;?>
+    </td>
+    <td>
+    <?php
+        $max_email_input=new INum('max_email');
+        $max_email_input->prec=0;
+        $max_email_input->value=-1;
+        echo $max_email_input->input();
+    ?>
+    </td>
+</tr>
                                           <TR> <TD><?php echo _('Modèle');
     ?></td><td>  <?php   echo $template;
     ?> </TD></TR>
@@ -373,14 +395,14 @@ if ( $sa == 'remove' && isNumber($dossier_id) == 1 && $dossier_id != -1 )
     /**
      * Check if db exists
      */
-    $str_name=domaine.'dossier'.$dossier_id;
+    $str_name=sql_string(domaine.'dossier'.$dossier_id);
     
     $database_exist=$cn->exist_database($str_name);
     
     // if db exists for postgres then drop it
     if ( $database_exist  == 1)
     {
-        $sql="drop database ".domaine."dossier".sql_string($_REQUEST['d']);
+        $sql="drop database ".$str_name;
         ob_start();
         if ( $cn->exec_sql($sql)==false)
         {

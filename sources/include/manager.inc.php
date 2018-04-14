@@ -17,24 +17,24 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 // Copyright Author Dany De Bontridder danydb@aevalys.eu
-/* !\brief include from supplier.inc.php and concerned only the supplier card and
+/*!\brief include from supplier.inc.php and concerned only the supplier card and
  * the supplier category
  */
 if (!defined('ALLOWED'))
     die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class_iselect.php';
-require_once NOALYSS_INCLUDE.'/class_ihidden.php';
-require_once NOALYSS_INCLUDE.'/class_manager.php';
-require_once NOALYSS_INCLUDE.'/class_ibutton.php';
-require_once NOALYSS_INCLUDE.'/class_iaction.php';
-require_once NOALYSS_INCLUDE.'/class_fiche_def.php';
-require_once NOALYSS_INCLUDE.'/class_iaction.php';
-require_once NOALYSS_INCLUDE.'/class_fiche_def.php';
+require_once NOALYSS_INCLUDE.'/lib/iselect.class.php';
+require_once NOALYSS_INCLUDE.'/lib/ihidden.class.php';
+require_once NOALYSS_INCLUDE.'/class/manager.class.php';
+require_once NOALYSS_INCLUDE.'/lib/ibutton.class.php';
+require_once NOALYSS_INCLUDE.'/lib/iaction.class.php';
+require_once NOALYSS_INCLUDE.'/class/fiche_def.class.php';
+require_once NOALYSS_INCLUDE.'/lib/iaction.class.php';
+require_once NOALYSS_INCLUDE.'/class/fiche_def.class.php';
 
-global $g_user;
+global $g_user,$http;
 
 $low_action = (isset($_REQUEST['sb'])) ? $_REQUEST['sb'] : "list";
-/* ! \file
+/*! \file
  * \brief Called from the module "Gestion" to manage the supplier
  */
 $href = basename($_SERVER['PHP_SELF']);
@@ -78,9 +78,10 @@ if ($low_action == "list")
                 echo '<h2>' . "Exercice " . $g_user->get_exercice() . '</h2>';
                 echo dossier::hidden();
                 $a = (isset($_GET['query'])) ? $_GET['query'] : "";
-                printf(_('Recherche') . ' <input class="input_text" type="text" name="query" value="%s">', $a);
+                echo _("Cherche ").HtmlInput::filter_table_form("tiers_tb", '0,1,2', 1,"query",$a);
+
                 echo HtmlInput::request_to_hidden(array('ac'));
-                $choice_cat=HtmlInput::default_value_request("choice_cat", 1);
+                $choice_cat=$http->request("choice_cat", "number",1);
                 if ( $choice_cat == 1 )
                 {
                     $sel_card = new ISelect('cat');
@@ -93,7 +94,7 @@ if ($low_action == "list")
                 }
                 else
                 {
-                    $cat=HtmlInput::default_value_request('cat', '');
+                    $cat=$http->request('cat',"string", '');
                     echo HtmlInput::hidden("cat",$cat);
                     echo HtmlInput::hidden('choice_cat', 0);
                 }

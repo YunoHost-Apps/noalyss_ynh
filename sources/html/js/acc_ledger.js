@@ -56,7 +56,7 @@ function update_predef(p_type, p_direct, p_ac)
                         // document.getElementsByName(name_ctl)[0].value = code_html;
                         $('modele_op_div').innerHTML = code_html;
                     } catch (e) {
-                        $('info_div').innerHTML = e.getMessage;
+                        $('info_div').innerHTML = e.message;
                     }
                 }
             }
@@ -162,7 +162,7 @@ function update_row(ctl)
     {
         var jrn = g('p_jrn').value;
         var dossier = g('gDossier').value;
-        var qs = 'gDossier=' + dossier + '&op=minrow&j=' + jrn + '&ctl=' + ctl;
+        var qs = encodeURI('gDossier=' + dossier + '&op=minrow&j=' + jrn + '&ctl=' + ctl);
         var action = new Ajax.Request(
                 "ajax_misc.php",
                 {
@@ -201,13 +201,13 @@ function update_row(ctl)
                                 }
                             }
                         } catch (e) {
-                            alert_box(e.getMessage);
+                            alert_box(e.message);
                         }
                     }
                 }
         );
     } catch (e) {
-        alert_box(e.getMessage);
+        alert_box(e.message);
     }
 }
 /**
@@ -286,9 +286,9 @@ function success_get_pj(request, json)
 {
 
     var answer = request.responseText.evalJSON(true);
-    obj = g("e_pj");
+    var obj = g("e_pj");
     obj.value = '';
-    if (answer.count == 0)
+    if (answer.length == 0)
         return;
     obj.value = answer.pj;
     g("e_pj_suggest").value = answer.pj;
@@ -328,6 +328,7 @@ function ledger_fin_add_row()
         new_tt = new_tt.replace(/e_other0_label/g, "e_other" + nb.value + '_label');
         new_tt = new_tt.replace(/dateop0/g, "dateop" + nb.value);
         newCell.innerHTML = new_tt;
+        newCell.className=rowToCopy.cells[e].className;
         new_tt.evalScripts();
     }
     g("e_other" + nb.value).value = "";
@@ -368,6 +369,7 @@ function ledger_add_row()
             new_tt = new_tt.replace(/compute_ledger\(0\)/g, "compute_ledger(" + nb.value + ")");
             new_tt = new_tt.replace(/clean_tva\(0\)/g, "clean_tva(" + nb.value + ")");
             newCell.innerHTML = new_tt;
+            newCell.className=ofirstRow.cells[e].className;
             new_tt.evalScripts();
         }
 
@@ -431,7 +433,6 @@ function compute_ledger(p_ctl_nb)
     g('e_quant' + p_ctl_nb).value = trim(g('e_quant' + p_ctl_nb).value);
     var quantity = g('e_quant' + p_ctl_nb).value;
     var querystring = 'gDossier=' + dossier + '&c=' + qcode + '&t=' + tva_id + '&p=' + price + '&q=' + quantity + '&n=' + p_ctl_nb;
-    $('sum').hide();
     var action = new Ajax.Request(
             "compute.php",
             {
@@ -613,6 +614,7 @@ function quick_writing_add_row()
         new_tt = new_tt.replace(/ck0/g, "ck" + nb.value);
         new_tt = new_tt.replace(/ld0/g, "ld" + nb.value);
         newCell.innerHTML = new_tt;
+        newCell.className=rowToCopy.cells[e].className;
         new_tt.evalScripts();
     }
     $("qc_" + nb.value).value = "";
@@ -648,43 +650,97 @@ function go_next_concerned()
     }
     return true;
 }
-function view_history_account(p_value, dossier)
+/**
+ * @brief View the history of an account
+ * @param {type} p_value
+ * @param {type} dossier
+ * @returns {undefined}
+ */
+function view_history_account(p_value, dossier,p_exercice)
 {
     layer++;
-    id = 'det' + layer;
-    var popup = {'id': id, 'cssclass': 'inner_box', 'html': loading(), 'drag': true};
+    var idbox = 'det' + layer;
+    var popup = {'id': idbox, 'cssclass': 'inner_box', 'html': loading(), 'drag': false};
 
-    querystring = 'gDossier=' + dossier + '&act=de&pcm_val=' + p_value + '&div=' + id + "&l=" + layer;
-    add_div(popup);
+    var querystring={'gDossier':dossier,'act':'de','pcm_val':p_value,'div':idbox,'l':layer,'op':'history','exercice':p_exercice};
+    waiting_box();
 
     var action = new Ajax.Request(
-            "ajax_history.php",
+            "ajax_misc.php",
             {
                 method: 'get',
                 parameters: querystring,
                 onFailure: error_box,
                 onSuccess: function (req, xml)
                 {
+                    remove_waiting_box();
+                    add_div(popup);
                     success_box(req, xml);
-                    g(id).style.top = calcy(140 + (layer * 3)) + "px";
+                    $(idbox).style.top = calcy(140 + (layer * 3)) + "px";
                 }
             }
     );
 
 }
+/**
+ * @brief View the history of an account
+ * @param {type} p_value
+ * @param {type} dossier
+ * @returns {undefined}
+ */
+function view_history_anc_account(p_value, dossier,p_exercice)
+{
+    layer++;
+    var idbox = 'det' + layer;
+    var popup = {'id': idbox, 'cssclass': 'inner_box', 'html': loading(), 'drag': false};
 
+    var querystring={'gDossier':dossier,'op':'history_anc_account','po_id':p_value,'div':idbox,'l':layer,'act':'history','exercice':p_exercice};
+    waiting_box();
+
+    var action = new Ajax.Request(
+            "ajax_misc.php",
+            {
+                method: 'get',
+                parameters: querystring,
+                onFailure: error_box,
+                onSuccess: function (req, xml)
+                {
+                    remove_waiting_box();
+                    add_div(popup);
+                    $(idbox).innerHTML=req.responseText;
+                    $(idbox).style.top = calcy(140 + (layer * 3)) + "px";
+                }
+            }
+    );
+
+}
+/**
+ * @brief Change the view of account history
+ * @param {type} obj
+ * @returns {Boolean}
+ */
 function update_history_account(obj)
 {
     try {
-        var querystring = "l=" + obj.div + "&div=" + obj.div + "&gDossier=" + obj.gDossier + "&pcm_val=" + obj.pcm_val + "&ex=" + obj.select.options[obj.select.selectedIndex].text;
+        var querystring = {
+            "l" :obj.div ,
+            "div" :obj.div ,
+            "gDossier" : obj.gDossier,
+            "pcm_val" : obj.pcm_val ,
+            "ex" : obj.select.options[obj.select.selectedIndex].text,
+            "op":"history",
+            "exercice":obj.exercice
+        };
+        waiting_box();
         var action = new Ajax.Request(
-                "ajax_history.php",
+                "ajax_misc.php",
                 {
                     method: 'get',
                     parameters: querystring,
                     onFailure: error_box,
                     onSuccess: function (req, xml)
                     {
+                        remove_waiting_box();
                         success_box(req, xml);
                         g(obj.div).style.top = calcy(140 + (layer * 3)) + "px";
                     }
@@ -696,48 +752,68 @@ function update_history_account(obj)
 
     return false;
 }
-/*!\brief
+/*!\brief Change the view of card history
  * \param p_value f_id of the card
  */
-
-function view_history_card(p_value, dossier)
+function view_history_card(p_value, dossier,p_exercice)
 {
     layer++;
-    id = 'det' + layer;
-    var popup = {'id':
-                id, 'cssclass': 'inner_box'
-        , 'html':
-                loading(), 'drag':
-                true};
-    querystring = 'gDossier=' + dossier + '&act=de&f_id=' + p_value + '&div=' + id + "&l=" + layer;
-    add_div(popup);
+    var idbox = 'det' + layer;
+    var popup = {'id':idbox,
+                'cssclass': 'inner_box', 
+                'html':loading(), 
+                'drag':false};
+    var querystring = { 'gDossier' : dossier ,
+         'act':'de',
+         'f_id' : p_value , 
+         'div' : idbox ,
+          "l" : layer,
+          "op":"history",
+      "exercice":p_exercice};
+    waiting_box();
     var action = new Ajax.Request(
-            "ajax_history.php",
+            "ajax_misc.php",
             {
                 method: 'get',
                 parameters: querystring,
                 onFailure: error_box,
                 onSuccess: function (req, xml)
                 {
+                    remove_waiting_box();
+                    add_div(popup);
                     success_box(req, xml);
-                    g(id).style.top = calcy(140 + (layer * 3)) + "px";
+                    g(idbox).style.top = calcy(140 + (layer * 3)) + "px";
                 }
             }
     );
 }
-
+/**
+ * @brief update history view after changing the exercice
+ * @param {type} obj
+ * @returns {Boolean}
+ */
 function update_history_card(obj)
 {
     try {
-        var querystring = "l=" + obj.div + "&div=" + obj.div + "&gDossier=" + obj.gDossier + "&f_id=" + obj.f_id + "&ex=" + obj.select.options[obj.select.selectedIndex].text;
+        var querystring = {
+            "l" : obj.div , 
+            "div" : obj.div ,
+            "gDossier" : obj.gDossier,
+            "f_id" : obj.f_id ,
+            "ex" : obj.select.options[obj.select.selectedIndex].text,
+            "op":"history",
+            "exercice":obj.exercice
+        };
+        waiting_box();
         var action = new Ajax.Request(
-                "ajax_history.php",
+                "ajax_misc.php",
                 {
                     method: 'get',
                     parameters: querystring,
                     onFailure: error_box,
                     onSuccess: function (req, xml)
                     {
+                        remove_waiting_box();
                         success_box(req, xml);
                         g(obj.div).style.top = calcy(140 + (layer * 3)) + "px";
                     }
@@ -758,9 +834,13 @@ function update_history_card(obj)
 function removeOperation(p_jr_id, dossier, div)
 {
     waiting_box();
-    var qs = "gDossier=" + dossier + "&act=rmop&div=" + div + "&jr_id=" + p_jr_id;
-    var action = new Ajax.Request(
-            "ajax_ledger.php",
+    var qs = { "gDossier" :  dossier ,
+        "op":"ledger",
+        "act":"rmop",
+        "div" : div ,
+        "jr_id" : p_jr_id};
+    new Ajax.Request(
+            "ajax_misc.php",
             {
                 method: 'get',
                 parameters: qs,
@@ -777,17 +857,34 @@ function removeOperation(p_jr_id, dossier, div)
  */
 function reverseOperation(obj)
 {
-    var qs = $(obj).serialize();
+    var qs = $(obj).serialize()+ "&op=ledger";
     g('ext' + obj.divname).style.display = 'none';
     g('bext' + obj.divname).style.display = 'none';
     waiting_box();
-    var action = new Ajax.Request(
-            "ajax_ledger.php",
+    new Ajax.Request(
+            "ajax_misc.php",
             {
                 method: 'get',
                 parameters: qs,
                 onFailure: error_box,
-                onSuccess: infodiv
+                onSuccess: function (req) {
+                    try {
+                        var action = new Ajax.Request(
+                                "ajax_misc.php",
+                                {
+                                    method: 'get',
+                                    parameters:{"gDossier" : obj["gDossier"].value,"op":"ledger","act":"de","div":obj['div'].value,"jr_id":obj['jr_id'].value},
+                                    onFailure: error_box,
+                                    onSuccess: function (xml, txt) {
+                                        
+                                        success_box(xml, txt);
+                                        infodiv(req);
+                                    }
+                                });
+                    } catch (ex) {
+                        smoke.alert(ex.message);
+                    }
+                }
             }
     );
 
@@ -802,24 +899,27 @@ function reverseOperation(obj)
 function modifyOperation(p_value, dossier)
 {
     layer++;
-    var id = 'det' + layer;
+    var id_div = 'det' + layer;
     waiting_box();
-    var querystring = 'gDossier=' + dossier + '&act=de&jr_id=' + p_value + '&div=' + id;
-
+    var querystring = { "gDossier" :  dossier ,
+        "op":"ledger",
+        "act":"de",
+        "div" : id_div ,
+        "jr_id" : p_value};
     var action = new Ajax.Request(
-            "ajax_ledger.php",
+            "ajax_misc.php",
             {
                 method: 'get',
                 parameters: querystring,
                 onFailure: error_box,
                 onSuccess: function (xml, txt) {
-                    var popup = {'id': id, 'cssclass': 'inner_box'
-                        , 'html': "", 'drag': true};
+                    var popup = {'id': id_div, 'cssclass': 'inner_box'
+                        , 'html': "", 'drag': false};
                     remove_waiting_box();
                     add_div(popup);
                     success_box(xml, txt);
-                    $(id).style.position = "absolute";
-                    $(id).style.top = calcy(100 + (layer * 3)) + "px";
+                    $(id_div).style.position = "absolute";
+                    $(id_div).style.top = calcy(100 + (layer * 3)) + "px";
                 }
             }
     );
@@ -835,12 +935,13 @@ function viewOperation(p_value, p_dossier)
 }
 function dropLink(p_dossier, p_div, p_jr_id, p_jr_id2)
 {
-    var querystring = 'gDossier=' + p_dossier;
-    querystring += '&div=' + p_div;
-    querystring += '&jr_id=' + p_jr_id;
-    querystring += '&act=rmr';
-    querystring += '&jr_id2=' + p_jr_id2;
-    var action = new Ajax.Request('ajax_ledger.php',
+    var querystring = { "gDossier" :  p_dossier ,
+        "op":"ledger",
+        "act":"rmr",
+        "div" : p_div ,
+        "jr_id" : p_jr_id,
+        "jr_id2" : p_jr_id2};
+    var action = new Ajax.Request('ajax_misc.php',
             {
                 method: 'get',
                 parameters: querystring,
@@ -998,16 +1099,18 @@ function op_save(obj)
         queryString += '&div=' + obj.whatdiv.value;
         var divid=obj.whatdiv.value;
         queryString += '&act=save';
+        queryString += '&op=ledger';
+        
         waiting_box();
         /*
          * Operation detail is in a new window
          */
         if (g('inpopup'))
         {
-            var action = new Ajax.Request('ajax_ledger.php',
+            var action = new Ajax.Request('ajax_misc.php',
                     {
                         method: 'post',
-                        parameters: queryString,
+                        parameters: encodeURI(queryString),
                         onFailure: null,
                         onSuccess: infodiv
                     }
@@ -1019,15 +1122,16 @@ function op_save(obj)
             /*
              *Operation is in a modal box 
              */
-            var action = new Ajax.Request('ajax_ledger.php',
+            var action = new Ajax.Request('ajax_misc.php',
                     {
                         method: 'post',
                         parameters: queryString,
                         onFailure: null,
                         onSuccess: function(req,json) {
-                            new Ajax.Request('ajax_ledger.php', {
+                            new Ajax.Request('ajax_misc.php', {
                                 parameters:{'gDossier':obj.gDossier.value,
                                          'act':'de',
+                                         'op':'ledger',
                                          'jr_id' :  jr_id,
                                          'div' :  divid},
                                 onSuccess:function(xml) {
@@ -1035,6 +1139,7 @@ function op_save(obj)
                                         var answer=xml.responseXML;
                                         var html = answer.getElementsByTagName('code');
                                         $(divid).innerHTML=unescape(getNodeText(html[0]));
+                                         $(divid).innerHTML.evalScripts();
                                         remove_waiting_box();
                                         }  catch (e) {
                                             alert_box("1038"+e.message)
@@ -1058,11 +1163,12 @@ function  get_history_account(ctl, dossier) {
     }
 }
 var previous = [];
+var let_previous="";
 function show_reconcile(p_div, p_let)
 {
     try
     {
-        if (previous.length != 0)
+        if (previous.length != 0 || p_let == let_previous )
         {
             var count_elt = previous.length;
             var i = 0;
@@ -1074,14 +1180,21 @@ function show_reconcile(p_div, p_let)
         }
         var name = 'tr_' + p_let + '_' + p_div;
         var elt = document.getElementsByName(name);
-        previous = elt;
-        var count_elt = elt.length;
-        var i = 0;
-        for (i = 0; i < count_elt; i++) {
-            elt[i].style.backgroundColor = '#000066';
-            elt[i].style.color = 'white';
-            elt[i].style.fontWeight = 'bolder';
+        if ( p_let != let_previous )  {
+            
+            previous = elt;
+            var count_elt = elt.length;
+            var i = 0;
+            for (i = 0; i < count_elt; i++) {
+                elt[i].style.backgroundColor = '#000066';
+                elt[i].style.color = 'white';
+                elt[i].style.fontWeight = 'bolder';
 
+            }
+            let_previous=p_let;
+        }
+        else {
+                let_previous="";
         }
 
     } catch (e)
@@ -1144,13 +1257,203 @@ function document_remove(p_dossier,p_div,p_jrid)
     smoke.confirm('Effacer ?', function (e) 
     {
         if (e) {
-            new Ajax.Request('ajax_ledger.php',
+            new Ajax.Request('ajax_misc.php',
             {
-                parameters:{"p_dossier":p_dossier,"div":p_div,"p_jrid":p_jrid,'act':'rmf'},
+                parameters:{"op":"ledger","gDossier":p_dossier,"div":p_div,"p_jrid":p_jrid,'act':'rmf'},
                 onSuccess : function(x) {
                     $('receipt'+p_div).innerHTML=x.responseText;
                 }
             })
         }
     });
+}
+/***
+ * @brief receive an object and display a list of filter + form to save one
+ * fill up the span (id : {div}search_filter_span) with the name of the selected filter
+ * Object = '{'div':'','type':'ALL','all_type':1,'dossier':'10104'}' 
+ * @see Acc_Ledger_Search
+ */
+function manage_search_filter(p_obj) {
+    waiting_box();
+    new Ajax.Request("ajax_misc.php", {
+       method:'get',
+       parameters:{"op":"display_search_filter","gDossier":p_obj.dossier,"div":p_obj.div,"ledger_type":p_obj.ledger_type,"all_type":p_obj.all_type},
+       onSuccess:function(req) {
+            remove_waiting_box();
+            var x=posX;
+            var y=posY-20;
+            create_div({'id':'boxfilter'+p_obj.div,'cssclass':'inner_box','html':req.responseText,'style':'top:'+y+'px;left:'+x+'px;position:absolute;width:400px'});
+            $('boxfilter'+p_obj.div).show();
+       }
+    });
+}
+
+/**
+ * Send data from the form and record a new filter , the ajax answer is a json object
+ * with the attribute filter_name,filter_id,status,message
+ * 
+ * @param p_div prefix id of all concerned DOM Element
+ * @param p_dossier 
+ * @see Acc_Ledger_Search
+ */
+function save_filter(p_div,p_dossier) {
+    var elt=['ledger_type','nb_jrn','date_start','date_end','date_paid_start','date_paid_end','desc','amount_min','amount_max','qcode','accounting'];
+    var eltValue={};
+    eltValue['gDossier']=p_dossier;
+    eltValue['op']="save_filter";
+    eltValue['div']=p_div;
+    eltValue['filter_name']=$(p_div+"filter_new").value;
+    // Get all elt from the form
+    for ( var i = 0 ; i < elt.length;i++) {
+        var idx=elt[i];
+        eltValue[idx]=$(p_div+elt[i]).value;
+   
+    }
+    if (eltValue['amount_min']=="") eltValue["amount_min"]=0;
+    if (eltValue['amount_max']=="") eltValue["amount_max"]=0;
+    
+    //ledger's list r_jrn
+    if (eltValue['nb_jrn'] > 0) {
+        eltValue['r_jrn']=[];
+        for (i=0;i<eltValue['nb_jrn'];i++) {
+            var idx=p_div+'r_jrn['+i+']';
+            eltValue['r_jrn'+i]=$(idx).value
+   
+        }
+    }
+    //unpaid
+    eltValue['unpaid']=$(p_div+"unpaid").checked;
+    new Ajax.Request('ajax_misc.php', {
+        method:"POST",
+        parameters:eltValue,
+        onSuccess:function (req) {
+            try {
+                var answer=req.responseJSON;
+                if ( answer.status == 'OK') {
+                    /*Add the new list to the selection */
+                    var new_item=document.createElement('li');
+                    new_item.innerHTML=answer.filter_name;
+                    new_item.setAttribute("id","li"+p_div+"_"+answer.filter_id);
+                    $('manage'+p_div).appendChild(new_item);
+                    $(p_div+"filter_new").value="";
+                } else {
+                    throw answer.message;
+                }
+            } catch (e) {
+                smoke.alert(e);
+            }
+        }
+    });
+}
+/**
+ * Load a search filter  and fill up the form search
+ * @param p_div prefix id of all concerned DOM Element
+ * @param p_dossier 
+ * @param p_filter_id filter id (SQL user_filter.id)
+ * @see Acc_Ledger_Search
+ */
+function load_filter(p_div,p_dossier,p_filter_id) {
+    new Ajax.Request('ajax_misc.php',{
+       method:"get",
+       parameters:{"gDossier":p_dossier,"div":p_div,"op":"load_filter","filter_id":p_filter_id},
+       onSuccess:function (req) {
+           try {
+                var answer=req.responseJSON;    
+                console.log(answer);
+                var elt=['ledger_type','date_start','date_end','date_paid_start','date_paid_end','desc','amount_min','amount_max','qcode','accounting'];
+                for (var i=0;i<elt.length;i++) {
+                    var idx=elt[i];
+                    $(p_div+idx).value=answer[elt[i]]
+                }
+               // fillup the r_jrn array
+               var eltLedgerId=$("ledger_id"+p_div);
+               eltLedgerId.innerHTML="";
+               var eltHidden=document.createElement("input");
+               eltHidden.setAttribute("name",p_div+"nb_jrn");
+               eltHidden.setAttribute("type","hidden");
+               eltHidden.setAttribute("id",p_div+"nb_jrn");
+               eltHidden.setAttribute("value",answer.nb_jrn);
+               eltLedgerId.appendChild(eltHidden);  
+               
+               for ( var i=0;i < answer.nb_jrn;i++) {
+                   // create hidden element and add them into eltLedgerId
+                   var eltHidden=document.createElement("input");
+                   
+                   eltHidden.setAttribute("name",p_div+"r_jrn["+i+"]");
+                   eltHidden.setAttribute("type","hidden");
+                   eltHidden.setAttribute("id",p_div+"r_jrn["+i+"]");
+                   eltHidden.setAttribute("value",answer.r_jrn[i]);
+                   eltLedgerId.appendChild(eltHidden);
+               }
+               if ( answer.unpaid == 'false') {
+                   $(p_div+"unpaid").checked=false;
+               }
+               if ( answer.unpaid == 'true') {
+                   $(p_div+"unpaid").checked=true;
+               }
+
+               
+           } catch (e) {
+              smoke.alert(e.message);
+           }
+           
+       }
+    });
+}
+/**
+ * @brief delete a saved search filter  from the db, it is limited to the current
+ * user
+ * @parameter p_div
+identification des elements LI manageli{div}_{filter_id}
+identification element UL manage{div}
+@parameter p_filter_id SQL user_filter.id
+*/
+
+function delete_filter (p_div,p_dossier,p_filter_id) {
+    new Ajax.Request("ajax_misc",{
+        parameters:{"gDossier":p_dossier,"div":p_div,"filter_id":p_filter_id,'op':"delete_search_operation"},
+        method:"POST",
+        onSuccess:function (req) {
+            try {
+            var answer=req.evalJSON;
+           
+            var child=$("manageli"+p_div+"_"+p_filter_id);
+                if ( child )  {$("manage"+p_div).removeChild(child); }
+            }catch (e) {
+                console.log(e.message)
+            }
+            
+        }
+    })
+    
+}     
+/**
+ * Reset the search_form and reinitialize all the input but ledger_type
+ * @param p_div prefix for DOM Element
+ */
+function reset_filter(p_div) {
+  // clean all the input fields but ledger_type remains
+  var elt=['date_start','date_end','date_paid_start','date_paid_end','desc','amount_min','amount_max','qcode','accounting'];
+                for (var i=0;i<elt.length;i++) {
+                    var idx=elt[i];
+                    $(p_div+idx).value="";
+                }
+  if ( $(p_div+"date_start_hidden")) {
+      $(p_div+"date_start").value=$(p_div+"date_start_hidden").value;
+  }
+  if ( $(p_div+"date_end_hidden")) {
+      $(p_div+"date_end").value=$(p_div+"date_end_hidden").value;
+  }
+  // clean all the selected ledger
+   var eltLedgerId=$("ledger_id"+p_div);
+               eltLedgerId.innerHTML="";
+               var eltHidden=document.createElement("input");
+               eltHidden.setAttribute("name",p_div+"nb_jrn");
+               eltHidden.setAttribute("type","hidden");
+               eltHidden.setAttribute("id",p_div+"nb_jrn");
+               eltHidden.setAttribute("value",0);
+               eltLedgerId.appendChild(eltHidden);
+  
+  // By default , unpaid is uncked
+   $(p_div+"unpaid").checked=false;
 }

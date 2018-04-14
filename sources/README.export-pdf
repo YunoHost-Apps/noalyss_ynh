@@ -1,0 +1,12 @@
+If you want to CONVERT your document to PDF before sending them by email. Or 
+creating the receipt with a stamp (great ledger analytical )
+You have to
+1. define the variable
+GENERATE_PDF to YES
+OFFICE' to 'HOME=/tmp unoconv' 
+2. Install the convert library for manipulating image
+3. Install pdftk to manage the PDF
+4. To fix the broken PDF (slower), install also /usr/bin/ps2pdf
+
+For creating PDF file nothing must be install 
+

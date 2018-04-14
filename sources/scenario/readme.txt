@@ -14,10 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-
+-----------------------
+    FRANCAIS
+-----------------------
 Afin d'avoir les scénarios pour les rejouer avec test.php.
 
-Dans include/constant.php, changer 
+Dans include/config.inc.php, changer 
 define ('LOGINPUT',false); par
 define ('LOGINPUT',true); 
 
@@ -33,4 +35,25 @@ Vous pouvez aussi utiliser un nom de fichier plus parlant.
     
 L'objectif étant de pouvoir tester et de rejouer facilement les actions que vous avez faites.
 
+Il est aussi possible de faire vos tests unitaire ici , autrement qu'avec PHPUNIT (voir répertiore php-unit)
+
+
+-----------------------
+     ENGLISH
+-----------------------
+If you want to use scenario in order to use them with test.php 
+You must have in include/config.inc.php
+
+define ('LOGINPUT',true); 
+
+you must also create the file authorized_debug (this file is empty)
+
+Next step you perform the action you like to test or change , a file into $_ENV['TMP'] has been created, you
+copy this file into tghe noalyss/scenario folder.
+
+You point  you browser  noalyss/html/test.php an you click on the link with the name of the file
+
+and you can rerun the file , it works also for ajax.
+
+It is useful to test ajax answer , unit test or testing a class
 

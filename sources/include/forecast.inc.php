@@ -25,12 +25,12 @@
  */
 
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class_anticipation.php';
-$action=HtmlInput::default_value_get('action','');
+require_once NOALYSS_INCLUDE.'/class/anticipation.class.php';
+global $http;
+$action=$http->get("action","string","");
 
 echo '<div class="content">';
-
-$sa = (isset($_REQUEST['sa'])) ? $_REQUEST['sa'] : 'list';
+$sa=$http->request("sa","string","list");
 /* * ********************************************************************
  * Remove a anticipation
  *
@@ -38,7 +38,8 @@ $sa = (isset($_REQUEST['sa'])) ? $_REQUEST['sa'] : 'list';
  * ******************************************************************** */
 if ( $action == 'del' )
 {
-    $forecast = new Forecast($cn, $_GET['f_id']);
+    $f_id=$http->get("f_id","number");
+    $forecast = new Forecast($cn, $f_id);
     $forecast->delete();
 }
 /*
@@ -50,7 +51,8 @@ if ( $action == 'clone' )
     /*
      * We need to clone the forecast
      */
-    $anti = new Forecast($cn, $_REQUEST ['f_id']);
+    $f_id=$http->get("f_id","number");
+    $anti = new Forecast($cn, $f_id);
     $anti->object_clone();
     $sa="list";
 }
@@ -64,14 +66,18 @@ if (isset($_POST['mod_cat_save']))
     /*
      * We save the forecast
      */
-    $anti = new Forecast($cn, $_POST['f_id']);
+    $f_id=$http->post("f_id","number");
+    $an_name=$http->post("an_name");
+    $start_date=$http->post("start_date");
+    $end_date=$http->post("end_date");
+    $anti = new Forecast($cn,$f_id);
     try
     {
 	$cn->start();
 	/* Save forecast */
-	$anti->set_parameter('name', $_POST['an_name']);
-	$anti->set_parameter('start_date', $_POST['start_date']);
-	$anti->set_parameter('end_date', $_POST['end_date']);
+	$anti->set_parameter('name', $an_name);
+	$anti->set_parameter('start_date', $start_date);
+	$anti->set_parameter('end_date', $end_date);
 
 	$anti->save();
 
@@ -80,12 +86,16 @@ if (isset($_POST['mod_cat_save']))
 	{
 	    if (isset($_POST['fr_cat_new' . $i]))
 	    {
-		if (strlen(trim($_POST['fr_cat_new' . $i])) != 0)
+                $fr_cat_name=$http->post("fr_cat_new".$i);
+		if (strlen(trim($fr_cat_name)) != 0)
 		{
+                    $order=$http->post("fc_order_new".$i);
+                    $desc=$http->post('fr_cat_new' . $i);
+                    $f_id=$http->post("f_id","number");
 		    $c = new Forecast_Cat($cn);
-		    $c->set_parameter('order', $_POST['fc_order_new' . $i]);
-		    $c->set_parameter('desc', $_POST['fr_cat_new' . $i]);
-		    $c->set_parameter('forecast', $_POST['f_id']);
+		    $c->set_parameter('order',$order);
+		    $c->set_parameter('desc', $desc);
+		    $c->set_parameter('forecast', $f_id);
 		    $c->save();
 		}
 	    }
@@ -105,9 +115,12 @@ if (isset($_POST['mod_cat_save']))
 		}
 		else
 		{
-		    $fc->set_parameter('order', $_POST['fc_order' . $var[0]]);
-		    $fc->set_parameter('desc', $_POST['fr_cat' . $var[0]]);
-		    $fc->set_parameter('forecast', $_POST['f_id']);
+                     $order=$http->post("fc_order".$var[0]);
+                    $desc=$http->post('fr_cat' . $var[0]);
+                    $f_id=$http->post("f_id","number");
+		    $fc->set_parameter('order', $order);
+		    $fc->set_parameter('desc', $desc);
+		    $fc->set_parameter('forecast', $f_id);
 		    $fc->save();
 		}
 	    }
@@ -136,7 +149,8 @@ if ($sa == 'new' || isset($_POST['step3']))
 	try
 	{
 	    $cn->start();
-	    for ($i = 0; $i < $_POST['nbrow']; $i++)
+            $nb_row=$http->post("nbrow");
+	    for ($i = 0; $i < $nb_row; $i++)
 	    {
 
 		// Delete if needed
@@ -238,12 +252,6 @@ if ($sa == 'new')
 	 */
 	$anticip = new Anticipation($cn, $a->get_parameter("id"));
 	echo '<div class="content">';
-	echo ICard::ipopup('ipopcard');
-	echo IPoste::ipopup('ipop_account');
-	$search_card = new IPopup('ipop_card');
-	$search_card->title = _('Recherche de fiche');
-	$search_card->value = '';
-	echo $search_card->input();
 
 	echo '<form method="post" action="?">';
 	echo dossier::hidden();

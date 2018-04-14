@@ -18,37 +18,36 @@
 
  */
 // Copyright Author Dany De Bontridder danydb@aevalys.eu
-/* ! \file
+/*! \file
  * \brief handle your own report: create or view report
  */
 if (!defined('ALLOWED'))
     die('Appel direct ne sont pas permis');
-require_once  NOALYSS_INCLUDE.'/ac_common.php';
-require_once  NOALYSS_INCLUDE.'/user_menu.php';
-require_once NOALYSS_INCLUDE.'/class_ifile.php';
-require_once NOALYSS_INCLUDE.'/class_ibutton.php';
-require_once NOALYSS_INCLUDE.'/class_acc_report.php';
-require_once NOALYSS_INCLUDE.'/class_dossier.php';
-require_once NOALYSS_INCLUDE.'/class_database.php';
-require_once  NOALYSS_INCLUDE.'/class_user.php';
-require_once  NOALYSS_INCLUDE.'/user_menu.php';
-require_once NOALYSS_INCLUDE.'/class_ipopup.php';
-
+require_once  NOALYSS_INCLUDE.'/lib/ac_common.php';
+require_once  NOALYSS_INCLUDE.'/lib/user_menu.php';
+require_once NOALYSS_INCLUDE.'/lib/ifile.class.php';
+require_once NOALYSS_INCLUDE.'/lib/ibutton.class.php';
+require_once NOALYSS_INCLUDE.'/class/acc_report.class.php';
+require_once NOALYSS_INCLUDE.'/class/dossier.class.php';
+require_once NOALYSS_INCLUDE.'/lib/database.class.php';
+require_once  NOALYSS_INCLUDE.'/class/user.class.php';
+require_once NOALYSS_INCLUDE.'/lib/ipopup.class.php';
+global $http;
 
 $gDossier=dossier::id();
 $str_dossier=dossier::get();
 
 /* Admin. Dossier */
-$rep=new Database($gDossier);
+$rep=Dossier::connect();
 
 
-$cn=new Database($gDossier);
+$cn=Dossier::connect();
 
 $rap=new Acc_Report($cn);
 $menu=0;
 if (isset($_POST["del_form"]))
 {
-    $rap->id=$_POST['fr_id'];
+    $rap->id=$http->post("fr_id","number");
     $rap->delete();
     $menu=1;
 }
@@ -62,7 +61,7 @@ if (isset($_POST['update']))
 {
     $rap->from_array($_POST);
     $rap->save($_POST);
-    $menu=1;
+    $menu=0;
 }
 if (isset($_POST['upload']))
 {
@@ -106,10 +105,10 @@ if (isset($_REQUEST["action"]) && $menu == 0)
         echo '<span class="notice">'._("Les lignes vides seront effacées").'</span>';
         echo "</DIV>";
     }
-    if ($action=="view")
+    if ($action=="view" || $action == "record")
     {
         echo '<DIV class="content">';
-        $rap->id=$_REQUEST ['fr_id'];
+        $rap->id=$http->request("fr_id","number");
         echo '<form method="post" style="display:inline">';
         $rap->load();
         echo h1($rap->name);
@@ -140,7 +139,7 @@ else
     $ac="&ac=".$_REQUEST['ac'];
     $p_action='p_action=defreport';
     echo '<div class="content">';
-   echo _('Filtre')." ".HtmlInput::filter_table("rapport_table_id", '0', 1);
+   echo _('Cherche')." ".HtmlInput::filter_table("rapport_table_id", '0', 1);
 
     echo '<TABLE id="rapport_table_id" class="vert_mtitle">';
     echo '<TR><TD class="first"><A HREF="?'.$p_action.$ac.'&action=add&'.$str_dossier.'">Ajout</A></TD></TR>';

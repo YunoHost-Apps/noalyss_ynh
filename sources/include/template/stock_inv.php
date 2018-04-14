@@ -29,6 +29,7 @@
 ?>
 <div style="<?php if ( ! $p_readonly) echo "position:absolute";?>" class="content">
 	<form method="POST" id="stock_reprise" class="print" onsubmit="return confirm_box(this,'<?php echo _("Vous confirmez ?")?>')">
+            <input type="hidden" name="save" value="1">
 <table>
 	<tr><td>
 			<?php echo _("Date")?>

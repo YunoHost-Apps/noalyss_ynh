@@ -17,7 +17,7 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 // Copyright Author Dany De Bontridder danydb@aevalys.eu
-include_once("ac_common.php");
+include_once("lib/ac_common.php");
 html_page_start();
 echo '<H1 class="info"> Not Implemented</H1>';
 html_page_stop();

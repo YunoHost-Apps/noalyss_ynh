@@ -2,8 +2,8 @@
 //This file is part of NOALYSS and is under GPL 
 //see licence.txt
 ?><?php
-require_once  NOALYSS_INCLUDE.'/class_acc_operation.php';
-require_once  NOALYSS_INCLUDE.'/class_acc_reconciliation.php';
+require_once  NOALYSS_INCLUDE.'/class/acc_operation.class.php';
+require_once  NOALYSS_INCLUDE.'/class/acc_reconciliation.class.php';
 
 $gDossier=dossier::id();
 if ( count($this->content) == 0 ) :
@@ -27,6 +27,9 @@ $delta=0;
 <th>
    <?php echo _('Ref')?>
 </th>
+<th>
+   <?php echo _('Internal')?>
+</th>    
 <th>
    <?php echo _('Description')?>
 </th>
@@ -68,6 +71,9 @@ if ($linked_limit != 0 && $i==$linked_limit)
    <?php echo _('Ref')?>
 </th>
 <th>
+   <?php echo _('Internal')?>
+</th> 
+<th>
    <?php echo _('Description')?>
 </th>
 <th style="text-align:right">
@@ -106,12 +112,14 @@ $letter=($this->content[$i]['letter']< 0)?" ":strtoupper(base_convert($this->con
 <?php echo $letter?>
 </td>
 <td> <?php echo smaller_date($this->content[$i]['j_date_fmt'])?> </td>
+<td> <?php echo h($this->content[$i]['jr_pj_number']);?> </td>
 <?php
 $r=sprintf('<A class="detail" style="text-decoration:underline"  HREF="javascript:viewOperation(\'%s\',\'%s\')" >%s</A>',
 	   $this->content[$i]['jr_id'], $gDossier,  $this->content[$i]['jr_internal']);
 ?>
 <td> <?php echo $r?> </td>
-<td> <?php echo $this->content[$i]['jr_comment']?> </td>
+
+<td> <?php echo h($this->content[$i]['jr_comment'])?> </td>
  <?php if ($this->content[$i]['j_debit']=='t') : ?>
   <td style="text-align:right"> <?php echo nb($this->content[$i]['j_montant'])?> </td>
   <td></td>

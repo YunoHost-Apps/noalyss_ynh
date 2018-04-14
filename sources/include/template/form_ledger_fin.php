@@ -33,14 +33,13 @@
    <?php echo _('Solde début') ?> <?php echo $wFirst->input();?>
 <?php echo _('Solde Fin')?> <?php echo $wLast->input();?>
 </fieldset>
-<?php echo $str_add_button?>
    <fieldset><legend><?php echo _('Opérations')?></legend>
 <table id="fin_item" width="100%" border="0">
 <tr>
-<th id="thdate" style="display:none;text-align: left"><?php echo _('Date')?><?php echo HtmlInput::infobulle(16)?></TH>
-<th style="text-align: left;width: auto">code<?HtmlInput::infobulle(0)?></TH>
+<th id="thdate" style="display:none;text-align: left"><?php echo _('Date')?><?php echo Icon_Action::infobulle(16)?></TH>
+<th style="text-align: left;width: auto">code<?Icon_Action::infobulle(0)?></TH>
    <th style="text-align: left"><?php echo _('Fiche')?></TH>
-   <th style="text-align: left"><?php echo _('Commentaire')?></TH>
+   <th style="text-align: left" class="visible_gt800 visible_gt1155"><?php echo _('Commentaire')?></TH>
    <th style="text-align: left"><?php echo _('Montant')?></TH>
    <th style="text-align: left;width:auto"colspan="2"> <?php echo _('Op. Concernée(s)')?></th>
 </tr>
@@ -52,9 +51,9 @@ foreach ($array as $item) {
 echo '<tr>';
 // echo td($item['dateop']);
 echo td($item['dateop'],' style="display:none" id="tdchdate'.$i.'"');
-echo td($item['qcode'].$item['search']);
+echo td($item['qcode'].$item['search'].$item['card_add']);
 echo td($item['cname']);
-echo td($item['comment']);
+echo td($item['comment'],' class="visible_gt800 visible_gt1155" ');
 echo td($item['amount']);
 echo td($item['concerned']);
 echo '</tr>';

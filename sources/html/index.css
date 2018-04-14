@@ -1,0 +1,280 @@
+
+BODY {
+    background-color:white;
+    font-size:12px;
+    font-family:sans-serif,arial;
+    color:blue;
+}
+.cell , #recover_box p{
+    font-size : 18px;
+}
+.remark {
+    border: solid black 1px;
+    font-family:sans-serif;
+    font-size: 9px;
+    color:blue;
+    width:200px;
+    padding:3px;
+}
+
+.gras {
+    font-size:12px;
+    font-family:sans-serif,arial;
+    color:red;
+
+}
+.input_text {
+    border:1px solid blue;
+    margin:1px;
+    padding: 10px;
+    border-radius: 4px;
+    font-size:16px;
+    font-size:1rem;
+}
+.button {
+    color:white;
+    font-weight: bold;
+    border:0px;
+    text-decoration:none;
+    font-family: helvetica,arial,sans-serif;
+    background-image: url("image/bg-submit2.gif");
+    background-repeat: repeat-x repeat-y;
+    background-position: left;
+    text-decoration:none;
+    font-family: helvetica,arial,sans-serif;
+    border-width:0px;
+    padding:2px 4px 2px 4px;
+    cursor:pointer;
+    margin:31px 2px 1px 2px;
+    -moz-border-radius:2px 2px;
+    border-radius:2px 2px;
+    font-size : 1rem;
+    margin-bottom: 10px;
+}
+.button:hover {
+    cursor:pointer;
+    background-color:white;
+    border-style:  solid;
+    border-width:  0px;
+    background-image: url("image/bg-submit3.gif");
+    background-repeat: repeat-x repeat-y;
+}
+#logo_id {
+    width:19%;
+}
+#alternate_browser {
+    display : none;
+}
+#logo_id {
+    position:absolute;
+    z-index:-1;
+    height:30%;
+    width:auto;
+    left:0px;
+
+}
+#login_frm {
+    position:absolute;
+    left:15%;
+    top:50%;
+}
+.input_text {
+    width:8em;
+}
+#recover_link {
+    position:absolute;
+    margin-bottom:30px;
+    width: 100%;
+}
+
+#alternate_browser {
+    display : none;
+}
+#logo_id {
+    position:absolute;
+    z-index:-1;
+    height:45%;
+    width:auto;
+    left:0px;
+
+}
+#login_frm {
+    position:absolute;
+    left:15%;
+    top:50%;
+}
+.input_text {
+    width:8em;
+}
+#recover_link {
+    position:absolute;
+    bottom:30px;
+    width: 100%;
+}
+#recover_box {
+
+    display: none;
+    position: absolute;
+    top: 15%;
+    z-index: 1;
+    border: 2px solid blue;
+    width: 96%;
+    margin-left: 1%;
+    background-color: whitesmoke;
+}
+
+@media only screen and (max-width : 900px) {
+    #alternate_browser {
+        display : none;
+    }
+    #logo_id {
+        position:absolute;
+        z-index:-1;
+        height:auto;
+        width:60%;
+        left:20%;
+        top:5%;
+
+    }
+    .input_text {
+        width:12rem;
+    }
+    #recover_box {
+
+        display:none;
+        position: absolute;
+        top: 15%;
+        z-index: 1;
+        border: 2px solid blue;
+        width: 96%;
+        left: 1%;
+        background-color: whitesmoke;
+
+    }
+    #login_frm {
+        position:absolute;
+        left:25%;
+        right:35%;
+        top:50%;
+    }
+}
+@media only screen and (min-width : 901px) {
+    #alternate_browser {
+        position:absolute;
+        bottom: 0px;
+        left:0px;
+        z-index: -1;
+        display : block;
+    }
+    #logo_id {
+        z-index:-1;
+        position:absolute;
+        width:19%;
+        left:7%;
+        top:9%;
+    }
+    #login_frm {
+        position:absolute;
+        left:30%;
+        top:25%;
+    }
+    .input_text {
+        width: 24em;
+        width: 24rem;
+    }
+    #recover_link {
+        position:absolute;
+        margin-top:397px;
+        left:539px;
+        background-color: white;
+    }
+}
+@media only screen and (min-width : 1100px) {
+    #alternate_browser {
+        position:absolute;
+        bottom: 0px;
+        left:0px;
+        z-index: -1;
+        display : block;
+    }
+    #logo_id {
+        z-index:-1;
+        position:absolute;
+        width:19%;
+        left:8%;
+        top:19.5%;
+    }
+    #login_frm {
+        position:absolute;
+        left:25%;
+        top:30%;
+    }
+    .input_text {
+        width: 24em;
+        width: 24rem;
+    }
+    #recover_link {
+        position:absolute;
+        top:397px;
+        left:539px;
+        background-color: white;
+        width:auto;
+    }
+    #recover_box {
+
+        display: none;
+        position: absolute;
+        top: 15%;
+        z-index: 1;
+        border: 2px solid blue;
+        width: 96%;
+        margin-left: 1%;
+        background-color: whitesmoke;
+
+    }
+}
+@media only screen and (min-width : 1100px) {
+    #alternate_browser {
+        position:absolute;
+        bottom: 0px;
+        left:0px;
+        z-index: -1;
+        display : block;
+    }
+    #logo_id {
+        z-index:-1;
+        position:absolute;
+        width:19%;
+        left:25%;
+        top:19.5%;
+    }
+    #login_frm {
+        position:absolute;
+        left:39%;
+        top:28%;
+    }
+    .input_text {
+        width: 24em;
+        width: 24rem;
+    }
+    #recover_link {
+        position:absolute;
+        top:55%;
+        left:55%;
+        background-color: white;
+        margin-top:0px;
+    }
+    #recover_box {
+
+        display: none;
+        position: absolute;
+        top: 40%;
+        z-index: 1;
+        border: 2px solid blue;
+        width: 30%;
+        margin-left: 25%;
+        background-color: whitesmoke;
+
+    }
+
+}

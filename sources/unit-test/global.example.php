@@ -26,7 +26,7 @@
 global $g_connection,$g_parameter,$g_user;
 $_REQUEST['gDossier'] = DOSSIER;
 $g_connection=new Database(DOSSIER);
-$g_parameter = new Own($g_connection);
+$g_parameter = new Noalyss_Parameter_Folder($g_connection);
 $_SESSION['g_user']='phpcompta';
 $_SESSION['g_pass']='dany';
 $_SESSION['g_pagesize']='50';

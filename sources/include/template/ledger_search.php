@@ -2,14 +2,15 @@
 //This file is part of NOALYSS and is under GPL 
 //see licence.txt
 ?>
-<table>
+<table id="<?=$this->div?>table_search">
+    
 <tr>
 <td style="text-align:right;width:30em">
 <?php echo _('Dans le journal')?>
 </td>
 <td>
    <?php echo $f_ledger; ?>
-    <span id="ledger_id<?php echo $div;?>">
+    <span id="ledger_id<?php echo $this->div;?>">
         <?php
         echo $hid_jrn;
         ?>
@@ -23,14 +24,16 @@
 </td>
 <td>
 <?php echo $f_date_start->input();  ?> <?php echo _('et')?> <?php echo $f_date_end->input();  ?>
+
 </td>
 </tr>
 <tr>
 <td style="text-align:right;width:30em">
-<?php echo _('Et paiement compris entre les date ').HtmlInput::infobulle(36); ?>
+<?php echo _('Et paiement compris entre les date ').Icon_Action::infobulle(36); ?>
 </td>
 <td>
 <?php echo $f_date_paid_start->input();  ?> <?php echo _('et')?> <?php echo $f_date_paid_end->input();  ?>
+<?php echo $date_start_hidden,$date_end_hidden;?>
 </td>
 </tr>
 
@@ -80,4 +83,3 @@
 </tr>
 
 </table>
-

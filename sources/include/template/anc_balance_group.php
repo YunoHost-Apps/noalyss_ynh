@@ -56,7 +56,7 @@ if ($idx %2 == 0)
   echo '<tr class="even">';
 else
   echo '<tr class="odd">';
-		echo td($array[$i]['po_name']);
+		echo td($array[$i]['po_name']." ".h($array[$i]['po_description']));
 echo td(nbm($array[$i]['sum_deb']),' class="num"');
 echo td(nbm($array[$i]['sum_cred']),' class="num"');
 $solde=bcsub($array[$i]['sum_cred'],$array[$i]['sum_deb']);

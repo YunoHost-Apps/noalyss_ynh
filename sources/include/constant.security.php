@@ -27,7 +27,9 @@ define ('PARCATDOC',1050);   // modifier type document pour follow up
 define ('RMRECEIPT',1110);   // Effacer un document d'une pièce comptable
 define ('RMOPER',1120);   // Effacer une opération comptable
 define ('SHARENOTE',1210); // Can share a note
-define ('SHARENOTEPUBLIC',1230); // Can create public note
-define ('SHARENOTEREMOVE',1240); // Can drop drop of other
-global $audit; $audit=false;
+define ('SHARENOTEPUBLIC',1220); // Can create public note
+define ('SHARENOTEREMOVE',1230); // Can drop drop of other
+global $audit; 
+$audit=false;
+if (defined('AUDIT_ENABLE') && AUDIT_ENABLE == true ) $audit=true;
 ?>

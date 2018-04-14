@@ -40,60 +40,6 @@ function set_jrn_parent(p_ctl,p_value)
     }
 }
 /**
- *@brief Display a box with accounting detail for update, delete or add, update the
- * table account_tbl_id
- *@param p_dossier dossier id
- *@param p_val value of the accounting, it is used to compute the row id
- */
-function pcmn_update(p_dossier, p_val)
-{
-    var query = {gDossier: p_dossier, value: p_val, op: 'pcmn_update'};
-    waiting_box();
-    var action = new Ajax.Request('ajax_misc.php',
-            {
-                method: 'get',
-                parameters: query,
-                onSuccess: function (req)
-                {
-                    try
-                    {
-                        remove_waiting_box();
-                        var answer = req.responseXML;
-                        var a = answer.getElementsByTagName('ctl');
-                        var html = answer.getElementsByTagName('code');
-                        var status= answer.getElementsByTagName('status');
-                        
-                        if (a.length == 0)
-                        {
-                            var rec = req.responseText;
-                            alert_box('erreur :' + rec);
-                        }
-
-                        var name_ctl = getNodeText(a[0]);
-                        var code_html = getNodeText(html[0]);
-                        var result = getNodeText(status[0]);
-                        $('acc_update').innerHTML=code_html;
-                        $('acc_update').setStyle('top:'+calcy(150)+'px');
-                        $('acc_update').show();
-                    }
-                    catch (e)
-                    {
-                        error_message(e.message);
-                    }
-                    try
-                    {
-                        code_html.evalScripts();
-                    }
-                    catch (e)
-                    {
-                        alert_box("Impossible executer script de la reponse\n" + e.message);
-                    }
-
-                }
-            }
-    );
-}
-/**
  *@brief show the popup for search an accounting item
  *@param object this, it must contains some attribute as
  * - jrn if set and different to 0, will filter the accounting item for a
@@ -118,13 +64,14 @@ function search_poste(obj)
 
 	var div_style="top:"+sx+"px";
 	removeDiv('search_account');
-	add_div({id:'search_account',cssclass:'inner_box',html:loading(),style:div_style,drag:true});
+	add_div({id:'search_account',cssclass:'inner_box',html:loading(),style:div_style,drag:false});
 
     var dossier=$('gDossier').value;
 
     var queryString="gDossier="+dossier;
 
-    queryString+="&op=sf";
+    queryString+="&op2=sf";
+    queryString+="&op=account";
     try
     {
         if ( obj.jrn)
@@ -174,7 +121,7 @@ function search_poste(obj)
 
         queryString+="&ctl="+'search_account';
         queryString=encodeURI(queryString);
-        var action=new Ajax.Request ( 'ajax_poste.php',
+        var action=new Ajax.Request ( 'ajax_misc.php',
                                       {
                                   method:'get',
                                   parameters:queryString,
@@ -185,7 +132,7 @@ function search_poste(obj)
     }
     catch (e)
     {
-        alert_box(e.getMessage);
+        alert_box(e.message);
     }
 }
 /**
@@ -199,7 +146,8 @@ function search_get_poste(obj)
     var dossier=$('gDossier').value;
     var queryString="gDossier="+dossier;
 
-    queryString+="&op=sf";
+    queryString+="&op=account";
+    queryString+="&op2=sf";
 
     if ( obj.elements['jrn'] )
     {
@@ -235,7 +183,7 @@ function search_get_poste(obj)
     }
 
     $('asearch').innerHTML=loading();
-    var action=new Ajax.Request ( 'ajax_poste.php',
+    var action=new Ajax.Request ( 'ajax_misc.php',
                                   {
                                   method:'get',
                                   parameters:queryString,
@@ -296,82 +244,3 @@ function pausecomp(millis)
   do { curDate = new Date(); }
   while(curDate-date < millis);
 }
-/**
- * Update an accounting with the information in the form, called frmo
- * param_pcmn.inc.php
- * @returns false
- */
-function pcmn_save()
-{
-    try {
-        waiting_box();
-        // initialize variables
-        var gDossier=0;
-        var p_action="";
-        var p_oldu=-1;
-        var p_valu="";
-        var p_libu="";
-        var p_parentu="";
-        var form=$('acc_update_frm_id');
-        var notfound="not found:";
-        var p_typeu=-1;
-        var acc_delete=0;
-        // get them
-        if ( form['gDossier']) { gDossier=form['gDossier'].value;}else { notfound+='gDossier';} 
-        if ( form['p_action']) { p_action=form['p_action'].value;}else { notfound+=', p_action ';}
-        if ( form['p_oldu']) { p_oldu=form['p_oldu'].value;}else { notfound+=', p_oldu';}
-        if ( form['p_valu']) { p_valu=form['p_valu'].value;}else { notfound+=', p_valu';}
-        if ( form['p_libu']) { p_libu=form['p_libu'].value;}else { notfound+=', p_libu ';}
-        if ( form['p_parentu']) { p_parentu=form['p_parentu'].value;}else { notfound+='p_parentu';}
-        if ( form['delete_acc'])  { 
-                if (form['delete_acc'].checked) { acc_delete=1;} else {acc_delete=0} }
-            else {
-                notfound += ', delete_acc';
-            }
-        if ( form['p_typeu']) { p_typeu=form['p_typeu'].value;} else { notfound+=", p_typeu";}
-        
-        
-        if ( notfound != "not found:") throw notfound;
-            
-        var queryString={op:'account_update',action:p_action,gDossier:gDossier,p_oldu:p_oldu,p_valu:p_valu,p_libu:p_libu,p_parentu:p_parentu,acc_delete:acc_delete,p_typeu:p_typeu};
-        var ajax_action = new Ajax.Request(
-                "ajax_misc.php",
-                {
-                    method: 'get',
-                    parameters: queryString,
-                    onFailure: error_box,
-                    onSuccess: function(req, json) {
-                        try
-                        {
-                            remove_waiting_box();
-                            var name_ctl = 'acc_update_info';
-                            var answer = req.responseXML;
-                            var html = answer.getElementsByTagName('code');
-                            var ctl = answer.getElementsByTagName('ctl')[0].textContent;
-                            if (html.length == 0) {
-                                var rec = req.responseText;
-                                alert_box('erreur :' + rec);
-                            }
-                            var code_html = getNodeText(html[0]); // Firefox ne prend que les 4096 car.
-                            code_html = unescape_xml(code_html);
-                            
-                            $(name_ctl).innerHTML = code_html;
-                           if ( ctl == 'ok') {
-                               window.location.reload();
-                            }
-                        } catch (e)
-                        {
-                            error_message(e.message);
-                            return false;
-                        }
-                    }
-                }
-
-        );
-        
-    }catch (e) {
-        return false;
-    }
-    return false;
-}
- 

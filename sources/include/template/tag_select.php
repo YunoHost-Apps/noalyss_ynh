@@ -1,6 +1,10 @@
 <?php
 //This file is part of NOALYSS and is under GPL 
 //see licence.txt
+/**
+ * @file
+ * @brief list of tags
+ */
 ?><?php
 echo HtmlInput::title_box('Tag', 'tag_div');
 $max=$this->cn->count($ret);
@@ -9,7 +13,7 @@ if ( $max == 0 ) {
     return;
 }
 ?>
-Filtrer = <?php echo HtmlInput::filter_table('tag_tb_id', '0,1', 1); ?>
+<?php echo  _("Cherche")." ".HtmlInput::filter_table('tag_tb_id', '0,1', 1); ?>
 <table class="result"  id="tag_tb_id">
     <tr>
         <th>

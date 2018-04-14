@@ -26,8 +26,8 @@
  */
 
 require_once '../include/constant.php';
-require_once NOALYSS_INCLUDE.'/class_database.php';
-require_once NOALYSS_INCLUDE.'/class_dossier.php';
+require_once NOALYSS_INCLUDE.'/lib/database.class.php';
+require_once NOALYSS_INCLUDE.'/class/dossier.class.php';
 /*!\brief
  *  Received parameters are
  *   - j for the ledger
@@ -44,11 +44,11 @@ require_once NOALYSS_INCLUDE.'/class_dossier.php';
 
 $jrn= ( ! isset($_REQUEST['j']))?-1:$_REQUEST['j'];
 $filter_card="";
-$cn=new Database(dossier::id());
+$cn=Dossier::connect();
 $d=$_REQUEST['e'];
 $filter_card='';
 
-require_once('class_user.php');
+require_once('class/user.class.php');
 global $g_user;
 $g_user=new User($cn);
 $g_user->check();
@@ -146,13 +146,13 @@ if (sizeof($sql) != 0 )
 
         $sql_name=$cn->execute('get_name',array($sql[$i]['f_id'],23));
         if (Database::num_row($sql_name) == 1) $quick_code=Database::fetch_result($sql_name,0,0);
-
+	$fid=htmlentities($_REQUEST['FID']);
 
         /* Highlight the found pattern with bold format */
-        $name=str_ireplace($_REQUEST['FID'],'<em>'.$_REQUEST['FID'].'</em>',h($name));
-        $qcode=str_ireplace($_REQUEST['FID'],'<em>'.$_REQUEST['FID'].'</em>',h($quick_code));
-        $desc=str_ireplace($_REQUEST['FID'],'<em>'.$_REQUEST['FID'].'</em>',h($desc));
-        printf('<li id="%s">%s <span class="informal"> %s %s</span></li>',
+        $name=str_ireplace($_REQUEST['FID'],'<em>'.$fid.'</em>',h($name));
+        $qcode=str_ireplace($_REQUEST['FID'],'<em>'.$fid.'</em>',h($quick_code));
+        $desc=str_ireplace($_REQUEST['FID'],'<em>'.$fid.'</em>',h($desc));
+        printf('<li id="%s">%s <span class="informal">%s %s</span></li>',
                $quick_code,
                $quick_code,
                $name,

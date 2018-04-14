@@ -21,12 +21,28 @@
  * \brief Logout
  */
 require_once '../include/constant.php';
-require_once ("ac_common.php");
-require_once('class_database.php');
+require_once ("lib/ac_common.php");
+require_once('lib/database.class.php');
+session_unset();
 
 html_page_start("classic");
 
-session_unset();
+/* clean Global variable */
+
+if ( isset ($g_user) ) unset ($GLOBAL['g_user']);
+if ( isset ($g_pass) ) unset ($GLOBAL['g_pass']);
+//
+// Clean the possible cookies
+//
+if (isset($_SERVER['HTTP_COOKIE'])) {
+    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+    foreach($cookies as $cookie) {
+        $parts = explode('=', $cookie);
+        $name = trim($parts[0]);
+        @setcookie($name, '', time()-1000);
+        @setcookie($name, '', time()-1000, '/');
+    }
+}
 echo '<h2 class="info">'._('Vous êtes déconnecté').'</h2>';
 echo '<META HTTP-EQUIV="REFRESH" content="0;url=index.html">';
 

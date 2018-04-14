@@ -29,7 +29,7 @@
 $max=Database::num_row($res);
 ?>
 <div id="list_cat_div" class="content">
-	<?php echo "Filtre"; echo HtmlInput::filter_table("fiche_def_tb", "0,1,2,3,4", "1"); ?>
+	<?php echo _("Cherche"); echo HtmlInput::filter_table("fiche_def_tb", "0,1,2,3,4", "1"); ?>
 <table id="fiche_def_tb" class="result">
 	<tR>
 		<th>

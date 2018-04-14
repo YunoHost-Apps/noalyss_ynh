@@ -1,45 +1,48 @@
 <?php
 /*
- *   This file is part of PhpCompta.
+ *   This file is part of NOALYSS.
  *
- *   PhpCompta is free software; you can redistribute it and/or modify
+ *   NOALYSS isfree software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation; either version 2 of the License, or
  *   (at your option) any later version.
  *
- *   PhpCompta is distributed in the hope that it will be useful,
+ *   NOALYSS isdistributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with PhpCompta; if not, write to the Free Software
+ *   along with NOALYSS; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 // Copyright (2014) Author Dany De Bontridder <dany@alchimerys.be>
 
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-
+global $http;
 /**
- * @file
- * @brief 
- * @param type $name Descriptionara
+ *@file
+ *@brief Print the aged balance for accountancy see 
+ * @see Balance_Age
  */
-$date_start=HtmlInput::default_value_get('p_date_start', '01.01.'.$g_user->get_exercice());
+$type=$http->get('p_type','string','C');
+$let=$http->get('p_let','string','unlet');
+
+$date_start=$http->get('p_date_start','string', '01.01.'.$g_user->get_exercice());
 $w_date_start=new IDate('p_date_start',$date_start);
 $w_select=new ISelect('p_type');
 $w_select->value=array( 
     array('value'=>'C','label'=>_('Client')),
     array('value'=>'F','label'=>_('Fournisseur'))
 );
-$w_select->selected=HtmlInput::default_value_get('p_type','C');
+$w_select->selected=$type;
 
 $w_lettre=new ISelect('p_let');
 $w_lettre->value=array( 
     array('value'=>'let','label'=>_('lettrées et non lettrées')),
     array('value'=>'unlet','label'=>_('non lettrées'))
 );
-$w_lettre->selected=HtmlInput::default_value_get('p_let','unlet');
+$w_lettre->selected=$let;
 
 ?>
 <form method="GET">
@@ -65,15 +68,13 @@ $w_lettre->selected=HtmlInput::default_value_get('p_let','unlet');
 ?>
 </form>
 <?php
-    require_once 'class_balance_age.php';
+    require_once NOALYSS_INCLUDE.'/class/balance_age.class.php';
     $balance=new Balance_Age($cn);
-    $type=HtmlInput::default_value_get('p_type', 'C');
-    $let=HtmlInput::default_value_get('p_let', 'unlet');
-    $date=HtmlInput::default_value_get('p_date_start', date('d.m.Y'));
+    
     if ( $type == "C") :
-        $balance->display_sale($date,$let);
+        $balance->display_sale($date_start,$let);
     else:
-        $balance->display_purchase($date,$let);
+        $balance->display_purchase($date_start,$let);
     endif;
 
 ?>

@@ -27,8 +27,9 @@
     echo HtmlInput::request_to_hidden(array('gDossier', 'ac'));
     echo HtmlInput::hidden('op','consult');
     echo HtmlInput::hidden('key', $this->key->getp('id'));
-    $name=HtmlInput::default_value_post("name_key",$this->key->getp('name'));
-    $description_text=HtmlInput::default_value_post("description_key",$this->key->getp('description'));
+    $http=new HttpInput();
+    $name=$http->post("name_key","string",$this->key->getp('name'));
+    $description_text=$http->post("description_key","string",$this->key->getp('description'));
     ?>
     <div class="content">
         <div style="width:30%;display:inline-block;min-height: 75px">
@@ -61,8 +62,8 @@
                 endfor;
                 ?>
                     <th style="text-align: right">
+                    <?php echo Icon_Action::infobulle(41); ?>
                     <?php echo _('Pourcentage'); ?>
-                    <?php echo HtmlInput::infobulle(41); ?>
                 </th>
             </tr>
             <?php
@@ -107,9 +108,9 @@
                             }
                             if (isset($_POST['po_id']))
                             {
-                                $a_po_id=HtmlInput::default_value_post('po_id', array());
+                                $a_po_id=$http->post('po_id', "array",array());
                                 $selected=$a_po_id[$j][$i];
-                                $a_percent=HtmlInput::default_value_post('percent', array());
+                                $a_percent=$http->post('percent',"array", array());
                                 $percent=$a_percent[$j];
                             }
                             $select->selected=$selected;
@@ -170,7 +171,7 @@
                                             where kd_id=$1 or kd_id is null
                                             order by jrn_def_name ', array($this->key->getp('id')));
                 }
-                $post_jrn=HtmlInput::default_value_post("jrn",-1);
+                $post_jrn=$http->post("jrn","string",-1);
                 ?>
                 <table id="jrn_def_tb" class="result">
                     <?php for ($i=0; $i<count($jrn); $i++): ?>
