@@ -1,13 +1,9 @@
 <?php
 //This file is part of NOALYSS and is under GPL 
 //see licence.txt
-/**
- *@file
- *@brief Print the balance of 1 plan of analytic accountancy separated by group
- * @see Anc_Group
- */
+
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class/anc_group.class.php';
+require_once NOALYSS_INCLUDE.'/class_anc_group.php';
 
 $gr = new Anc_Group($cn);
 $gr->get_request();

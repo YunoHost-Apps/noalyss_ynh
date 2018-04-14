@@ -29,13 +29,11 @@
  * - $ss_action
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class/acc_ledger.class.php';
-global $http;
-
-$f=new Fiche($cn,$http->request('f_id',"number"));
+require_once NOALYSS_INCLUDE.'/class_acc_ledger.php';
+$f=new Fiche($cn,$_REQUEST['f_id']);
 $qcode=$f->get_quick_code();
-$_GET['search_opqcode']=$qcode;
-$_REQUEST['search_opqcode']=$qcode;
+$_GET['qcode']=$qcode;
+$_REQUEST['qcode']=$qcode;
 $var_array=compute_variable('ledger_type=ALL');
 put_global($var_array);
 

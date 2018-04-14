@@ -86,20 +86,11 @@ function checkTotalDirect()
         diff=total_deb-total_cred;
         diff=Math.round(diff*100)/100;
         document.getElementById("totalDiff").innerHTML=diff;
-        return false;
 
     }
     else
     {
         document.getElementById("totalDiff").innerHTML="0.0";
-        return true;
     }
 }
-function controleBalance()
-{
-    if ( checkTotalDirect() == true ) { return true;}
-    else {
-        smoke.alert('Balance incorrecte D/C');
-        return false;
-    }
-}
+

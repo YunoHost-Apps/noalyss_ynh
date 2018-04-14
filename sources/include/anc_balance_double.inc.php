@@ -1,13 +1,9 @@
 <?php
 //This file is part of NOALYSS and is under GPL 
 //see licence.txt
-/**
- *@file
- *@brief Print the crossed balance between 2 plan
- *@see Anc_Balance_Double
- */
+
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class/anc_balance_double.class.php';
+require_once NOALYSS_INCLUDE.'/class_anc_balance_double.php';
 $bc = new Anc_Balance_Double($cn);
 $bc->get_request();
 echo '<form method="get">';

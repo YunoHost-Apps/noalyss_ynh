@@ -8,7 +8,7 @@
 echo "Extract"
 cd ..
 # CATALOG
-xgettext -L PHP -j --from-code=UTF-8 -p html/lang/ html/*.php include/*.php include/template/*.php include/ext/*/*.php include/ext/*/include/*.php  include/ext/*/include/template/*.php include/lib/*.php include/ajax/*.php include/export/*.php include/class/*.php
+xgettext -L PHP -j --from-code=UTF-8 -p html/lang/ html/*.php include/*.php include/template/*.php include/ext/*/*.php include/ext/*/include/*.php  include/ext/*/include/template/*.php 
 
 # For dutch
 echo "Dutch"

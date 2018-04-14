@@ -1,7 +1,7 @@
 <?php
 //This file is part of NOALYSS and is under GPL 
 //see licence.txt
-?><?php require_once NOALYSS_TEMPLATE.'/ledger_detail_top.php'; ?>
+?><?php require_once NOALYSS_INCLUDE.'/template/ledger_detail_top.php'; ?>
 <?php
     $tab_account=$div."account";
     $tab_rapprochement=$div."rapproch";
@@ -11,8 +11,8 @@
  ?>
 <div class="content" style="padding:0;">
     <?php
-    require_once NOALYSS_INCLUDE.'/class/noalyss_parameter_folder.class.php';
-    $owner = new Noalyss_Parameter_Folder($cn);
+    require_once NOALYSS_INCLUDE.'/class_own.php';
+    $owner = new Own($cn);
     ?>
 
     <?php if ($access == 'W') : ?>
@@ -146,20 +146,7 @@ echo $ipaid->input();
                     $x = count($a_anc);
                     /* set the width of the col */
                     /* add hidden variables pa[] to hold the value of pa_id */
-                   $str_anc.='<tr>'.
-                           '<th>'.
-                           _('Code').
-                           '</th>'.
-                           '<th>'.
-                           _('Poste').
-                           '</th>'.
-                           '<th>'.
-                           _('Montant').
-                           '</th>'.
-                           '<th colspan="' . $x . '">' 
-                           . _('Compt. Analytique') .Anc_Plan::hidden($a_anc). 
-                           '</th>'.
-                           '</tr>';
+                   $str_anc.='<tr><th>Code</th><th>Montant</th><th colspan="' . $x . '">' . _('Compt. Analytique') .Anc_Plan::hidden($a_anc). '</th>'.'</tr>';
 
                 }
 
@@ -187,8 +174,10 @@ echo $ipaid->input();
 
                     $row.=td($input->input() . $hidden);
                     $sym_tva = '';
-                    $pu = $q['qs_unit'];
-                    $row.=td(nbm($pu,4), 'class="num"');
+                    $pu = 0;
+                    if ($q['qs_quantite'] != 0)
+                        $pu = bcdiv($q['qs_price'], $q['qs_quantite']);
+                    $row.=td(nbm($pu), 'class="num"');
                     $row.=td(nbm($q['qs_quantite']), 'class="num"');
                     $sym_tva = '';
                     if ($owner->MY_TVA_USE == 'Y' && $q['qs_vat_code'] != '')
@@ -228,14 +217,12 @@ echo $ipaid->input();
                             $anc_op = new Anc_Operation($cn);
                             $anc_op->in_div=$div;
                             $anc_op->j_id = $q['j_id'];
-                            $side=($q['j_debit'] == 'f')?'C':'D';
-                            echo HtmlInput::hidden('opanc[]', $anc_op->j_id);
+                            echo HtmlInput::hidden('op[]', $anc_op->j_id);
                             /* compute total price */
                             bcscale(2);
                             $str_anc.='<tr>';
                             $str_anc.=td($qcode);
-                            $str_anc.=td($poste);
-                            $str_anc.=td(nbm($htva)." {$side}");
+                            $str_anc.=td(nbm($htva));
                             $str_anc.=$anc_op->display_table(1, $htva, $div).'</tr>';
                            // $row.=($div == 'popup') ? $anc_op->display_table(1, $htva, $div):"";
                         } else
@@ -265,5 +252,5 @@ echo $ipaid->input();
         </div>
             
 <?php
-require_once NOALYSS_TEMPLATE.'/ledger_detail_bottom.php';
+require_once NOALYSS_INCLUDE.'/template/ledger_detail_bottom.php';
 ?>

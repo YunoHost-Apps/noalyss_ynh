@@ -20,8 +20,7 @@
 
 // Copyright Author Dany De Bontridder danydb@aevalys.eu
 
-/**
- * \file
+/**\file
  * \brief this file respond to an ajax request
  * The parameters are
  * - gDossier
@@ -38,17 +37,12 @@
 if ( ! defined('ALLOWED')) define ('ALLOWED',1);
 
 require_once '../include/constant.php';
-require_once NOALYSS_INCLUDE.'/lib/database.class.php';
-require_once  NOALYSS_INCLUDE.'/class/fiche.class.php';
-require_once NOALYSS_INCLUDE.'/lib/iradio.class.php';
-require_once NOALYSS_INCLUDE.'/lib/function_javascript.php';
-require_once NOALYSS_INCLUDE.'/lib/ac_common.php';
-require_once  NOALYSS_INCLUDE.'/class/user.class.php';
-require_once NOALYSS_INCLUDE.'/lib/http_input.class.php';
-require_once NOALYSS_INCLUDE.'/lib/icon_action.class.php';
-require_once NOALYSS_INCLUDE.'/lib/progress_bar.class.php';
-$http=new HttpInput();
-
+require_once NOALYSS_INCLUDE.'/class_database.php';
+require_once  NOALYSS_INCLUDE.'/class_fiche.php';
+require_once NOALYSS_INCLUDE.'/class_iradio.php';
+require_once NOALYSS_INCLUDE.'/function_javascript.php';
+require_once NOALYSS_INCLUDE.'/ac_common.php';
+require_once  NOALYSS_INCLUDE.'/class_user.php';
 mb_internal_encoding("UTF-8");
 
 $var = array('gDossier', 'op');
@@ -64,21 +58,19 @@ foreach ($var as $v)
 }
 if ($cont != 0)
 	exit();
-extract($_REQUEST, EXTR_SKIP );
-if ( isset($div)) ajax_disconnected($div);
+extract($_REQUEST);
+set_language();
 global $g_user, $cn, $g_parameter;
 //
 // If database id == 0 then we are not connected to a folder 
 // but to the administration
 // 
 if ($gDossier<>0) {
-    $cn =Dossier::connect();
-    $g_parameter=new Noalyss_Parameter_Folder($cn);
+    $cn = new Database($gDossier);
+    $g_parameter=new Own($cn);
     $g_user = new User($cn);
     $g_user->check(true);
-    if ( $g_user->check_dossier($gDossier, true) == 'X' ) {
-        die(_('Non autorisé'));
-    }
+    $g_user->check_dossier($gDossier, true);
 }
 else
 {
@@ -87,18 +79,8 @@ else
     $g_user = new User($cn);
     $g_user->check(true);
 }
-
-// For progress bar, for saving time , we check and answer directly
-if ($op == "progressBar") {
-    $task_id=$http->request("task_id");
-    $task=new Progress_Bar($task_id);
-    $task->answer();
-    return;
-}
-
-
 $html = var_export($_REQUEST, true);
-set_language();
+
 if ( LOGINPUT)
     {
         $file_loginput=fopen($_ENV['TMP'].'/scenario-'.$_SERVER['REQUEST_TIME'].'.php','a+');
@@ -117,196 +99,11 @@ if ( LOGINPUT)
         fwrite($file_loginput,"include '".basename(__FILE__)."';\n");
         fclose($file_loginput);
     }
-$path = array(
-    // search accounting , detail ...
-    "account"=>"ajax_poste",
-    // display card detail :possible to update or add
-    "card"=>"ajax_card",
-    "ledger"=>"ajax_ledger",
-    // Manage ledger access
-    "ledger_access"=>"ajax_user_security",
-    // Manage user profile
-    "profile"=>"ajax_user_security",
-    // enable or not the security on ledger
-    "user_sec_ledger"=>"ajax_user_security",
-    // enable or not the security on action
-    "user_sec_action"=>"ajax_user_security",
-    // Update in once all the ledgers
-    "ledger_access_all"=>"ajax_user_security",
-    // From the page CFGSEC,set the actions
-    "action_access"=>"ajax_user_security",
-    // From the page CFGSEC,set all the actions
-    "action_access_all"=>"ajax_user_security",
-    "todo_list"=>"ajax_todo_list",
-    // Writing operation History for a card or an accounting
-    "history"=>"ajax_history",
-    "mod_doc"=>"ajax_mod_document",
-    // Periode menu: PERIODE
-    'periode'=>"ajax_periode",
-    "mod_predf"=>"ajax_mod_predf_op",
-    "save_predf"=>"ajax_save_predf_op",
-    "search_action"=>"ajax_search_action",
-    "display_profile"=>"ajax_get_profile",
-    "det_menu"=>"ajax_get_menu_detail",
-    "add_menu"=>"ajax_add_menu",
-    "display_submenu"=>"ajax_display_submenu",
-    "remove_submenu"=>"ajax_remove_submenu",
-    "cardsearch"=>"ajax_boxcard_search",
-    "saldo"=>"ajax_bank_saldo",
-    "up_predef"=>"ajax_update_predef",
-    "upd_receipt"=>"ajax_get_receipt",
-    "up_pay_method"=>"ajax_update_payment",
-    "openancsearch"=>"ajax_anc_search",
-    "resultancsearch"=>"ajax_anc_search",
-    "autoanc"=>"ajax_auto_anc_card",
-    "create_menu"=>"ajax_create_menu",
-    "modify_menu"=>"ajax_mod_menu",
-    "mod_stock_repo"=>"ajax_mod_stock_repo",
-    "view_mod_stock"=>"ajax_view_mod_stock",
-    "fddetail"=>"ajax_fiche_def_detail",
-    "vw_action"=>"ajax_view_action",
-    "minrow"=>"ajax_min_row",
-    "navigator"=>"ajax_navigator",
-    "preference"=>"ajax_preference",
-    "bookmark"=>"ajax_bookmark",
-    // Tag 
-    "tag_detail"=>"ajax_tag_detail",
-    "tag_save"=>"ajax_tag_save",
-    "tag_list"=>"ajax_tag_list",
-    "tag_add"=>"ajax_tag_add_action",
-    "tag_remove"=>"ajax_tag_remove_action",
-    "tag_choose"=>"ajax_tag_choose",
-    "tag_activate"=>"ajax_tag_save",
-    // search
-    "search_display_tag"=>"ajax_search_display_tag",
-    "search_add_tag"=>"ajax_search_add_tag",
-    "search_clear_tag"=>"ajax_search_clear_tag",
-    "calendar_zoom"=>"ajax_calendar_zoom",
-    "ledger_show"=>"ajax_ledger_show",
-  //Show the available distribution keys for analytic 
-    "anc_key_choice"=>"ajax_anc_key_choice" ,
-  // Show the activities computed with the selected distribution key 
-    "anc_key_compute"=>"ajax_anc_key_compute" ,
-  //From admin, revoke the access to a folder from an user
-    "folder_remove"=>"ajax_admin",
-  //From admin, display a list of folder to which the user has no access
-    "folder_display"=>"ajax_admin",
-  // From admin, grant the access to a folder to an
-  // user
-    "folder_add"=>"ajax_admin",
-  // From admin, display info and propose to drop the folder
-    "folder_drop"=>"ajax_admin",
-  // From admin, display the information of a folder you can 
-  // modify
-    "folder_modify"=>"ajax_admin",
-  // From admin, display info and propose to drop the template
-    "modele_drop"=>"ajax_admin",
-  // From admin, display the information of a template you can modify
-    "modele_modify"=>"ajax_admin",
-    // From admin , upgrade Noalyss
-    "upgradeCore"=>"ajax_admin",
-    // From admin , upgrade or install plugin
-    "upgradePlugin"=>"ajax_admin",
-    // From admin , install a template
-    "installTemplate"=>"ajax_admin",
-  // From dashboard, display detail about last operation     
-    "action_show"=>"ajax_gestion",
-  // From dashboard, display form for a new event    
-    "action_add"=>"ajax_gestion",
-  // Save a event given in the short form
-    "action_save"=>"ajax_gestion",
-    /* display the lettering , callebd from acc_ledger : dsp_letter*/
-    "dl"=>"ajax_display_letter",
-    // Add , delete update anc accounting
-    "anc_accounting"=>"ajax_anc_accounting",
-    // Update name and description
-    "anc_updatedescription"=>"ajax_anc_plan",
-    // Update, insert or delete accounting frmo CFGPCMN
-    "accounting"=>"ajax_accounting",
-    // Show detail of an ANC operation
-    "anc_detail_op"=>"ajax_anc_detail_operation",
-    // show history of an analytic account
-    "history_anc_account"=>"ajax_history_anc_account",
-    // Display the list of filter saved
-    "display_search_filter"=>"ajax_search_filter",
-    // Save search filter 
-    "save_filter"=>"ajax_search_filter",
-    // Load a search filter
-    "load_filter"=>"ajax_search_filter",
-    // search operation to reconcile
-    	'search_op'=>'ajax_search_operation',
-    // delete operation
-    	'delete_search_operation'=>'ajax_search_filter',
-    // template category of card
-    'template_cat_card'=>'ajax_template_cat_card',
-    // Attribute for category of card
-    'template_cat_category'=>'ajax_template_cat_category',
-    // From FollowUp , update a comment on a file
-    'update_comment_followUp'=>'ajax_follow_up',
-    // TVA param
-    "tva_parameter"=>"ajax_tva_parameter"
-)    ;
-
-if (array_key_exists($op, $path)) {
-    require NOALYSS_INCLUDE.'/ajax/'.$path[$op].".php";
-    return;
-}
 switch ($op)
 {
-    case "periode_change":
-        $field=$http->get("field");
-        $type=$http->get("type");
-        $exercice=$http->get("exercice","number");
-        $last=$http->get("last","number");
-        
-        // if last == 1 then show first and last periode of the 
-        // exercice
-        $periode_start=0;
-        $periode_end=0;
-        if ( $last==1) {
-            $t_periode=new Periode($cn);
-            list($per_max,$per_min)=$t_periode->get_limit($exercice);
-            $periode_start=$per_max->p_id;
-            $periode_end=$per_min->p_id;
-        }
-        
-        $iperiod = new IPeriod($field);
-        $iperiod->id=$field;
-        $iperiod->user = $g_user;
-        $iperiod->cn = $cn;
-        $iperiod->filter_year = true;
-        $iperiod->exercice=$exercice;
-        if ( $type=="from")
-        {
-            $iperiod->show_end_date=FALSE;
-            $iperiod->value=$periode_start;
-        } elseif ($type=="to"){
-            $iperiod->show_start_date=FALSE;
-            $iperiod->value=$periode_end;
-            
-        } else {
-            throw new Exception(_("Invalide type"));
-        }
-        
-        $iperiod->type = ALL;
-        echo $iperiod->input();
-        
-        return;
-        
-        break;
-    case "pref_exercice":
-        $iperiod = new IPeriod("period");
-        $iperiod->id="setting_period";
-        $iperiod->user = $g_user;
-        $iperiod->cn = $cn;
-        $iperiod->filter_year = true;
-        $iperiod->exercice=$http->get("exercice");
-        
-        $iperiod->type = ALL;
-        echo $iperiod->input();
-        
-        return;
-    break;
+        case 'pcmn_update':
+            require 'ajax_pcmn_update.php';
+            return;
 	case "remove_anc":
 		if ($g_user->check_module('ANCODS') == 0)
 			exit();
@@ -325,7 +122,7 @@ switch ($op)
 	//--------------------------------------------------
 	// get the last date of a ledger
 	case 'lastdate':
-		require_once NOALYSS_INCLUDE.'/class/acc_ledger_fin.class.php';
+		require_once NOALYSS_INCLUDE.'/class_acc_ledger_fin.php';
 		$ledger = new Acc_Ledger_Fin($cn, $_GET['p_jrn']);
 		$html = $ledger->get_last_date();
 		$html = escape_xml($html);
@@ -340,7 +137,7 @@ EOF;
 
 		break;
 	case 'bkname':
-		require_once NOALYSS_INCLUDE.'/class/acc_ledger_fin.class.php';
+		require_once NOALYSS_INCLUDE.'/class_acc_ledger_fin.php';
 		$ledger = new Acc_Ledger_Fin($cn, $_GET['p_jrn']);
 		$html = $ledger->get_bank_name();
 		$html = escape_xml($html);
@@ -355,13 +152,13 @@ EOF;
 		break;
 	// display new calendar
 	case 'cal':
-		require_once NOALYSS_INCLUDE.'/class/calendar.class.php';
+		require_once NOALYSS_INCLUDE.'/class_calendar.php';
 		/* others report */
 		$cal = new Calendar();
 		$cal->set_periode($per);
-                $notitle=$http->get("notitle", "string",0);
+                $notitle=HtmlInput::default_value_get("notitle", 0);
 		$html = "";
-		$html = $cal->display($http->get('t'),$notitle);
+		$html = $cal->display($_GET['t'],$notitle);
 		$html = escape_xml($html);
 		header('Content-type: text/xml; charset=UTF-8');
 		echo <<<EOF
@@ -373,7 +170,7 @@ EOF;
 		break;
 	/* rem a cat of document */
 	case 'rem_cat_doc':
-		require_once NOALYSS_INCLUDE.'/class/document_type.class.php';
+		require_once NOALYSS_INCLUDE.'/class_document_type.php';
 		// if user can not return error message
                 $message="";
 		if ($g_user->check_action(PARCATDOC) == 0)
@@ -421,37 +218,17 @@ EOF;
 		return;
 		break;
 	case 'mod_cat_doc':
-		require_once NOALYSS_TEMPLATE.'/document_mod_change.php';
+		require_once NOALYSS_INCLUDE.'/template/document_mod_change.php';
 		break;
 	case 'dsp_tva':
-		$cn = Dossier::connect();
-            // Filter the VAT 
-                $filter=$http->get("filter","string","none");
-                if ( $filter == 'sale')  {
-                    $Res = $cn->exec_sql("select * 
-                        from v_tva_rate 
-                        where 
-                        tva_sale <> '#'
-                            order by tva_rate desc");
-                    
-                } elseif ($filter == "purchase") {
-                    
-                    $Res = $cn->exec_sql("select * 
-                        from 
-                        v_tva_rate 
-                        where 
-                        tva_purchase <> '#'
-                            order by tva_rate desc");
-                }else {
-                    
-                    $Res = $cn->exec_sql("select * from v_tva_rate 
-                            order by tva_rate desc");
-                }
+		$cn = new Database($gDossier);
+		$Res = $cn->exec_sql("select * from tva_rate order by tva_rate desc");
 		$Max = Database::num_row($Res);
 		$r = "";
-		$r.=HtmlInput::title_box(_('Choisissez la TVA'),'tva_select',"close","","y");
+		$r = HtmlInput::anchor_close('tva_select');
+		$r.=h2(_('Choisissez la TVA '),'class="title"');
 		$r.='<div >';
-                $r.=_('Cherche')." ".HtmlInput::filter_table("tva_select_table",'0,1,2,3' , 1);
+                $r.=_('Filter')." ".HtmlInput::filter_table("tva_select_table",'0,1,2,3' , 1);
 		$r.= '<TABLE style="width:100%" id="tva_select_table">';
 		$r.=th(_('code'));
 		$r.=th(_('Taux'));
@@ -507,7 +284,7 @@ EOF;
 EOF;
 		break;
 	case 'label_tva':
-		$cn =Dossier::connect();
+		$cn = new Database($gDossier);
 		if (isNumber($id) == 0)
 			$value = _('tva inconnue');
 		else
@@ -528,7 +305,255 @@ EOF;
 EOF;
 
 		break;
+	/**
+	 * display the lettering
+	 */
+	case 'dl':
+		require_once NOALYSS_INCLUDE.'/class_lettering.php';
+		$exercice = $g_user->get_exercice();
+		if ($g_user->check_module("LETCARD") == 0 && $g_user->check_module("LETACC") == 0)
+			exit();
+		$periode = new Periode($cn);
+		list($first_per, $last_per) = $periode->get_limit($exercice);
 
+		$ret = new IButton('return');
+		$ret->label = _('Retour');
+		$ret->javascript = "$('detail').hide();$('list').show();$('search').show();";
+
+		// retrieve info for the given j_id (date, amount,side and comment)
+		$sql = "select j_date,to_char(j_date,'DD.MM.YYYY') as j_date_fmt,J_POSTE,j_qcode,jr_id,
+         jr_comment,j_montant, j_debit,jr_internal from jrnx join jrn on (j_grpt=jr_grpt_id)
+         where j_id=$1";
+		$arow = $cn->get_array($sql, array($j_id));
+		$row = $arow[0];
+		$r = '';
+		$r.='<fieldset><legend>' . _('Lettrage') . '</legend>';
+		$r.=_('Poste')." " . $row['j_poste'] . '  ' . $row['j_qcode'] . '<br>';
+
+		$detail = "<A class=\"detail\" style=\"display:inline\" HREF=\"javascript:modifyOperation('" . $row['jr_id'] . "'," . $gDossier . ")\" > " . $row['jr_internal'] . "</A>";
+
+		$r.=_('Date').' : ' . $row['j_date_fmt'] . ' ref :' . $detail . ' <br>  ';
+		$r.=h($row['jr_comment']) ." ". _("montant")." : " . ($row['j_montant']) . " " . (($row['j_debit'] == 't') ? 'D' : 'C');
+		$r.='</fieldset>';
+		$r.='<div id="filtre" style="float:left;display:block">';
+		$r.='<form method="get" id="search_form" onsubmit="search_letter(this);return false">';
+		$r.='<div style="float:left;">';
+		// needed hidden var
+		$r.=dossier::hidden();
+		if (isset($_REQUEST['ac']))
+			$r.=HtmlInput::hidden('ac', $_REQUEST['ac']);
+		if (isset($_REQUEST['sa']))
+			$r.=HtmlInput::hidden('sa', $_REQUEST['sa']);
+		if (isset($_REQUEST['acc']))
+			$r.=HtmlInput::hidden('acc', $_REQUEST['acc']);
+		$r.=HtmlInput::hidden('j_id', $j_id);
+		$r.=HtmlInput::hidden('op', $op);
+		$r.=HtmlInput::hidden('ot', $ot);
+
+		$r.='<table>';
+		//min amount
+		$line = td(_('Montant min. '));
+		$min = new INum('min_amount');
+		$min->value = (isset($min_amount)) ? $min_amount : $row['j_montant'];
+		$min_amount = (isset($min_amount)) ? $min_amount : $row['j_montant'];
+
+		$line.=td($min->input());
+		// max amount
+		$line.=td(_('Montant max. '));
+		$max = new INum('max_amount');
+		$max->value = (isset($max_amount)) ? $max_amount : $row['j_montant'];
+		$max_amount = (isset($max_amount)) ? $max_amount : $row['j_montant'];
+		$line.=td($max->input());
+		$r.=tr($line);
+
+		$date_error="";
+		// start date
+		$start = new IDate('search_start');
+
+		/*  check if date are valid */
+		if (isset($search_start) && isDate($search_start) == null)
+		{
+			ob_start();
+			alert(_('Date malformée'));
+			$date_error = ob_get_contents();
+			ob_end_clean();
+			$search_start=$first_per->first_day();
+		}
+		$start->value = (isset($search_start)) ? $search_start : $first_per->first_day();
+
+		$line = td('Date Debut') . td($start->input());
+		// end date
+		$end = new IDate('search_end');
+						/*  check if date are valid */
+		if (isset($search_end) && isDate($search_end) == null)
+		{
+			ob_start();
+			alert(_('Date malformée'));
+			$date_error = ob_get_contents();
+			ob_end_clean();
+			$search_end=$last_per->last_day();
+		}
+		$end->value = (isset($search_end)) ? $search_end : $last_per->last_day();
+		$line.=td(_('Date Fin')) . td($end->input());
+		$r.=tr($line);
+		// Side
+		$line = td(_('Debit / Credit'));
+		$iside = new ISelect('side');
+		$iside->value = array(
+			array('label' => _('Debit'), 'value' => 0),
+			array('label' => _('Credit'), 'value' => 1),
+			array('label' => _('Les 2'), 'value' => 3)
+		);
+		/**
+		 *
+		 * if $side is not then
+		 * - if jl_id exist and is > 0 show by default all the operation (=3)
+		 * - if jl_id does not exist or is < 0 then show by default the opposite
+		 *  side
+		 */
+		if (!isset($side))
+		{
+			// find the jl_id of the j_id
+			$jl_id = $cn->get_value('select comptaproc.get_letter_jnt($1)', array($j_id));
+			if ($jl_id == null)
+			{
+				// get the other side
+				$iside->selected = (isset($side)) ? $side : (($row['j_debit'] == 't') ? 1 : 0);
+				$side = (isset($side)) ? $side : (($row['j_debit'] == 't') ? 1 : 0);
+			}
+			else
+			{
+				// show everything
+				$iside->selected = 3;
+				$side = 3;
+			}
+		}
+		else
+		{
+			$iside->selected = $side;
+		}
+
+		$r.=tr($line . td($iside->input()));
+		$r.='</table>';
+		$r.='</div>';
+		$r.='<div style="float:left;padding-left:100">';
+		$r.=HtmlInput::submit('search', 'Rechercher');
+		$r.='</div>';
+		$r.='</form>';
+		$r.='</div>';
+
+		$form = '<div id="result" style="float:top;clear:both">';
+
+		$form.='<FORM id="letter_form" METHOD="post">';
+		$form.=dossier::hidden();
+		if (isset($_REQUEST['p_action']))
+			$form.=HtmlInput::hidden('p_action', $_REQUEST['p_action']);
+		if (isset($_REQUEST['sa']))
+			$form.=HtmlInput::hidden('sa', $_REQUEST['sa']);
+		if (isset($_REQUEST['acc']))
+			$form.=HtmlInput::hidden('acc', $_REQUEST['acc']);
+		if (isset($_REQUEST['sc']))
+			$form.=HtmlInput::hidden('sc', $_REQUEST['sc']);
+		if (isset($_REQUEST['sb']))
+			$form.=HtmlInput::hidden('sb', $_REQUEST['sb']);
+		if (isset($_REQUEST['f_id']))
+			$form.=HtmlInput::hidden('f_id', $_REQUEST['f_id']);
+
+
+		// display a list of operation from the other side + box button
+		if ($ot == 'account')
+		{
+			$obj = new Lettering_Account($cn, $row['j_poste']);
+			if (isset($search_start))
+				$obj->start = $search_start;
+			if (isset($search_end))
+				$obj->end = $search_end;
+			if (isset($max_amount))
+				$obj->fil_amount_max = $max_amount;
+			if (isset($min_amount))
+				$obj->fil_amount_min = $min_amount;
+			if (isset($side))
+				$obj->fil_deb = $side;
+
+			$form.=$obj->show_letter($j_id);
+		}
+		else if ($ot == 'card')
+		{
+			$obj = new Lettering_Card($cn, $row['j_qcode']);
+			if (isset($search_start))
+				$obj->start = $search_start;
+			if (isset($search_end))
+				$obj->end = $search_end;
+			if (isset($max_amount))
+				$obj->fil_amount_max = $max_amount;
+			if (isset($min_amount))
+				$obj->fil_amount_min = $min_amount;
+			if (isset($side))
+				$obj->fil_deb = $side;
+			$form.=$obj->show_letter($j_id);
+		}
+		else
+		{
+			$form.=_('Mauvais type objet');
+		}
+
+		$form.=HtmlInput::submit('record', _('Sauver')) . $ret->input();
+		$form.='</FORM>';
+		$form.='</div>';
+
+		$html = $r . $form;
+		$html.=$date_error;
+		//       echo $html;exit;
+		$html = escape_xml($html);
+
+		header('Content-type: text/xml; charset=UTF-8');
+		echo <<<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+<code>detail</code>
+<value>$html</value>
+</data>
+EOF;
+		break;
+	case 'mod_doc':
+		require_once NOALYSS_INCLUDE.'/ajax_mod_document.php';
+		break;
+	case 'input_per':
+		require_once NOALYSS_INCLUDE.'/ajax_mod_periode.php';
+		break;
+	case 'save_per':
+		require_once NOALYSS_INCLUDE.'/ajax_mod_periode.php';
+		break;
+	case 'mod_predf':
+		require_once NOALYSS_INCLUDE.'/ajax_mod_predf_op.php';
+		break;
+	case 'save_predf':
+		require_once NOALYSS_INCLUDE.'/ajax_save_predf_op.php';
+		break;
+	case 'search_op':
+		require_once NOALYSS_INCLUDE.'/search.inc.php';
+		break;
+	case 'search_action':
+		require_once NOALYSS_INCLUDE.'/ajax_search_action.php';
+		break;
+	case 'display_profile':
+		require_once NOALYSS_INCLUDE.'/ajax_get_profile.php';
+		break;
+	case 'det_menu':
+		require_once NOALYSS_INCLUDE.'/ajax_get_menu_detail.php';
+		break;
+	case 'add_menu':
+		require_once NOALYSS_INCLUDE.'/ajax_add_menu.php';
+		break;
+        case 'display_submenu':
+                require_once NOALYSS_INCLUDE.'/ajax_display_submenu.php';
+                break;
+        case 'remove_submenu':
+                require_once NOALYSS_INCLUDE.'/ajax_remove_submenu.php';
+                break;
+	case 'cardsearch':
+		require_once NOALYSS_INCLUDE.'/ajax_boxcard_search.php';
+		break;
 	case 'add_plugin':
 		$me_code = new IText('me_code');
 		$me_file = new IText('me_file');
@@ -536,16 +561,15 @@ EOF;
 		$me_description = new IText("me_description");
 		$me_parameter = new IText("me_parameter");
 		$new = true;
-		require_once NOALYSS_INCLUDE.'/ajax/ajax_plugin_detail.php';
+		require_once NOALYSS_INCLUDE.'/ajax_plugin_detail.php';
 		break;
 	case 'mod_plugin':
 		$m = $cn->get_array("select me_code,me_file,me_menu,me_description,me_parameter
 			from menu_ref where me_code=$1", array($me_code));
 		if (empty($m))
 		{
-			echo HtmlInput::title_box(_("Ce plugin n'existe pas "), $ctl,"close","","y");
-			echo "<p>"._("Il y a une erreur, ce plugin n'existe pas").
-                                "</p>";
+			echo HtmlInput::title_box("Ce plugin n'existe pas ", $ctl);
+			echo "<p>Il y a une erreur, ce plugin n'existe pas";
 			exit;
 		}
 		$me_code = new IText('me_code', $m[0] ['me_code']);
@@ -554,8 +578,92 @@ EOF;
 		$me_description = new IText("me_description", $m[0] ['me_description']);
 		$me_parameter = new IText("me_parameter", $m[0] ['me_parameter']);
 		$new = false;
-		require_once NOALYSS_INCLUDE.'/ajax/ajax_plugin_detail.php';
+		require_once NOALYSS_INCLUDE.'/ajax_plugin_detail.php';
 		break;
+	case 'saldo':
+		require_once NOALYSS_INCLUDE.'/ajax_bank_saldo.php';
+		break;
+	case 'up_predef':
+		require_once NOALYSS_INCLUDE.'/ajax_update_predef.php';
+		break;
+	case 'upd_receipt':
+		require_once NOALYSS_INCLUDE.'/ajax_get_receipt.php';
+		break;
+	case 'up_pay_method':
+		require_once NOALYSS_INCLUDE.'/ajax_update_payment.php';
+		break;
+	case 'openancsearch':
+	case 'resultancsearch':
+		require_once NOALYSS_INCLUDE.'/ajax_anc_search.php';
+		break;
+	case 'autoanc':
+		require_once NOALYSS_INCLUDE.'/ajax_auto_anc_card.php';
+		break;
+	case 'create_menu';
+		require_once NOALYSS_INCLUDE.'/ajax_create_menu.php';
+		break;
+	case 'modify_menu';
+		require_once NOALYSS_INCLUDE.'/ajax_mod_menu.php';
+		break;
+	case 'mod_stock_repo':
+		require_once NOALYSS_INCLUDE.'/ajax_mod_stock_repo.php';
+		break;
+	case 'view_mod_stock':
+		require_once NOALYSS_INCLUDE.'/ajax_view_mod_stock.php';
+		break;
+	case 'fddetail':
+		require_once NOALYSS_INCLUDE.'/ajax_fiche_def_detail.php';
+		break;
+	case 'vw_action':
+		require_once NOALYSS_INCLUDE.'/ajax_view_action.php';
+		break;
+	case 'minrow':
+		require_once NOALYSS_INCLUDE.'/ajax_min_row.php';
+		break;
+        case 'navigator':
+                require_once NOALYSS_INCLUDE.'/ajax_navigator.php';
+                break;
+        case 'preference':
+                require_once NOALYSS_INCLUDE.'/ajax_preference.php';
+                break;
+        case 'bookmark':
+            require_once NOALYSS_INCLUDE.'/ajax_bookmark.php';
+            break;
+        case 'tag_detail':
+            require_once NOALYSS_INCLUDE.'/ajax_tag_detail.php';
+            break;
+        case 'tag_save':
+            require_once NOALYSS_INCLUDE.'/ajax_tag_save.php';
+            break;
+        case 'tag_list':
+            require_once NOALYSS_INCLUDE.'/ajax_tag_list.php';
+            break;
+        case 'tag_add':
+            require_once NOALYSS_INCLUDE.'/ajax_tag_add_action.php';
+            break;
+        case 'tag_remove':
+            require_once NOALYSS_INCLUDE.'/ajax_tag_remove_action.php';
+            break;
+        case 'tag_choose':
+            require_once NOALYSS_INCLUDE.'/ajax_tag_choose.php';
+            break;
+        case 'tag_choose':
+            require_once NOALYSS_INCLUDE.'/ajax_tag_choose.php';
+            break;
+       case 'search_display_tag':
+            require_once NOALYSS_INCLUDE.'/ajax_search_display_tag.php';
+            break;
+        case 'search_add_tag':
+            require_once NOALYSS_INCLUDE.'/ajax_search_add_tag.php';
+            break;
+        case 'search_clear_tag':
+            require_once NOALYSS_INCLUDE.'/ajax_search_clear_tag.php';
+            break;
+        case 'calendar_zoom':
+            require_once NOALYSS_INCLUDE.'/ajax_calendar_zoom.php';
+            break;
+        case 'ledger_show':
+            require_once NOALYSS_INCLUDE.'/ajax_ledger_show.php';
         case 'ledger_description':
             $ajrn=$cn->get_array('select jrn_def_name,jrn_def_description from jrn_def where jrn_def_id=$1',array($l));
             if ( count($ajrn)==1)
@@ -570,6 +678,72 @@ EOF;
             exit();
             break;
         
+        case 'anc_key_choice': 
+            /*
+             *  Show the available distribution keys for analytic 
+             */
+            require_once NOALYSS_INCLUDE.'/ajax_anc_key_choice.php';
+            break;
+        case 'anc_key_compute':
+            /* 
+             * Show the activities computed with the selected distribution key 
+             */
+            require_once NOALYSS_INCLUDE.'/ajax_anc_key_compute.php';
+            break;
+        case 'account_update':
+            /**
+             * update an accounting (from CFGPCMN)
+             */
+            require_once NOALYSS_INCLUDE.'/ajax_account_update.php';
+            break;
+        // From admin, revoke the access to a folder from an
+        // user
+        case 'folder_remove':
+            require_once NOALYSS_INCLUDE.'/ajax_admin.php';
+            break;
+        // From admin, display a list of folder to which the user has 
+        // no access
+        case 'folder_display':
+            require_once NOALYSS_INCLUDE.'/ajax_admin.php';
+            break;
+        // From admin, grant the access to a folder to an
+        // user
+        case 'folder_add':
+            require_once NOALYSS_INCLUDE.'/ajax_admin.php';
+            break;
+
+        // From admin, display info and propose to drop the folder
+        case 'folder_drop':
+            require_once NOALYSS_INCLUDE.'/ajax_admin.php';
+            break;
+
+        // From admin, display the information of a folder you can 
+        // modify
+        case 'folder_modify':
+            require_once NOALYSS_INCLUDE.'/ajax_admin.php';
+            break;
+        // From admin, display info and propose to drop the template
+        case 'modele_drop':
+            require_once NOALYSS_INCLUDE.'/ajax_admin.php';
+            break;
+
+        // From admin, display the information of a template you can 
+        // modify
+        case 'modele_modify':
+            require_once NOALYSS_INCLUDE.'/ajax_admin.php';
+            break;
+        // From dashboard, display detail about last operation 
+        case 'action_show':
+            require_once NOALYSS_INCLUDE.'/ajax_gestion.php';
+            break;
+        // From dashboard, display form for a new event
+        case 'action_add':
+            require_once NOALYSS_INCLUDE.'/ajax_gestion.php';
+            break;
+        // Save a event given in the short form
+        case 'action_save':
+            require_once NOALYSS_INCLUDE.'/ajax_gestion.php';
+            break;
 	default:
-		var_dump($_REQUEST);
+		var_dump($_GET);
 }

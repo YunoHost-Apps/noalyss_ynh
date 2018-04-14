@@ -32,18 +32,20 @@
 // Save modification
 //---------------------------------------------------------------------------
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class/customer.class.php';
-global $http;
-
- $f_id=$http->request('f_id','number');
+require_once NOALYSS_INCLUDE.'/class_customer.php';
 if ( isset ($_POST['mod']))
 {
+
     // modification is asked
+    $f_id=$_REQUEST['f_id'];
+
     $supplier=new Customer($cn,$f_id);
     $supplier->Save();
+
 }
 
 echo '<div class="u_content">';
+$f_id=$_REQUEST['f_id'];
 echo '<div class="content" style="width:50%">';
 if ( isset($_POST['mod'])) echo hb(_('Information sauvée'));
 
@@ -66,9 +68,7 @@ if ( ! $p_readonly)
 {
 	echo HtmlInput::submit('mod',_('Sauver les modifications'),' onclick="$(\'action_fiche\').value=\'mod\';"');
 	echo HtmlInput::reset(_("Annuler"));
-	echo HtmlInput::submit('delete_card',
-                _('Effacer cette fiche'),
-                'onclick="$(\'action_fiche\').value=\'delete_card\';return confirm_box(\'catergory_detail_frm\',\''.('Confirmer effacement ?').'\');"');
+	echo HtmlInput::submit('delete_card',_('Effacer cette fiche'),'onclick="$(\'action_fiche\').value=\'delete_card\';return confirm_box(\'catergory_detail_frm\',\''.('Confirmer effacement ?').'\');"');
 	echo '</form>';
 }
 echo '</div>';

@@ -27,23 +27,21 @@
  *  - $cn = database connection
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class/follow_up.class.php';
-global $http;
+require_once NOALYSS_INCLUDE.'/class_follow_up.php';
+
 /**
  *\note problem with ShowActionList, this function is local
  * to the file action.inc.php. And this function must different for each
- *  follow-up
+ *  suivi
  */
-$sub_action=$http->request('sa',"string","list");
-
-$ag_id=$http->request("ag_id","string","0");
+$sub_action=(isset($_REQUEST['sa']))?$_REQUEST['sa']:"list";
+$ag_id=(isset($_REQUEST['ag_id']))?$_REQUEST['ag_id']:0;
 if (! isset($_GET['submit_query'])) {$_REQUEST['closed_action']=1;$_GET['closed_action']=1;}
 
-$p_action=$http->request('ac');
+$p_action=$_REQUEST['ac'];
 $base="ac=$p_action&sc=sv&sb=detail&f_id=".$_REQUEST['f_id']."&".HtmlInput::request_to_string(array("closed_action","remind_date_end","remind_date","sag_ref","only_internal","state","gDossier","qcode","ag_dest","query","tdoc","date_start","date_end","hsstate","searchtag","sb","sc"),"");
 $retour=HtmlInput::button_anchor('Retour','?'.dossier::get().'&'.$base);
-
-$fiche=new Fiche($cn,$http->request("f_id","number"));
+$fiche=new Fiche($cn,$_REQUEST['f_id']);
 
 $_GET['qcode']=$fiche->get_quick_code();
 $_REQUEST['qcode'] = $fiche->get_quick_code();

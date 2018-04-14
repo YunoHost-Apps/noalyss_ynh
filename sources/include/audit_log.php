@@ -17,14 +17,14 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-// Copyright Author Dany De Bontridder danydb@noalyss.eu
+// Copyright Author Dany De Bontridder danydb@aevalys.eu
 
 /*!\file
  * \brief let you see the list of the connexion
  */
 if ( !defined ('ALLOWED')) die('Forbidden');
 ?>
-<DIV class="content">
+<DIV class="content" style="width:80%;margin-left:10%">
 <span class="notice">Liste limitée aux 100 dernières connexions</span>
 <?php
 

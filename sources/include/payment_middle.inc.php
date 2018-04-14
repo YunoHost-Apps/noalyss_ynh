@@ -19,8 +19,8 @@
 
 // Copyright Author Dany De Bontridder danydb@aevalys.eu
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class/acc_payment.class.php';
-require_once NOALYSS_INCLUDE.'/lib/sort_table.class.php';
+require_once NOALYSS_INCLUDE.'/class_acc_payment.php';
+require_once NOALYSS_INCLUDE.'/class_sort_table.php';
 //---------------------------------------------------------------------------
 // Common variable
 $td='<TD>';
@@ -29,11 +29,11 @@ $tr='<tr>';
 $etr='</tr>';
 $th='<th>';
 $eth='</th>';
-global $http;
+
 /*!\file
  * \brief payment mode
  */
-$sb=$http->request('sb', "string","");
+$sb=HtmlInput::default_value('sb', "", $_REQUEST);
 echo '<div class="content">';
 
 //----------------------------------------------------------------------
@@ -63,8 +63,7 @@ if ( $sb=='change')
 //
 if ( $sb=='save')
 {
-    $http=new HttpInput();
-    $delete=$http->post("delete_ck","string", 0);
+    $delete=HtmlInput::default_value_post("delete_ck", 0);
     if ( $delete == 0 )
     {
         $row=new Acc_Payment($cn,$_POST ['id']);
@@ -144,8 +143,8 @@ $array=$cn->get_array("
 if ( ! empty ($array))
 {
 
-	require_once NOALYSS_TEMPLATE.'/list_mod_payment.php';
+	require_once NOALYSS_INCLUDE.'/template/list_mod_payment.php';
+	echo HtmlInput::button_anchor("Ajout", $base_url."&sb=ins","","","smallbutton");
 }
-echo HtmlInput::button_anchor("Ajout", $base_url."&sb=ins","","","smallbutton");
 echo '</div>';
 ?>

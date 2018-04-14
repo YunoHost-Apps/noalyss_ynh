@@ -23,8 +23,8 @@
 /**
  * @file
  * @brief  display a submenu contained in a array
- * @param $a_module contains rows from profile_menu
- * @param $p_module_id is the module / menu id main menu
+ * @parameter $a_module contains rows from profile_menu
+ * @parameter $p_module_id is the module / menu id main menu
  * @see Profile_Menu::display_module_menu
  */
 ?>
@@ -47,8 +47,7 @@
             }
         ?>
         <?php 
-            echo HtmlInput::anchor($a_module[$i]['me_code']. " ".
-                    gettext($a_module[$i]['me_menu']),'',
+            echo HtmlInput::anchor(gettext($a_module[$i]['me_menu']),'',
                    sprintf(" onclick =\"mod_menu (%d,%d) \" ",Dossier::id(),$a_module[$i]['pm_id']),
                    ' class="line" ')?>
         <span>

@@ -18,11 +18,11 @@
 */
 // Copyright Author Dany De Bontridder danydb@aevalys.eu
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/lib/ispan.class.php';
-require_once NOALYSS_INCLUDE.'/lib/icard.class.php';
-require_once NOALYSS_INCLUDE.'/lib/iselect.class.php';
-require_once NOALYSS_INCLUDE.'/lib/icheckbox.class.php';
-require_once NOALYSS_INCLUDE.'/class/acc_operation.class.php';
+require_once NOALYSS_INCLUDE.'/class_ispan.php';
+require_once NOALYSS_INCLUDE.'/class_icard.php';
+require_once NOALYSS_INCLUDE.'/class_iselect.php';
+require_once NOALYSS_INCLUDE.'/class_icheckbox.php';
+require_once NOALYSS_INCLUDE.'/class_acc_operation.php';
 /*! \file
  * \brief Print account (html or pdf)
  *        file included from user_impress
@@ -33,8 +33,8 @@ require_once NOALYSS_INCLUDE.'/class/acc_operation.class.php';
 //-----------------------------------------------------
 // Show the jrn and date
 //-----------------------------------------------------
-require_once NOALYSS_INCLUDE.'/lib/database.class.php';
-global $g_user,$http;
+require_once NOALYSS_INCLUDE.'/class_database.php';
+global $g_user;
 //-----------------------------------------------------
 // Form
 //-----------------------------------------------------
@@ -46,7 +46,7 @@ echo HtmlInput::hidden('type','gl_comptes');
 echo dossier::hidden();
 echo '<TABLE><TR>';
 
-$cn=Dossier::connect();
+$cn=new Database(dossier::id());
 $periode=new Periode($cn);
 $a=$periode->get_limit($g_user->get_exercice());
 // $a is an array
@@ -66,11 +66,11 @@ $letter=new ICheckbox('letter');
 $letter->selected=(isset($_REQUEST['letter']))?true:false;
 
 $from_poste=new IPoste('from_poste');
-$from_poste->value=$http->request('from_poste',"string",'');
+$from_poste->value=HtmlInput::default_value('from_poste','',$_REQUEST);
 $from_poste->set_attribute('account','from_poste');
 
 $to_poste=new IPoste('to_poste');
-$to_poste->value=$http->request('to_poste',"string",'');
+$to_poste->value=HtmlInput::default_value('to_poste','',$_REQUEST);
 $to_poste->set_attribute('account','to_poste');
 
 $solded=new ICheckbox('solded');
@@ -110,7 +110,7 @@ echo '</div>';
 //-----------------------------------------------------
 if ( isset( $_REQUEST['bt_html'] ) )
 {
-  require_once NOALYSS_INCLUDE.'/class/acc_account_ledger.class.php';
+  require_once NOALYSS_INCLUDE.'/class_acc_account_ledger.php';
   echo '<div class="content">';
     echo Acc_Account_Ledger::HtmlTableHeader("gl_comptes");
     echo '</div>';
@@ -146,7 +146,7 @@ if ( isset( $_REQUEST['bt_html'] ) )
     }
     if ( isDate($_REQUEST['from_periode'])==null || isDate($_REQUEST['to_periode'])==null)
     {
-        echo alert(_('Date malformée, désolée'));
+        echo alert('Date malformée, désolée');
         return;
     }
     echo '<div class="content">';
@@ -181,7 +181,6 @@ if ( isset( $_REQUEST['bt_html'] ) )
         <td>R&eacute;f&eacute;rence</td>
         <td>Libell&eacute;</td>
         <td>Pi&egrave;ce</td>
-        <td>Type</td>
         <td align="right">D&eacute;bit</td>
         <td align="right">Cr&eacute;dit</td>
         <td align="right">Solde</td>
@@ -206,15 +205,15 @@ if ( isset( $_REQUEST['bt_html'] ) )
                 echo '<tr class="highlight">
                <td>'.$current_exercice.'</td>
                <td>'.''.'</td>
-               <td>'._("Total du compte").$poste_id['pcm_val'].'</td>
-               <td>'.''.'</td>'.td("").
-               '<td align="right">'.($solde_d  > 0 ? nbm( $solde_d)  : '').'</td>
+               <td>'.'Total du compte '.$poste_id['pcm_val'].'</td>
+               <td>'.''.'</td>
+               <td align="right">'.($solde_d  > 0 ? nbm( $solde_d)  : '').'</td>
                <td align="right">'.($solde_c  > 0 ? nbm( $solde_c)  : '').'</td>
                <td align="right">'.nbm( abs($solde_c-$solde_d)).'</td>
                <td>';
                if ($solde_c > $solde_d ) echo _("Crédit");
                if ($solde_c < $solde_d )  echo _("Débit");
-               if ($solde_c == $solde_d )  echo  " ";
+               if ($solde_c == $solde_d )  echo "=";
 
              echo '</td>'.
                '</tr>';
@@ -242,7 +241,7 @@ if ( isset( $_REQUEST['bt_html'] ) )
 			$side="&nbsp;".$Poste->get_amount_side($solde);
 	    $letter="";
 		$html_let="";
-		if ($detail['letter'] > 0) {
+		if ($detail['letter']!=-1) {
 			$letter=strtoupper(base_convert($detail['letter'],10,36));
 			$html_let = HtmlInput::show_reconcile("", $letter);
 		}
@@ -253,7 +252,6 @@ if ( isset( $_REQUEST['bt_html'] ) )
             <td>'.HtmlInput::detail_op($detail['jr_id'],$detail['jr_internal']).'</td>
             <td>'.$detail['description'].'</td>
             <td>'.$detail['jr_pj_number'].'</td>
-            <td>'.$detail['jr_optype'].'</td>
             <td align="right">'.($detail['deb_montant']  > 0 ? nbm($detail['deb_montant'])  : '').'</td>
             <td align="right">'.($detail['cred_montant'] > 0 ? nbm($detail['cred_montant']) : '').'</td>
             <td align="right">'.nbm(abs($solde)).$side.'</td>
@@ -264,8 +262,8 @@ if ( isset( $_REQUEST['bt_html'] ) )
         <td>'.$current_exercice.'</td>
         <td>'.''.'</td>
         <td>'.'<b>'.'Total du compte '.$poste_id['pcm_val'].'</b>'.'</td>
-        <td>'.''.'</td>'.td("").
-        '<td align="right">'.'<b>'.($solde_d  > 0 ? nbm( $solde_d)  : '').'</b>'.'</td>
+        <td>'.''.'</td>
+        <td align="right">'.'<b>'.($solde_d  > 0 ? nbm( $solde_d)  : '').'</b>'.'</td>
         <td align="right">'.'<b>'.($solde_c  > 0 ? nbm( $solde_c)  : '').'</b>'.'</td>
         <td align="right">'.'<b>'.nbm( abs($solde_c-$solde_d)).'</b>'.'</td>
         <td>';

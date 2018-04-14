@@ -20,8 +20,7 @@
 
 // Copyright Author Dany De Bontridder danydb@aevalys.eu
 
-/**
- * \file
+/**\file
  * \brief this file is common to suivi client, suivi fournisseur, suivi
  * administration.
  * The needed variables are
@@ -38,10 +37,8 @@ if (isset($_REQUEST['f_id']))
 if (isset($_REQUEST['sb']))
 	$supl_hidden.=HtmlInput::hidden('sb', $_REQUEST['sb']);
 $supl_hidden.=HtmlInput::hidden('ac', $_REQUEST['ac']);
-
 $correction = 0;
 $error_id=0;
-$http=new HttpInput();
 /*-----------------------------------------------------------------------------*/
 /* For other action
 /*-----------------------------------------------------------------------------*/
@@ -96,8 +93,7 @@ if (isset($_POST['generate']))
 	{
 		$act->Update();
 	}
-        $doc_mod=$http->post('doc_mod',"number");
-	$act->generate_document($doc_mod, $_POST);
+	$act->generate_document($_POST['doc_mod'], $_POST);
 	$sub_action = 'detail';
 }
 /* for delete  */
@@ -125,7 +121,7 @@ if ($sub_action == "update")
 	{
 		$act2 = new Follow_Up($cn);
 		$act2->fromArray($_POST);
-		if ($g_user->can_write_action($act2->ag_id) == FALSE )
+		if ($g_user->can_write_action($act2->ag_id) == false )
 		{
 			echo '<div class="redcontent">';
 			echo '<h2 class="error">'._('Cette action ne vous est pas autorisée Contactez votre responsable').'</h2>';
@@ -149,33 +145,23 @@ if ($sub_action == "update")
                     $act->get();
                     $act->fromArray($_POST);
                     $error_id=$e->getCode();
-                    record_log($e->getTraceAsString());
                 }
 	}
 	//----------------------------------------------------------------------
 	// Add a related action
 	//----------------------------------------------------------------------
 	if (isset($_POST['add_action_here']))
-	{   
-                $ag_id=$http->post('ag_id',"number");
-		$act = new Follow_Up($cn,$ag_id);
-                if ($g_user->can_write_action($act->ag_id) == FALSE )
-		{
-			echo '<div class="redcontent">';
-			echo '<h2 class="error">'._('Cette action ne vous est pas autorisée Contactez votre responsable').'</h2>';
-			echo '</div>';
-			return;
-		}
+	{
+		$act = new Follow_Up($cn);
+
 
 		//----------------------------------------
 		// puis comme ajout normal (copier / coller )
+		$act->fromArray($_POST);
 		$act->ag_id = 0;
 		$act->d_id = 0;
-		$act->action = $http->post('ag_id',"number");
-                $act->ag_timestamp=date('d.m.Y');
-                $act->ag_hour="";
-                $act->ag_title="";
-                $act->ag_remind_date="";
+		$act->action = $_POST['ag_id'];
+
 		echo '<div class="content">';
 
 		// Add hidden tag
@@ -269,7 +255,7 @@ if ($sub_action == "list")
 }
 //--------------------------------------------------------------------------------
 // Save Follow_Up
-// Stage 2 : Save a NEW action + Files and generate a document
+// Stage 2 : Save a NEW action + Files and generate eventually a document
 //--------------------------------------------------------------------------------
 if ($sub_action == "save_action_st2")
 {
@@ -296,7 +282,6 @@ if ($sub_action == "save_action_st2")
         echo '</span>';
         $sub_action="add_action";
         $error_id=$e->getCode();
-        record_log($e->getTraceAsString());
     }
 }
 //--------------------------------------------------------------------------------

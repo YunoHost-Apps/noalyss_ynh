@@ -26,10 +26,10 @@
  *
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/database/stock_sql.class.php';
-require_once NOALYSS_INCLUDE.'/lib/sort_table.class.php';
+require_once NOALYSS_INCLUDE.'/class_stock_sql.php';
+require_once NOALYSS_INCLUDE.'/class_sort_table.php';
 
-global $g_user, $cn,$g_parameter,$http;
+global $g_user, $cn,$g_parameter;
 
 if ($g_parameter->MY_STOCK == 'N')
 {
@@ -40,7 +40,7 @@ if ($g_parameter->MY_STOCK == 'N')
 }
 if ( isset ($_POST['add_stock']))
 {
-    $post_name=$http->post('r_name');
+    $post_name=HtmlInput::default_value_post('r_name', "");
     if ( strlen(trim($post_name)) != 0)
     {
         $st=new Stock_Sql($cn);
@@ -50,11 +50,11 @@ if ( isset ($_POST['add_stock']))
 }
 if ( isset ($_POST['mod_stock']))
 {
-    $post_name=$http->post('r_name');
+    $post_name=HtmlInput::default_value_post('r_name', "");
     if ( strlen(trim($post_name)) != 0)
     {
 
-	$st=new Stock_Sql($cn,$http->post('r_id',"number"));
+	$st=new Stock_Sql($cn,$_POST['r_id']);
 	$st->from_array($_POST);
 	$st->update();
     }
@@ -114,9 +114,9 @@ $array=$cn->get_array($sql." ".$order);
 
 <?php endfor;?>
 </table>
-	<?php echo HtmlInput::button("show_add_depot_d", _("Ajout d'un dépot"), "onclick=\"$('add_depot_d').show();\"");?>
+	<?php echo HtmlInput::button("show_add_depot_d", "Ajout d'un dépot", "onclick=\"$('add_depot_d').show();\"");?>
 	<div id="add_depot_d" class="inner_box" style="display:none">
-	<?php echo HtmlInput::title_box(_("Ajouter un dépôt"),"add_depot_d","hide")?>
+	<?php echo HtmlInput::title_box("Ajouter un dépôt","add_depot_d","hide")?>
 	<form method="post">
 		<table>
 			<tr>
@@ -161,7 +161,7 @@ $array=$cn->get_array($sql." ".$order);
 			</tr>
 
 		</table>
-		<?php echo HtmlInput::submit("add_stock",_("Sauver"))?>
+		<?php echo HtmlInput::submit("add_stock","Sauver")?>
 	</form>
 	</div>
 </div>

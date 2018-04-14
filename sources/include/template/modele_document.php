@@ -60,10 +60,9 @@ echo $a->input();
 <td>
 <?php echo _("Fichier")?>
 <?php
-    $dosid=dossier::id();
-    $href=http_build_query(array('gDossier'=>$dosid,'md_id'=>$doc->md_id,'act'=>'RAW:document_template'));
+	        $s=dossier::get();
 
-    echo '<A HREF="export.php?'.$href.'">'.'('._('fichier actuel').')</a>';
+           echo '<A HREF="show_document_modele.php?md_id='.$doc->md_id.'&'.$s.'">(fichier actuel)</a>';
 ?>
 </td>
 <td>

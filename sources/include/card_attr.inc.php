@@ -23,8 +23,8 @@
  * \brief Manage the attributs
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class/fiche_attr.class.php';
-global $http;
+require_once NOALYSS_INCLUDE.'/class_fiche_attr.php';
+
 
 
 $fa=new Fiche_Attr($cn);
@@ -34,13 +34,13 @@ $fa=new Fiche_Attr($cn);
 /////////////////////////////////////////////////////////////////////////////
 if ( isset($_POST['save']))
 {
+    $ad_id=$_POST['ad_id'];
+    $ad_text=$_POST['desc'];
+    $ad_type=$_POST['type'];
+    $ad_size=$_POST['size'];
+    $ad_extra=$_POST['extra'];
     try
     {
-        $ad_id=$http->post('ad_id');
-        $ad_text=$http->post('desc');
-        $ad_type=$http->post('type');
-        $ad_size=$http->post('size');
-        $ad_extra=$http->post('extra');
         $cn->start();
         for ($e=0;$e<count($ad_id);$e++)
         {
@@ -56,7 +56,6 @@ if ( isset($_POST['save']))
     }
     catch (Exception $e)
     {
-        record_log($e->getTraceAsString());
       alert($e->getMessage());
         $cn->rollback();
     }
@@ -152,7 +151,7 @@ $size->readOnly=false;
 $extra->readOnly=false;
 $desc->value='';
 $select_type->selected=-1;
-$r=td(_("Nouvel attribut").HtmlInput::hidden('ad_id[]','0'),'class="highlight"');
+$r=td(HtmlInput::hidden('ad_id[]','0'));
 $r.=td($desc->input());
 $r.=td($select_type->input());
 $r.=td($size->input());

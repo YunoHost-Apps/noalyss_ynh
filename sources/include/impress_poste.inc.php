@@ -17,12 +17,12 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 // Copyright Author Dany De Bontridder danydb@aevalys.eu
-if ( ! defined ('ALLOWED') ) die(_('Non autorisé'));
-require_once NOALYSS_INCLUDE.'/lib/ispan.class.php';
-require_once NOALYSS_INCLUDE.'/lib/icard.class.php';
-require_once NOALYSS_INCLUDE.'/lib/iselect.class.php';
-require_once NOALYSS_INCLUDE.'/lib/icheckbox.class.php';
-require_once NOALYSS_INCLUDE.'/class/acc_operation.class.php';
+if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
+require_once NOALYSS_INCLUDE.'/class_ispan.php';
+require_once NOALYSS_INCLUDE.'/class_icard.php';
+require_once NOALYSS_INCLUDE.'/class_iselect.php';
+require_once NOALYSS_INCLUDE.'/class_icheckbox.php';
+require_once NOALYSS_INCLUDE.'/class_acc_operation.php';
 /*! \file
  * \brief Print account (html or pdf)
  *        file included from user_impress
@@ -33,8 +33,8 @@ require_once NOALYSS_INCLUDE.'/class/acc_operation.class.php';
 //-----------------------------------------------------
 // Show the jrn and date
 //-----------------------------------------------------
-require_once NOALYSS_INCLUDE.'/lib/database.class.php';
-require_once NOALYSS_INCLUDE.'/lib/ipopup.class.php';
+require_once NOALYSS_INCLUDE.'/class_database.php';
+require_once NOALYSS_INCLUDE.'/class_ipopup.php';
 global $g_user;
 
 //-----------------------------------------------------
@@ -55,15 +55,15 @@ $w->set_attribute('label','poste_id_label');
 $w->set_attribute('account','poste_id');
 $w->table=0;
 $w->value=(isset($_REQUEST['poste_id']))?$_REQUEST['poste_id']:"";
-$w->label=_("Choisissez le poste");
-print td(_('Choisissez un poste')).td($w->input());
+$w->label="Choisissez le poste";
+print td('Choisissez un poste ').td($w->input());
 echo td($span->input('poste_id_label'));
 echo '</tr><tr>';
 
 $w_poste=new ICard('f_id');
 $w_poste->table=0;
 $w_poste->jrn=0;
-echo td(_("Ou Choisissez la fiche"));
+echo td("Ou Choisissez la fiche");
 $w_poste->set_attribute('label','f_id_label');
 $w_poste->set_attribute('ipopup','ipop_card');
 $w_poste->set_attribute('gDossier',dossier::id());
@@ -88,21 +88,21 @@ echo td(_('Jusque ').$date_to->input());
 //
 print "<TR><TD>";
 $all=new ICheckBox();
-$all->label=_("Tous les postes qui en dépendent");
+$all->label="Tous les postes qui en dépendent";
 $all->disabled=false;
 $all->selected=(isset($_REQUEST['poste_fille']))?true:false;
 echo $all->input("poste_fille");
 echo '</TD></TR><TR><TD>';
 $detail=new ICheckBox();
-$detail->label=_("Détail des opérations");
+$detail->label="D&eacute;tail des op&eacute;rations";
 $detail->disabled=false;
 $detail->selected=(isset($_REQUEST['oper_detail']))?true:false;
 echo $detail->input("oper_detail");
 echo '</td></tr>';
 $a_let=array(
-           array('value'=>0,'label'=>_('Toutes les opérations')),
-           array('value'=>1,'label'=>_('Opérations lettrées')),
-           array('value'=>2,'label'=>_('Opérations non lettrées'))
+           array('value'=>0,'label'=>'Toutes les opérations'),
+           array('value'=>1,'label'=>' Opérations lettrées'),
+           array('value'=>2,'label'=>' Opérations non lettrées')
        );
 echo '</TABLE>';
 $salet=new ISelect('ople');
@@ -111,7 +111,7 @@ $salet->selected=(isset ($_GET['ople']))?$_GET['ople']:0;
 
 echo $salet->input();
 
-print HtmlInput::submit('bt_html',_('Visualisation'));
+print HtmlInput::submit('bt_html','Visualisation');
 
 echo '</FORM>';
 echo '<hr>';
@@ -129,14 +129,14 @@ if ( isset( $_REQUEST['bt_html'] ) )
         echo alert(_('Date malformée, désolée'));
         return;
     }
-    require_once NOALYSS_INCLUDE.'/class/acc_account_ledger.class.php';
+    require_once NOALYSS_INCLUDE.'/class_acc_account_ledger.php';
     $go=0;
 // we ask a poste_id
     if ( isset($_GET['poste_id']) && strlen(trim($_GET['poste_id'])) != 0 )
     {
         if ( isset ($_GET['poste_fille']) )
         {
-            $parent=sql_string($_GET['poste_id']);
+            $parent=$_GET['poste_id'];
             $a_poste=$cn->get_array("select pcm_val from tmp_pcmn where pcm_val::text like '$parent%' order by pcm_val::text");
             $go=3;
         }
@@ -149,7 +149,7 @@ if ( isset( $_REQUEST['bt_html'] ) )
     }
     if ( strlen(trim($_GET['f_id'])) != 0 )
     {
-        require_once NOALYSS_INCLUDE.'/class/fiche.class.php';
+        require_once NOALYSS_INCLUDE.'/class_fiche.php';
         // thanks the qcode we found the poste account
         $fiche=new Fiche($cn);
         $qcode=$fiche->get_by_qcode($_GET['f_id']);
@@ -168,14 +168,7 @@ if ( isset( $_REQUEST['bt_html'] ) )
         {
             Acc_Account_Ledger::HtmlTableHeader();
 	    echo '<div class="content">';
-            $Poste->load();
-            ob_start();
-            $result=$Poste->HtmlTable(null,$_GET['ople']);
-            $table=ob_get_clean();
-            if ( $result == 0) {
-            echo '<h2 class="info">'.$Poste->id." ".h($Poste->label).'</h2>';
-            echo $table;
-            }
+            $Poste->HtmlTable(null,$_GET['ople']);
 	    echo '</div>';
             echo Acc_Account_Ledger::HtmlTableHeader();
         }
@@ -264,15 +257,7 @@ if ( isset( $_REQUEST['bt_html'] ) )
             foreach ($a_poste as $poste_id )
             {
                 $Poste=new Acc_Account_Ledger ($cn,$poste_id['pcm_val']);
-                $Poste->load();
-                ob_start();
-                $result=$Poste->HtmlTable(null,$_GET['ople']);
-                $table=ob_get_clean();
-                if ( $result == 0) {
-                echo '<h2 class="info">'.$Poste->id." ".h($Poste->label).'</h2>';
-                echo $table;
-                }
-                
+                $Poste->HtmlTable(null,$_GET['ople']);
             }
             echo Acc_Account_Ledger::HtmlTableHeader();
             echo "</div>";

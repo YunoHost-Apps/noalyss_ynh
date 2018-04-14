@@ -2,7 +2,7 @@
 //This file is part of NOALYSS and is under GPL 
 //see licence.txt
 ?><div class="content">
-<?php echo _("Cherche")?> :    
+<?php echo _("Filtre")?> :    
     <?php
     $col="";$sp="";
     for ($e=0;$e<count($aHeading);$e++) {$col.=$sp.$e; $sp=",";}
@@ -16,9 +16,10 @@ for ($i=0;$i<count($aHeading);$i++) :
     $span="";$sort="";
    if ($i==0)
    {
+       $span='<span id="sorttable_sortfwdind">&nbsp;&nbsp;&#x25BE;</span>';
        $sort= 'class="sorttable_sorted"';
    }
-   echo '<th '.$sort.'>'.$aHeading[$i]->ad_text.'</th>';
+   echo '<th '.$sort.'>'.$aHeading[$i]->ad_text.$span.'</th>';
    endfor;
 ?>
 </tr>
@@ -42,8 +43,6 @@ echo td($detail);
                 if ($attr->ad_type=="date") :
                     // format YYYYMMDD
                     $sort='sorttable_customkey="'.format_date($attr->av_text, "DD.MM.YYYY", "YYYYMMDD").'"'; 
-                elseif ($attr->ad_type=="poste"):
-                    $sort='sorttable_customkey="TEXT'.$attr->av_text.'"'; 
                 endif;
         	echo td($attr->av_text,'style="padding: 0 10 1 10;white-space:nowrap;" '.$sort);
 	 else:

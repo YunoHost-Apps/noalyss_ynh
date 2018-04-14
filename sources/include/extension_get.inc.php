@@ -3,16 +3,16 @@
 //see licence.txt
 
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/lib/database.class.php';
-require_once NOALYSS_INCLUDE.'/class/dossier.class.php';
-require_once NOALYSS_INCLUDE.'/lib/ac_common.php';
+require_once NOALYSS_INCLUDE.'/class_database.php';
+require_once NOALYSS_INCLUDE.'/class_dossier.php';
+require_once NOALYSS_INCLUDE.'/ac_common.php';
 require_once NOALYSS_INCLUDE.'/constant.php';
-require_once NOALYSS_INCLUDE.'/lib/function_javascript.php';
-require_once NOALYSS_INCLUDE.'/class/extension.class.php';
-require_once  NOALYSS_INCLUDE.'/lib/html_input.class.php';
-require_once NOALYSS_INCLUDE.'/lib/iselect.class.php';
+require_once NOALYSS_INCLUDE.'/function_javascript.php';
+require_once NOALYSS_INCLUDE.'/class_extension.php';
+require_once  NOALYSS_INCLUDE.'/class_html_input.php';
+require_once NOALYSS_INCLUDE.'/class_iselect.php';
 require_once  NOALYSS_INCLUDE.'/constant.security.php';
-require_once  NOALYSS_INCLUDE.'/class/user.class.php';
+require_once  NOALYSS_INCLUDE.'/class_user.php';
 
 /**
  * included from do.php + extension_choice.inc.php

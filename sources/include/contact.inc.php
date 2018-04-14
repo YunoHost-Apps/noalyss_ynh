@@ -21,11 +21,11 @@
  * the contact category
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/lib/iselect.class.php';
-require_once NOALYSS_INCLUDE.'/lib/ihidden.class.php';
-require_once NOALYSS_INCLUDE.'/class/contact.class.php';
-require_once NOALYSS_INCLUDE.'/lib/ibutton.class.php';
-require_once NOALYSS_INCLUDE.'/class/fiche_def.class.php';
+require_once NOALYSS_INCLUDE.'/class_iselect.php';
+require_once NOALYSS_INCLUDE.'/class_ihidden.php';
+require_once NOALYSS_INCLUDE.'/class_contact.php';
+require_once NOALYSS_INCLUDE.'/class_ibutton.php';
+require_once NOALYSS_INCLUDE.'/class_fiche_def.php';
 
 
 
@@ -74,8 +74,7 @@ if ($low_action == "list")
 		<?php
 		echo dossier::hidden();
 		$a = (isset($_GET['query'])) ? $_GET['query'] : "";
-                echo _("Cherche ").HtmlInput::filter_table_form("contact_tb", '0,1,2,3,4,5,6', 1,"query",$a);
-
+		printf(_('Recherche') . HtmlInput::filter_table("contact_tb", "0,1,2,3,4,5,6", 1));
 		$sel_card = new ISelect('cat');
 		$sel_card->value = $cn->make_array('select fd_id, fd_label from fiche_def ' .
 			' where  frd_id=' . FICHE_TYPE_CONTACT .

@@ -22,12 +22,8 @@
  */
 
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class/document_modele.class.php';
+require_once NOALYSS_INCLUDE.'/class_document_modele.php';
 $sub_action=(isset ($_REQUEST['sa']))?$_REQUEST['sa']:"";
-
-$http=new HttpInput();
-
-$sub_action=$http->request("sa","string","");
 echo js_include('modele_document.js');
 echo '<div class="content">';
 // show the form for adding a template
@@ -39,13 +35,13 @@ $doc=new Document_modele($cn);
 //-----------------------------------------------------
 if ( $sub_action=='add_document')
 {
-    require_once NOALYSS_INCLUDE.'/class/document_modele.class.php';
+    require_once NOALYSS_INCLUDE.'/class_document_modele.php';
     $doc=new Document_modele($cn);
-    $doc->md_name=$http->post('md_name');
+    $doc->md_name=$_POST['md_name'];
     $doc->md_id=-1; // because it is a new model
-    $doc->md_type=$http->post('md_type',"number");
-    $doc->start=$http->post('start_seq',"number");
-    $doc->md_affect=$http->post('md_affect');
+    $doc->md_type=$_POST['md_type'];
+    $doc->start=$_POST['start_seq'];
+    $doc->md_affect=$_POST['md_affect'];
     $doc->Save();
 }
 //-----------------------------------------------------
@@ -53,7 +49,7 @@ if ( $sub_action=='add_document')
 //-----------------------------------------------------
 if ( $sub_action=='rm_template')
 {
-    require_once NOALYSS_INCLUDE.'/class/document_modele.class.php';
+    require_once NOALYSS_INCLUDE.'/class_document_modele.php';
     // Get all the document to remove
 
     foreach ( $_POST as $name=>$value )
@@ -72,9 +68,8 @@ if ( $sub_action=='rm_template')
 //----------------------------------------------------------------------
 if ( $sub_action == 'mod_template')
   {
-    require_once NOALYSS_INCLUDE.'/class/document_modele.class.php';
-    $id=$http->post("id","number");
-    $doc=new Document_modele($cn,$id);
+    require_once NOALYSS_INCLUDE.'/class_document_modele.php';
+    $doc=new Document_modele($cn,$_POST['id']);
     $doc->update($_POST);
   }
 //-----------------------------------------------------
@@ -82,7 +77,7 @@ if ( $sub_action == 'mod_template')
 //-----------------------------------------------------
 echo $doc->myList();
 echo '<div id="add_modele" class="inner_box" style="display:none">';
-echo HtmlInput::title_box(_("Ajout d'un modèle"), "add_modele", "hide");
+echo HtmlInput::title_box("Ajout d'un modèle", "add_modele", "hide");
 echo $doc->form('');
 echo '</div>';
 

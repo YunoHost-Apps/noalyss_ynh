@@ -25,27 +25,18 @@
  * @brief display the last action
  * inherited parameter  : $cn database connection, $array
  */
-require_once NOALYSS_INCLUDE.'/class/default_menu.class.php';
+require_once NOALYSS_INCLUDE.'/class_default_menu.php';
 $a_default=new Default_Menu();
 
 echo HtmlInput::title_box(_('Suivi'), 'action_list_div');
-
-echo _("Recherche"),HtmlInput::filter_table("event_followup", '0,1,2,3', 1);
 ?>
-<table id="event_followup" class="sortable"    style="width: 100%">
-    <tr>
-        <th class="sorttable_sorted_reverse"><?=_("Date création")?></th>
-        <th><?=_("Référence")?></th>
-        <th><?=_("Destinataire")?></th>
-        <th><?=_("Titre")?></th>
-    </tr>
+<table style="width: 100%">
     <?php
     for ($i=0;$i < $len_array;$i++) :
     ?>
         <tr class=" <?php echo ($i%2==0)?'even':'odd'?>">
-            <td sorttable_customkey="<?=$array[$i]['ag_timestamp']?>" class="box">
+            <td class="box">
                 <?php echo smaller_date($array[$i]['ag_timestamp_fmt']) ;?>
-                <?php echo " ".$array[$i]['ag_hour'] ;?>
             </td>
             <td class="box">
                 <?php echo HtmlInput::detail_action($array[$i]['ag_id'], $array[$i]['ag_ref'], 1)  ?>

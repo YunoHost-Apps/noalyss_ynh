@@ -1,32 +1,31 @@
 <?php
 /*
- *   This file is part of NOALYSS.
+ *   This file is part of PhpCompta.
  *
- *   NOALYSS isfree software; you can redistribute it and/or modify
+ *   PhpCompta is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation; either version 2 of the License, or
  *   (at your option) any later version.
  *
- *   NOALYSS isdistributed in the hope that it will be useful,
+ *   PhpCompta is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with NOALYSS; if not, write to the Free Software
+ *   along with PhpCompta; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 // Copyright (2014) Author Dany De Bontridder <dany@alchimerys.be>
 
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class/extension.class.php';
+require_once NOALYSS_INCLUDE.'/class_extension.php';
 
 /**
  * @file
  * @brief Automatic installation of plugins and activation
  */
 global $cn;
-global $http;
 
 /******************************************************************************
  * Scan the plugin folder and file in each subfolder a property file and
@@ -62,7 +61,7 @@ $nb_profile=count($a_profile);
  ******************************************************************************/
 if ( isset ($_POST['save_plugin'])){
     // retrieve array of plugin
-    $plugin=$http->post('plugin', "string",array());
+    $plugin=HtmlInput::default_value_post('plugin', array());
     // for each extension
     for ($i=0;$i<$nb_plugin;$i++) {
         
@@ -79,11 +78,10 @@ if ( isset ($_POST['save_plugin'])){
                 }
                 try
                 {
-                    $a_plugin[$i]->insert_profile_menu($profile);
+                    $a_plugin[$i]->insert_profile_menu($profile,'EXT');
                 }
                 catch (Exception $exc)
                 {
-                    record_log($exc->getTraceAsString());
                     $profile_name=$cn->get_value('select profile.p_name from profile where p_id=$1'
                             ,array($profile));
                     echo '<p class="notice">';
@@ -107,8 +105,7 @@ if ( isset ($_POST['save_plugin'])){
 <div class="content">
     <?php echo _('Nombre de plugins trouvés')." ".$nb_plugin; ?>
     <form method="post">
-    <?php echo _('Filtre');echo " ";echo HtmlInput::filter_table("plugin_install_tb", '0,1,2,3', 1);?>
-    <table id="plugin_install_tb" class="result">
+    <table class="result">
         <tr>
             <th><?php echo _('Extension')?></th>
             <th><?php echo _('Menu')?></th>
@@ -136,12 +133,7 @@ if ( isset ($_POST['save_plugin'])){
                 <?php echo h($a_plugin[$e]->me_menu); ?>
             </td>
             <td>
-                <?php echo h($a_plugin[$e]->me_description);?>
-                <span style="display:block">
-                <?php 
-                    printf(_("Installé par défaut dans %s"),$a_plugin[$e]->depend);
-                ?>
-                </span>
+                <?php echo h($a_plugin[$e]->me_description); ?>
             </td>
             <td>
                 <?php echo h($a_plugin[$e]->me_file); ?>

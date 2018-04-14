@@ -19,10 +19,10 @@
  */
 
 require_once '../include/constant.php';
-require_once NOALYSS_INCLUDE.'/lib/database.class.php';
-require_once NOALYSS_INCLUDE.'/class/user.class.php';
+require_once NOALYSS_INCLUDE.'/class_database.php';
+require_once NOALYSS_INCLUDE.'/class_user.php';
 
-$cn=Dossier::connect();
+$cn=new Database($_GET['gDossier']);
 global $g_user;
 $g_user=new User($cn);
 $g_user->Check();
@@ -30,13 +30,12 @@ $g_user->check_dossier($_GET['gDossier']);
 $res=$cn->exec_sql("select distinct code,description from get_profile_menu($1) where code ~* $2 or description ~* $3 order by code limit 5  ",array($g_user->get_profile(),$_POST['acs'],$_POST['acs']));
 $nb=Database::num_row($res);
 	echo "<ul>";
-set_language();
 for ($i = 0;$i< $nb;$i++)
 {
 	$row=Database::fetch_array($res,$i);
 	echo "<li>";
 	echo $row['code'];
-	echo '<span class="informal"> '._($row['description']).'</span></li>';
+	echo '<span class="informal"> '.$row['description'].'</span></li>';
 }
 	echo "</ul>";
 if ( $nb == 0 ) {

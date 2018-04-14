@@ -23,20 +23,20 @@
  * \brief included file for managing the predefined operation
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/lib/iselect.class.php';
-require_once NOALYSS_INCLUDE.'/lib/icheckbox.class.php';
-require_once NOALYSS_INCLUDE.'/lib/ihidden.class.php';
-require_once NOALYSS_INCLUDE.'/lib/database.class.php';
-require_once NOALYSS_INCLUDE.'/lib/ac_common.php';
-require_once NOALYSS_INCLUDE.'/class/pre_operation.class.php';
-global $http;
+require_once NOALYSS_INCLUDE.'/class_iselect.php';
+require_once NOALYSS_INCLUDE.'/class_icheckbox.php';
+require_once NOALYSS_INCLUDE.'/class_ihidden.php';
+require_once NOALYSS_INCLUDE.'/class_database.php';
+require_once NOALYSS_INCLUDE.'/ac_common.php';
+require_once NOALYSS_INCLUDE.'/class_pre_operation.php';
+
 /*
  * Value from $_GET or $_REQUEST
  */
-$request_jrn=$http->request("jrn","string", -1);
-$request_ac=$http->request("ac","string", "");
-$request_sa=$http->request("sa","string", "");
-$get_jrn=$http->get('jrn',"string",-1);
+$request_jrn=HtmlInput::default_value_request("jrn", -1);
+$request_ac=HtmlInput::default_value_request("ac", "");
+$request_sa=HtmlInput::default_value_request("sa", "");
+$get_jrn=HtmlInput::default_value_get('jrn',-1);
 
 echo '<div class="content">';
 echo '<form method="GET">';
@@ -60,12 +60,8 @@ echo '</form>';
 if ( $request_sa == 'del')
 {
     $op=new Pre_operation($cn);
-    $http=new HttpInput();
-    $op->od_id=$http->request('od_id',"string",-1);
-    if (isNumber($op->od_id)==1 && $op->od_id != -1 )
-    {
-        $op->delete();
-    }
+    $op->od_id=$_REQUEST['od_id'];
+    $op->delete();
     $request_sa='jrn';
 }
 
@@ -86,8 +82,8 @@ if ( $request_sa== 'jrn' )
         echo _("Aucun enregistrement");
         return;
     }
-    echo HtmlInput::filter_table('preod_table', '0', 0);
-    echo '<table id="preod_table">';
+
+    echo '<table>';
     $count=0;
     foreach ($array as $row )
     {
@@ -101,16 +97,16 @@ if ( $request_sa== 'jrn' )
         echo '<td>'.h($row['od_name']).'</td>';
         echo '<td>'.h($row['od_description']).'</td>';
         echo '<td>';
-	echo '<form method="POST" id="preod_frm'.$row['od_id'].'" class="print" style="margin:0px;padding:0px;">';
+	echo '<form method="POST" id="preod_frm" class="print" style="margin:0px;padding:0px;">';
         echo dossier::hidden();
-        echo HtmlInput::hidden("sa","del");
-        echo HtmlInput::hidden("ac",$request_ac);
-        echo HtmlInput::hidden("del","");
-        echo HtmlInput::hidden("od_id",$row['od_id']);
-        echo HtmlInput::hidden("jrn",$get_jrn);
+        echo $hid->input("sa","del");
+        echo $hid->input("ac",$request_ac);
+        echo $hid->input("del","");
+        echo $hid->input("od_id",$row['od_id']);
+        echo $hid->input("jrn",$get_jrn);
 
 	$b='<input type="submit" class="smallbutton" value="'._("Effacer").'"'.
-	  ' onClick="return confirm_box(\'preod_frm'.$row['od_id'].'\',\''._("Voulez-vous vraiment effacer cette operation ?").'\');" >';
+	  ' onClick="return confirm_box(\'preod_frm\',\''._("Voulez-vous vraiment effacer cette operation ?").'\');" >';
 	   echo $b;
 	   echo '</form>';
 

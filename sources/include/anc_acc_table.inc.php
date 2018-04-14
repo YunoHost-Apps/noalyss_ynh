@@ -1,13 +1,9 @@
 <?php
 //This file is part of NOALYSS and is under GPL 
 //see licence.txt
-/**
- * @file
- * @brief Module Printing : Analytic to display relation between card or accounting with
- * Analytic
- */
+
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class/anc_table.class.php';
+require_once NOALYSS_INCLUDE.'/class_anc_table.php';
 $tab = new Anc_Table($cn);
 $tab->get_request();
 echo '<form method="get">';

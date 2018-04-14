@@ -4,7 +4,6 @@
 ?><?php
 $max=$this->cn->count($ret);
 echo HtmlInput::filter_table("tag_tb", '0,1', '1');
-$nDossier=Dossier::id();
 ?>
 <table id="tag_tb">
     <tr>
@@ -31,20 +30,6 @@ $ac=$_REQUEST['ac'];
         <td>
             <?php
             echo $row['t_description'];
-            ?>
-        </td>
-        <td>
-            <?php
-            $id=sprintf("tag_onoff%d",$row['t_id']);
-            // Activate button
-            if ( $row['t_actif'] == "Y") {
-               $js=sprintf("activate_tag('%s','%s')",$nDossier,$row['t_id']);
-               echo Icon_Action::iconon($id, $js);
-            } else {
-               $js=sprintf("activate_tag('%s','%s')",$nDossier,$row['t_id']);
-               echo Icon_Action::iconoff($id, $js);
-                
-            }
             ?>
         </td>
     </tr>

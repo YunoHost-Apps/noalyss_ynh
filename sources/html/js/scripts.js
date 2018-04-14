@@ -25,7 +25,7 @@
  */
 var ask_reload = 0;
 var tag_choose = '';
-var aDraggableElement=new Array();
+
 /**
  * callback function when we just need to update a hidden div with an info
  * message
@@ -164,7 +164,7 @@ function encodeJSON(obj)
     {
         var str = '';
         var e = 0;
-        for (var i in obj)
+        for (i in obj)
         {
             if (e !== 0)
             {
@@ -363,8 +363,8 @@ function change_month(obj)
  * the code. In that case, you need to create the object before the Ajax.Request
  *The difference with success box is that
  *@see add_div removeDiv success_box is that the width and height are not changed ajax_misc.php
- *@param code is the ID of the object containing the html (div, button...)
- *@param value is the html code, with it you fill the ctl element
+ *@parameter code is the ID of the object containing the html (div, button...)
+ *@parameter value is the html code, with it you fill the ctl element
  */
 
 function success_misc(req)
@@ -431,8 +431,8 @@ function cat_doc_remove(p_dt_id, p_dossier)
                             alert_box('erreur <br>' + rec );
                             return;
                         }
-                        var nodeXML = html[0];
-                        var row_id = getNodeText(nodeXML);
+                        nodeXML = html[0];
+                        row_id = getNodeText(nodeXML);
                         if (row_id === 'nok')
                         {
                             var message_node = answer.getElementsByTagName('message');
@@ -496,8 +496,6 @@ function popup_select_tva(obj)
             queryString += '&code=' + obj.jcode;
         if (obj.compute)
             queryString += '&compute=' + obj.compute;
-        if (obj.filter)
-            queryString += '&filter=' + obj.filter;
 
         var action = new Ajax.Request(
                 "ajax_misc.php",
@@ -526,7 +524,7 @@ function popup_select_tva(obj)
                             var nLeft = "15%";
                             var str_style = "top:" + nTop + "px;left:" + nLeft + ";right:" + nLeft + ";width:55em;height:auto";
 
-                            var popup = {'id': 'tva_select', 'cssclass': 'inner_box', 'style': str_style, 'html': code_html, 'drag': false};
+                            var popup = {'id': 'tva_select', 'cssclass': 'inner_box', 'style': str_style, 'html': code_html, 'drag': true};
                             add_div(popup);
                             $('lk_tva_select_table').focus();
                         }
@@ -545,7 +543,7 @@ function popup_select_tva(obj)
 }
 /**
  *@brief display the popup with vat and explanations
- *@deprecated this function is not used anymore
+ *@obsolete
  */
 function success_popup_select_tva_obsolete(req)
 {
@@ -609,7 +607,7 @@ function success_set_tva_label(req)
  *@brief set loading for waiting
  *@param name of ipopup
  *@see showIPopup
- *@deprecated
+ *@obsolete
  */
 function set_wait_obsolete(name)
 {
@@ -673,13 +671,11 @@ function create_div(obj)
          else if ( ! obj.effect ){ Effect.Grow(obj.id,{direction:'top-right',duration:0.1}); }*/
         if (obj.drag)
         {
-            aDraggableElement[obj.id]=new Draggable(obj.id, {starteffect: function ()
+            new Draggable(obj.id, {starteffect: function ()
                 {
                     new Effect.Highlight(obj.id, {scroll: window, queue: 'end'});
                 }}
             );
-           
-            
         }
         return elt;
     }
@@ -751,7 +747,7 @@ function waiting_box()
     }
     waiting_node();
     add_div(obj);
-    
+    $('wait_box').setOpacity(0.7);
 
 }
 /**
@@ -771,7 +767,16 @@ function show_box(obj)
     add_div(obj);
     if (!obj.fixed)
     {
-        g(obj.id).style.top = calc(40) + "px";
+        var sx = 0;
+        if (window.scrollY)
+        {
+            sx = window.scrollY + 40;
+        }
+        else
+        {
+            sx = document.body.scrollTop + 40;
+        }
+        g(obj.id).style.top = sx + "px";
         show(obj.id);
     }
     else
@@ -849,7 +854,6 @@ function show_ledger_choice(json_obj)
         for (i = 0; i < $(json_obj.div + 'nb_jrn').value; i++) {
             query = query + "&r_jrn[]=" + $(json_obj.div + 'r_jrn[' + i + ']').value;
         }
-        query=encodeURI(query);
         var action = new Ajax.Request(
                 "ajax_misc.php",
                 {method: 'get',
@@ -860,12 +864,13 @@ function show_ledger_choice(json_obj)
                             var obj = {
                                 id: json_obj.div + 'jrn_search',
                                 cssclass: 'inner_box',
-                                style: ';position:absolute;width:auto;z-index:20;margin-left:20%',
+                                style: ';position:absolute;width:60%;z-index:20;margin-left:20%',
                                 drag: 1
                             };
                             //var y=calcy(posY);
                             var y = posY;
-                            
+                            if (json_obj.div != '')
+                                obj.cssclass = "";
                             obj.style = "top:" + y + 'px;' + obj.style;
                             /* if ( json_obj.class ) 
                              { 
@@ -915,10 +920,7 @@ function hide_ledger_choice(p_frm_search)
     try
     {
         var nb = $(p_frm_search).nb_jrn.value;
-        var div = "";
-        if ( $(p_frm_search).div ) {
-            div = $(p_frm_search).div.value;
-        }
+        var div = $(p_frm_search).div.value;
         var i = 0;
         var str = "";
         var name = "";
@@ -927,7 +929,7 @@ function hide_ledger_choice(p_frm_search)
         for (i = 0; i < nb; i++) {
             n_name = div + "r_jrn[" + sel + "]";
             name = div + "r_jrn" + i;
-            if ( $(name).checked) {
+            if ($(name).checked) {
                 str += '<input type="hidden" id="' + n_name + '" name="' + n_name + '" value="' + $(name).value + '">';
                 sel++;
             }
@@ -1029,25 +1031,6 @@ function select_checkbox(form_id)
     }
 }
 /**
- * select all the checkbox in a given form if the specific attribute 
- * has the given value
- * @param form_id id of the form
- * @param attribute name
- * @param attribute value
- */
-function select_checkbox_attribute(form_id,p_attribute_name,p_attribute_value)
-{
-    var form = $(form_id);
-    for (var i = 0; i < form.length; i++)
-    {
-        var e = form.elements[i];
-        if (e.type === 'checkbox' && e.getAttribute(p_attribute_name)==p_attribute_value)
-        {
-            e.checked = true;
-        }
-    }
-}
-/**
  * unselect all the checkbox in a given form
  * @param form_id id of the form
  */
@@ -1076,15 +1059,13 @@ function show_calc()
     }
     var sid = 'calc1';
     var shtml = '';
-    shtml +="<div class=\"bxbutton\">";
-    shtml += '<a class="icon" onclick="pin(\'calc1\')" id="pin_calc1">&#xf047;</a>	<a onclick="removeDiv(\'calc1\');" href="javascript:void(0)" title="" class="icon">&#10761;</a>';
-    shtml +="</div>";
-    shtml += '   <h2 class="title">Calculatrice</h2>';
-    shtml += '<form name="calc_line"  method="GET" onSubmit="cal();return false;" >Calculatrice simplifiée: écrivez simplement les opérations que vous voulez puis la touche retour. exemple : 1+2+3*(1/5) <input class="input_text" type="text" size="30" id="inp" name="calculator"> <input type="button" value="Efface" class="button" onClick="Clean();return false;" > <input type="button" value="Efface historique" class="button" onClick="CleanHistory();return false;" > <input type="button" class="button" value="Fermer" onClick="removeDiv(\'calc1\')" >';
-    shtml += '</form><span class="highligth" style="display:block" id="sub_total">  Taper une formule (ex 20*5.1) puis enter  </span><span style="display:block"  id="listing"> </span>';
+    shtml += '<div style="float:right;height:10px;display:block;margin-top:2px;margin-right:2px">	<a onclick="removeDiv(\'calc1\');" href="javascript:void(0)" id="close_div">Fermer</a></div>';
+    shtml += '<div>   <h2 class="info">Calculatrice</h2></div>';
+    shtml += '<form name="calc_line"  method="GET" onSubmit="cal();return false;" >Calculatrice simplifiée: écrivez simplement les opérations que vous voulez puis la touche retour. exemple : 1+2+3*(1/5) <input class="input_text" type="text" size="30" id="inp" name="calculator"> <input type="button" value="Efface tout" class="button" onClick="Clean();return false;" > <input type="button" class="button" value="Fermer" onClick="removeDiv(\'calc1\')" >';
+    shtml += '</form><span id="result">  </span><br><span id="sub_total">  Taper une formule (ex 20*5.1) puis enter  </span><br><span id="listing"> </span>';
 
     var obj = {id: sid, html: shtml,
-        drag: false, style: 'z-index:98'
+        drag: true, style: ''
     };
     add_div(obj);
     this.document.getElementById('inp').focus();
@@ -1177,8 +1158,8 @@ function save_periode(obj)
  * the code. In that case, you need to create the object before the Ajax.Request
  *The difference with success box is that
  *@see add_div removeDiv success_box is that the width and height are not changed
- *@param ctl is the ID of the object containing the html (div, button...)
- *@param code is the html code, with it you fill the ctl element
+ *@parameter ctl is the ID of the object containing the html (div, button...)
+ *@parameter code is the html code, with it you fill the ctl element
  */
 function fill_box(req)
 {
@@ -1200,19 +1181,11 @@ function fill_box(req)
     }
     catch (e) {
         alert_box(e.message);
-         if (console) {
-            console.error(e);
-            console.error("log answer = "+e.responseText);
-        }
     }
     try {
         code_html.evalScripts();
     }
     catch (e) {
-        if (console) {
-            console.error(e);
-            console.error("log answer = "+e.responseText);
-        }
         alert_box("Impossible executer script de la reponse\n" + e.message);
     }
 
@@ -1272,11 +1245,10 @@ function save_predf_op(obj)
  * @param {type} ctl_concern
  * @param {type} amount_id
  * @param {type} ledger
- * @param {type} p_id_targetDom Element (div) where to display the search result
- * @param p_tiers id of the Tiers
+ * @param {type} p_id_target
  * @returns {undefined}
  */
-function search_reconcile(dossier, ctl_concern, amount_id, ledger, p_id_target,p_tiers)
+function search_reconcile(dossier, ctl_concern, amount_id, ledger, p_id_target)
 {
     var dossier = g('gDossier').value;
     if (amount_id === undefined)
@@ -1294,31 +1266,24 @@ function search_reconcile(dossier, ctl_concern, amount_id, ledger, p_id_target,p
             amount_id = $(amount_id).innerHTML;
         }
     }
-    var tiers=""
-    if ( p_tiers ) tiers=p_tiers;
-    var target = "";
-    if ( p_id_target !="") {
-        target=p_id_target;
-    }else {
-        target = "search"+layer;
-        removeDiv(target);
-    }
+
+    var target = "search_op";
+    removeDiv(target);
     var str_style = fixed_position(77, 99);
     str_style += ";width:92%;overflow:auto;";
     waiting_box();
 
 
-    var param_send = {gDossier: dossier,
+    var target = {gDossier: dossier,
         ctlc: ctl_concern,
         op: 'search_op',
+        ctl: target,
         ac: 'JSSEARCH',
         amount_id: amount_id,
         ledger: ledger,
-        target: target,
-        tiers:tiers
-    };
+        target: p_id_target};
 
-    var qs = encodeJSON(param_send);
+    var qs = encodeJSON(target);
 
     var action = new Ajax.Request('ajax_misc.php',
             {
@@ -1327,9 +1292,9 @@ function search_reconcile(dossier, ctl_concern, amount_id, ledger, p_id_target,p
                 onFailure: null,
                 onSuccess: function (req) {
                     remove_waiting_box();
-                    var div = {id: target, cssclass: 'inner_box', style: str_style, drag: 0};
+                    var div = {id: 'search_op', cssclass: 'inner_box', style: str_style, drag: 1};
                     add_div(div);
-                    $(target).innerHTML = req.responseText;
+                    $('search_op').innerHTML = req.responseText;
                     req.responseText.evalScripts();
                 }
             }
@@ -1343,11 +1308,8 @@ function search_operation(obj)
     try {
         var dossier = g('gDossier').value;
         waiting_box();
-        var target = "search"+layer;
-        if ( $(obj)["target"] ) {
-            target=$(obj)["target"].value;
-        }
-        var qs = Form.serialize('search_form_ajx') + "&op=search_op";
+        var target = "search_op";
+        var qs = Form.serialize('search_form_ajx') + "&op=search_op&ctl=search_op";
         var action = new Ajax.Request('ajax_misc.php',
                 {
                     method: 'get',
@@ -1355,7 +1317,7 @@ function search_operation(obj)
                     onFailure: null,
                     onSuccess: function (req) {
                         remove_waiting_box();
-                        $(target).innerHTML = req.responseText;
+                        $('search_op').innerHTML = req.responseText;
                         req.responseText.evalScripts();
                     }
                 }
@@ -1379,12 +1341,11 @@ function set_reconcile(obj)
     try
     {
         var ctlc = obj.elements['ctlc'];
-        var tiers=obj.elements['tiers'];
         if ( ! obj.elements['target']) return;
         var target = obj.elements['target'].value;
         for (var e = 0; e < obj.elements.length; e++)
         {
-            
+
             var elmt = obj.elements[e];
             if (elmt.type === "checkbox")
             {
@@ -1396,16 +1357,15 @@ function set_reconcile(obj)
                         $(ctlc.value).value += ',';
 
                     } else {
-                        
-                        if (tiers  && tiers.value != "") {
-                            $(tiers.value).value = elmt.value;
+                        if (target != "" && $(target).value == "") {
+                            $(target).value = elmt.value;
                         }
                     }
                     $(ctlc.value).value += nValue;
                 }
             }
         }
-        removeDiv(obj.elements['target'].value);
+        removeDiv('search_op');
     }
     catch (e)
     {
@@ -1476,13 +1436,13 @@ function fixed_position(p_sx, p_sy)
 function calcy(p_sy)
 {
     var sy = p_sy;
-    if (window.pageYOffset)
+    if (window.scrollY)
     {
-        sy = window.pageYOffset + p_sy;
+        sy = window.scrollY + p_sy;
     }
     else
     {
-        sy = document.documentElement.scrollTop + p_sy;
+        sy = document.body.scrollTop + p_sy;
     }
     return sy;
 
@@ -1542,7 +1502,6 @@ function display_sub_menu(p_dossier,p_profile,p_dep,p_level)
                 if ( $('menu_table').rows.length > p_level ) {
                     $('menu_table').rows[1].remove();
                 }
-                $('sub'+p_dep).addClassName("selectedmenu");
                 var new_row = document.createElement('TR');
                 new_row.innerHTML = req.responseText;
                 $('menu_table').appendChild(new_row);
@@ -1793,7 +1752,6 @@ function search_action(dossier, ctl_concern)
 {
     try
     {
-        waiting_box();
         var dossier = g('gDossier').value;
 
         var target = "search_action_div";
@@ -1802,7 +1760,7 @@ function search_action(dossier, ctl_concern)
 
         var div = {id: target, cssclass: 'inner_box', style: str_style, html: loading(), drag: 1};
 
-       
+        add_div(div);
         var target = {gDossier: dossier,
             ctlc: ctl_concern,
             op: 'search_action',
@@ -1819,7 +1777,6 @@ function search_action(dossier, ctl_concern)
                     onSuccess: function (req) {
                         try {
                             remove_waiting_box();
-                             add_div(div);
                             $('search_action_div').innerHTML = req.responseText;
                             req.responseText.evalScripts();
                         } catch (e) {
@@ -1899,16 +1856,14 @@ function set_action_related(p_obj)
     }
 }
 /**
- *@brief Show a form to modify or add a new repository
- *@param p_dossier 
- *@param r_id : repository id
+ *@brief change a document_modele
  */
 function stock_repo_change(p_dossier, r_id)
 {
     var queryString = "gDossier=" + p_dossier + "&op=mod_stock_repo" + "&r_id=" + r_id;
     var nTop = calcy(posY);
-    var nLeft = "10.1562%";
-    var str_style = "top:" + nTop + "px;left:" + nLeft + ";height:auto;width:auto";
+    var nLeft = "200px";
+    var str_style = "top:" + nTop + "px;left:" + nLeft + ";height:auto";
 
     removeDiv('change_stock_repo_div');
     waiting_box();
@@ -1991,7 +1946,7 @@ function profile_show(p_div)
         $(p_div).show();
     } catch (e)
     {
-        alert_box(e.message);
+        alert_box(e.message)
     }
 }
 function detail_category_show(p_div, p_dossier, p_id)
@@ -2018,7 +1973,7 @@ function detail_category_show(p_div, p_dossier, p_id)
 /**
  * @brief check if the parameter is a valid a valid date or not, returns true if it is valid otherwise
  * false
- * @param p_str_date the string of the date (format DD.MM.YYYY)
+ * @parameter p_str_date the string of the date (format DD.MM.YYYY)
  */
 function check_date(p_str_date)
 {
@@ -2041,7 +1996,7 @@ function check_date(p_str_date)
 }
 /**
  * @brief get the string in the id and check if the date is valid
- * @param p_id_date is the id of the element to check
+ * @parameter p_id_date is the id of the element to check
  * @return true if the date is valid
  * @see check_date
  */
@@ -2089,12 +2044,12 @@ function view_action(ag_id, dossier, modify)
                         var pos = fixed_position(0, 50) + ";width:90%;left:5%;";
                         add_div({
                             id: id,
+                            drag: 1,
                             cssclass: "inner_box",
                             style: pos
                         });
                         $(id).innerHTML = code_html;
                         if ( ctl_txt == 'ok') { compute_all_ledger();}
-                        code_html.evalScripts();
                     } catch (e) {
                         alert_box('view_action' + e.message);
                     }
@@ -2167,7 +2122,11 @@ function filter_table(phrase, _id, colnr, start_row) {
  */
 function display_task(p_id)
 {
-
+    new Draggable(p_id, {starteffect: function ()
+        {
+            new Effect.Highlight(obj.id, {scroll: window, queue: 'end'});
+        }}
+    );
     $(p_id).style.top = posY + 'px';
     $(p_id).style.left = "10%";
     $(p_id).style.width = "80%";
@@ -2222,7 +2181,7 @@ function ask_navigator(p_dossier) {
                 }
         );
     } catch (e) {
-        info_message(e.message);
+        info_message(e.getMessage);
     }
 
 }
@@ -2257,7 +2216,7 @@ function set_preference(p_dossier) {
                 }
         );
     } catch (e) {
-        info_message(e.message);
+        info_message(e.getMessage);
     }
 
 }
@@ -2294,7 +2253,7 @@ function show_bookmark(p_dossier) {
                 }
         );
     } catch (e) {
-        info_message(e.message);
+        info_message(e.getMessage);
     }
 
 }
@@ -2328,7 +2287,7 @@ function save_bookmark() {
                 }
         );
     } catch (e) {
-        info_message(e.message);
+        info_message(e.getMessage);
     }
 
 }
@@ -2360,7 +2319,7 @@ function remove_bookmark() {
                 }
         );
     } catch (e) {
-        error_message(e.message);
+        error_message(e.getMessage);
     }
 
 }
@@ -2398,8 +2357,7 @@ function show_tag(p_dossier, p_ac, p_tag_id, p_post)
                         var code_html = getNodeText(html[0]);
                         code_html = unescape_xml(code_html);
                         remove_waiting_box();
-                        var posy=calcy(250);
-                        add_div({id: 'tag_div', cssclass: 'inner_box', drag: 0,style:"position:fixed;top:"+posy+"px"});
+                        add_div({id: 'tag_div', cssclass: 'inner_box', drag: 1});
                         $('tag_div').innerHTML = code_html;
                         try
                         {
@@ -2414,7 +2372,7 @@ function show_tag(p_dossier, p_ac, p_tag_id, p_post)
                 }
         );
     } catch (e) {
-        error_message(e.message);
+        error_message(e.getMessage);
     }
 }
 
@@ -2439,7 +2397,7 @@ function save_tag()
                 }
         );
     } catch (e) {
-        error_message(e.message);
+        error_message(e.getMessage);
         return false;
     }
     return false;
@@ -2471,8 +2429,8 @@ function action_tag_select(p_dossier, ag_id)
                         }
                         var code_html = getNodeText(html[0]);
                         code_html = unescape_xml(code_html);
-                        var pos = fixed_position(35, 229);
-                        add_div({id: 'tag_div', style: pos, cssclass: 'inner_box tag', drag: 0});
+                        pos = fixed_position(35, 229);
+                        add_div({id: 'tag_div', style: pos, cssclass: 'inner_box tag', drag: 1});
 
                         remove_waiting_box();
                         $('tag_div').innerHTML = code_html;
@@ -2480,7 +2438,7 @@ function action_tag_select(p_dossier, ag_id)
                 }
         );
     } catch (e) {
-        error_message(e.message);
+        error_message(e.getMessage);
     }
 }
 /**
@@ -2516,7 +2474,7 @@ function action_tag_add(p_dossier, ag_id, t_id)
                 }
         );
     } catch (e) {
-        error_message(e.message);
+        error_message(e.getMessage);
     }
 }
 /**
@@ -2527,58 +2485,38 @@ function action_tag_add(p_dossier, ag_id, t_id)
  */
 function action_tag_remove(p_dossier, ag_id, t_id)
 {
-    confirm_box(null,'Enlevez ce tags ?',function () {
-        try {
-            waiting_box();
-            var queryString = "t_id=" + t_id + "&ag_id=" + ag_id + "&op=tag_remove&gDossier=" + p_dossier;
-            var action = new Ajax.Request(
-                    "ajax_misc.php",
-                    {
-                        method: 'get', parameters: queryString,
-                        onFailure: ajax_misc_failure,
-                        onSuccess: function (req, j) {
-                            var answer = req.responseXML;
-                            var html = answer.getElementsByTagName('code');
-                            if (html.length === 0)
-                            {
-                                var rec = unescape_xml(req.responseText);
-                                error_message('erreur :' + rec);
-                            }
-                            var code_html = getNodeText(html[0]);
-                            code_html = unescape_xml(code_html);
-                            remove_waiting_box();
-                            $('action_tag_td').innerHTML = code_html;
-
+    if (confirm('Enlevez ce tags ?') === false)
+        return;
+    try {
+        waiting_box();
+        var queryString = "t_id=" + t_id + "&ag_id=" + ag_id + "&op=tag_remove&gDossier=" + p_dossier;
+        var action = new Ajax.Request(
+                "ajax_misc.php",
+                {
+                    method: 'get', parameters: queryString,
+                    onFailure: ajax_misc_failure,
+                    onSuccess: function (req, j) {
+                        var answer = req.responseXML;
+                        var html = answer.getElementsByTagName('code');
+                        if (html.length === 0)
+                        {
+                            var rec = unescape_xml(req.responseText);
+                            error_message('erreur :' + rec);
                         }
+                        var code_html = getNodeText(html[0]);
+                        code_html = unescape_xml(code_html);
+                        remove_waiting_box();
+                        $('action_tag_td').innerHTML = code_html;
+
                     }
-                );
-        } catch (e) {
-            error_message(e.message);
-        }
-    });
+                }
+        );
+    } catch (e) {
+        error_message(e.getMessage);
+    }
 }
 
-/**
- * Activate a tag
- * @param int p_dossier
- * @param int  p_tag_id
- */
-function activate_tag(p_dossier, p_tag_id) {
-    waiting_box();
-    new Ajax.Request("ajax_misc.php",
-    {
-        method:"get",
-        parameters:{gDossier:p_dossier,op:'tag_activate',t_id:p_tag_id},
-        onSuccess:function(req) {
-            remove_waiting_box();
-            var answer=req.responseText.evalJSON();
-            var tagId="tag_onoff"+p_tag_id;
-            $(tagId).update(answer.code);
-            $(tagId).setStyle(answer.style);
-            remove_waiting_box();
-        }
-    })
-}
+
 /**
  * Display a div with available tags, this div can update the cell
  * tag_choose_td
@@ -2606,17 +2544,17 @@ function search_display_tag(p_dossier, p_prefix)
                         var code_html = getNodeText(html[0]);
                         code_html = unescape_xml(code_html);
                         remove_waiting_box();
-                        add_div({id: p_prefix + 'tag_div', style: 'left:10%;width:70%', cssclass: 'inner_box', drag: 1});
+                        add_div({id: p_prefix + 'tag_div', style: '', cssclass: 'inner_box', drag: 1});
                         $(p_prefix + 'tag_div').style.top = posY - 80 + "px";
                         $(p_prefix + 'tag_div').style.left = posX - 200 + "px";
                         remove_waiting_box();
                         $(p_prefix + 'tag_div').innerHTML = code_html;
-                        code_html.evalScripts();
+
                     }
                 }
         );
     } catch (e) {
-        error_message(e.message);
+        error_message(e.getMessage);
     }
 }
 /**
@@ -2657,7 +2595,7 @@ function search_add_tag(p_dossier, p_tag_id, p_prefix)
                 }
         );
     } catch (e) {
-        error_message(e.message);
+        error_message(e.getMessage);
     }
 }
 /**
@@ -2693,7 +2631,7 @@ function search_clear_tag(p_dossier, p_prefix)
                 }
         );
     } catch (e) {
-        error_message(e.message);
+        error_message(e.getMessage);
     }
 }
 function action_show_checkbox()
@@ -2751,9 +2689,8 @@ function calendar_zoom(obj)
                             obj.outdiv = 'calendar_zoom_div';
                         }
                         if ($(obj.outdiv) == undefined) {
-                            var str_style = 'top:10%;margin-left:2%;';
-//                            var str_style = fixed_position(0, 120);
-                            add_div({id: obj.outdiv, style: 'margin-left:3%;width:94%;' + str_style, cssclass: "inner_box", drag: 0});
+                            var str_style = fixed_position(0, 20);
+                            add_div({id: obj.outdiv, style: 'margin-left:3%;width:94%;' + str_style, cssclass: "inner_box", drag: 1});
                         }
                         remove_waiting_box();
                         $(obj.outdiv).innerHTML = code_html;
@@ -2762,7 +2699,7 @@ function calendar_zoom(obj)
                 }
         );
     } catch (e) {
-        error_message('calendar_zoom ' + e.message);
+        error_message('calendar_zoom ' + e.getMessage);
     }
 
 
@@ -2815,14 +2752,23 @@ function show_description(p_id)
 
 }
 /**
- * Display an empty card to fill , with the right card category
- * @param pn_fiche_card_id : fiche_def.fd_id
- * @param pn_dossier_id
-  */
-function select_cat(pn_fiche_card_id,pn_dossier_id,ps_element_id)
+ * Hightlight the row we select and restore previous one
+ * @param {type} x
+ * @returns {undefined}
+ */
+var old_class = null;
+var old_select = null;
+
+function select_cat(x)
 {
-    dis_blank_card({"ctl":"div_new_card","fd_id":pn_fiche_card_id,"op2":"bc","op":"card",gDossier:pn_dossier_id,"elementId":ps_element_id});
-    removeDiv('select_card_div');
+    if (old_select != null)
+    {
+        $(old_select).className = old_class;
+    }
+    old_select = $('select_cat_row_' + x);
+    old_class = old_select.className;
+    $(old_select).className = "highlight";
+    $('fd_id').value = x;
 }
 /**
  * Show the DIV and hide the other, the array of possible DIV are
@@ -2863,7 +2809,6 @@ function unselect_other_tab(p_tab)
     } catch (e) {
         if (console)
             console.log(e.message);
-        alert_box('unselect_other_tab '+e.message);
     }
 }
 /**
@@ -2885,9 +2830,9 @@ function logout()
  */
 function create_anchor_up()
 {
-    if ( document.getElementById('up_top')) return;
+    if ( $('up_top')) return;
     
-    var newElt = document.createElement('div');
+    var newElt = new Element('div');
     newElt.setAttribute('id', 'up_top');
     newElt.innerHTML='<a id="up_top"></a>';
     
@@ -2903,17 +2848,16 @@ function create_anchor_up()
 function init_scroll()
 {
     var up=new Element('div',{"class":"inner_box",
-            "style":"padding:5px;left:auto;width:auto;height: auto;display:none;position:fixed;bottom:105px;right:50px;text-align:center;font-size:20px",
+            "style":"padding:10px;left:auto;width:30px;height: auto;display:none;position:fixed;top:25px;right:20px;text-align:center",
             id:"go_up"
         });
-        up.innerHTML=' <a class="icon" href="#up_top" >&#xe81a;</a><a href="javascript:show_calc()" class="icon">&#xf1ec;</a>';
+        up.innerHTML=' <a class="button" href="#up_top" >&#8679;</a>';
         document.body.appendChild(up);
          window.onscroll=function () {
          if ( document.viewport.getScrollOffsets().top> 0) {
              if ($('go_up').visible() == false) {
-                $('go_up').setOpacity(0.65); 
+                $('go_up').setOpacity(0.85); 
                 $('go_up').show();
-                $('go_up').style.zIndex=99;
             }
         } else {
             $('go_up').hide();
@@ -2961,7 +2905,7 @@ function confirm_box(p_obj, p_message,p_callback_true)
             });
         }
     } catch (e) {
-        alert_box(e.message);
+        alert_box(e.getMessage);
     }
     remove_waiting_box();
     return false;
@@ -2976,540 +2920,13 @@ function alert_box(p_message)
     smoke.alert(p_message,false , {ok:'ok',classname:"inner_box"});
 }
 
-
 /**
- * @brief Colorize the rows of the table 
- * @param string p_table id of the table
+ * All the onload must be here otherwise the other will overwritten
+ * @returns {undefined}
  */
-function alternate_row_color(p_table)
+window.onload=function ()
 {
-    var len = $(p_table).tBodies[0].rows.length;
-    var i = 0;
-    var localClass = "";
-    for (i = 1; i < len; i++) {
-        localClass = (i % 2 == 0) ? "even" : "odd";
-        if (localClass == "even" && $(p_table).tBodies[0].rows[i].hasClassName("odd")) 
-        {
-            $(p_table).tBodies[0].rows[i].removeClassName("odd");
-        }
-        if (localClass == "even" && !$(p_table).tBodies[0].rows[i].hasClassName("even"))
-        {
-            $(p_table).tBodies[0].rows[i].addClassName("even");
-        }
-
-        if (localClass == "odd" && $(p_table).tBodies[0].rows[i].hasClassName("even")) 
-        {
-            $(p_table).tBodies[0].rows[i].removeClassName("even");
-        }
-        if (localClass == "odd" && !$(p_table).tBodies[0].rows[i].hasClassName("odd"))
-        {
-            $(p_table).tBodies[0].rows[i].addClassName("odd");
-        }
-    }
-
-}
-/**
- * Make an DOM element draggable or not
- * @param object_id DOM id
- */
-function pin (object_id) {
-    if ( aDraggableElement[object_id]) {
-        aDraggableElement[object_id].destroy();
-        aDraggableElement[object_id]=undefined;
-        $('pin_'+object_id).innerHTML="&#xf047;";
-    } else {
-        aDraggableElement[object_id]=new Draggable(object_id, {starteffect: function ()
-                {
-                    new Effect.Highlight(object_id, {scroll: window, queue: 'end'});
-                }}
-            ); 
-        $('pin_'+object_id).innerHTML="&#xe809;";
-    }
-}
-/**
- * Show only the rows into the table (p_table_id) with the attribute (p_attribute_name) and if this attribute
- * has the value of  (attribut_value)
- * @param p_table_id table id
- * @param p_attribute_name the name of the attribute
- * @param p_attribute_value the value of the attribute we want to show
- */
-function show_only_row(p_table_id,p_attribute_name,p_attribute_value)
-{
-    if ( ! $(p_table_id)) {
-        throw "Invalide table id"
-    }
-    var mTable=$(p_table_id) ;
-    var ncount=mTable.rows.length
-    for (var i = 0;i < ncount;i++) {
-        var mRow=mTable.rows[i];
-        if (mRow.getAttribute(p_attribute_name) != undefined && mRow.getAttribute(p_attribute_name)!=p_attribute_value){
-            mRow.hide();
-          } else {
-            mRow.show();
-          }
-    }
-}
-/**
- * Show all the rows into the table (p_table_id) 
- * @param p_table_id table id
- */
-function show_all_row(p_table_id)
-{
-    if ( ! $(p_table_id)) {
-        throw "Invalide table id"
-    }
-    var mTable=$(p_table_id) ;
-    var ncount=mTable.rows.length
-    for (var i = 0;i < ncount;i++) {
-        var mRow=mTable.rows[i];
-            mRow.show();
-    }
-    
-}
-/**
- * @class
- * Periode handling
- * Variables :
- *   - id of the row of the periode row_per_(p_periode_id) , attribute exercice =per_exercice,periode_id=p_id
- *   - (this.dialog)
- *   - id of the table with the rows : periode_tbl
- * 
- * Members :
- *   - periode_id the concerned Periode , 0 none
- *   - p_ledger : the id of ledger (jrn_def.jrn_def_id), 0 for global
- *   - pcallback : default ajax_misc.php (this.callback) with the parameter { op:'periode',gDossier,[action:display,remove,save],p_id:p_periode_id}
- *   - dossier 
- *   - js_obj_name : name of the js object (this.js_obj_name)
- *   - ajax_test : file to include for debugging 
- *   - dialog : id of the dialog box (update / add ) periode_box 
- * 
- */
-var Periode=function (p_ledger)  {
-    this.periode_id=0;
-    this.p_ledger=p_ledger;
-    this.dialog='periode_box';
-    this.pcallback='ajax_misc.php';
-    this.dossier=0;
-    this.js_obj_name="";
-    this.ajax_test="";
-    this.set_callback=function (p_phpfile) { this.pcallback=p_phpfile;};
-    this.set_dossier=function (p_dosid) { this.dossier=p_dosid;};
-    /**
-     * set_js_obj_name (p_js_obj_name)
-     * We need to know the javascript variable name , to pass it to ajax and
-     * create a HTML containing the right variable
-     * @param  p_js_obj_name name of the variable js we use on caller side
-     */
-    this.set_js_obj_name=function (p_js_obj_name) { this.js_obj_name=p_js_obj_name;};
-    
-    /**
-     * Remove the periode , so call new Ajax and hide the row if successful
-     * otherwise show dialog box.
-     * @parameter p_periode_id is the id of periode
-     */
-    this.remove=function(p_periode_id) {
-        
-        var js_param={"gDossier":this.dossier,
-                        "op":"periode",
-                        "act":"remove",
-                        "p_id":p_periode_id,
-                        "ledger_id":0,
-                        "js_var":this.js_obj_name};
-        if ( this.ajax_test !="") {
-            js_param["TestAjaxFile"]=this.ajax_test;
-        }
-        here=this;
-        smoke.confirm("Confirmer  ?",function(e) {
-            if (e ) {
-                    waiting_box();
-                    new Ajax.Request(here.pcallback,
-                        {
-                            method:"POST",
-                            parameters:js_param,
-                            onSuccess:function(req) {
-                                var answer=req.responseText.evalJSON();
-                                remove_waiting_box();
-                                if ( answer.status=="OK" ) 
-                                { 
-                                    $("row_per_"+p_periode_id).remove();
-                                    alternate_row_color("periode_tbl");
-                                } else {
-                                    smoke.alert(answer.content);
-                                }
-                        }
-                    });
-                }
-            });
-    };
- 
-    /**
-     * display a dialog box to update a periode, call save either display 
-     * an error box or update the row.
-     * the name of variable is requested
-     * to build the right button , javascript in the html of answer
-     * @parameter p_periode_id is the id of periode
-     */
-    this.box_display=function(p_periode_id) {
-         if ( this.js_obj_name == "") {
-            smoke.alert("ERROR BOX_ADD")
-        }
-        
-         var js_param={"gDossier":this.dossier,
-                            "op":"periode",
-                            "act":"show",
-                            "p_id":p_periode_id,
-                            "ledger_id":this.p_ledger,
-                        "js_var":this.js_obj_name};
-        if ( this.ajax_test !="") {
-            js_param["TestAjaxFile"]=this.ajax_test;
-        }
-        var here=this;
-        new Ajax.Request(here.pcallback,
-                        {
-                            method:"POST",
-                            parameters:js_param,
-                            onSuccess:function(req) {
-                                remove_waiting_box();
-                                var json=req.responseText.evalJSON();
-                                var y=calcy(100);
-                                add_div({"id":"mod_periode","style":"position:fixed;top:"+y+"px;width:50%","cssclass":"inner_box",'html':"wait"});
-                                $('mod_periode').update(json.content);
-                        }
-                    });
-    };
-    /**
-     * close the periode, call ajax and receive a json object with the attribute
-     * status, content
-     * @parameter p_periode_id is the id of periode
-     */
-    this.close_periode=function(p_periode_id) {
-         if ( this.js_obj_name == "") {
-            smoke.alert("ERROR BOX_ADD")
-        }
-        
-        if ( this.ajax_test !="") {
-            js_param["TestAjaxFile"]=this.ajax_test;
-        }
-        var here=this;
-        smoke.confirm("Confirmer  ?",function(e) {
-            if (e ) {
-                    here._close(p_periode_id);
-                }
-          });
-    };
-    /**
-     * Internal function to close without confirming
-     * @param {type} p_periode_id
-     * @returns {undefined}
-     */
-     this._close=function(p_periode_id) {
-         if ( this.js_obj_name == "") {
-            smoke.alert("ERROR BOX_ADD")
-        }
-         var js_param={"gDossier":this.dossier,
-                            "op":"periode",
-                            "act":"close",
-                            "ledger_id":this.p_ledger,
-                            "p_id":p_periode_id,
-                        "js_var":this.js_obj_name
-                    };
-        if ( this.ajax_test !="") {
-            js_param["TestAjaxFile"]=this.ajax_test;
-        }
-        var here=this;
-        waiting_box();
-        new Ajax.Request(here.pcallback,
-            {
-                method:"POST",
-                parameters:js_param,
-                onSuccess:function(req) {
-                    remove_waiting_box();
-                    var json=req.responseText.evalJSON();
-                    if ( json.status == 'OK')
-                    {   
-                        $('row_per_'+p_periode_id).update(json.content);
-                        new Effect.Highlight('row_per_'+p_periode_id ,{startcolor: '#FAD4D4',endcolor: '#F78082' });
-                    } else {
-                        smoke.alert(json.content);
-                    }
-            }
-        });
-    };
-    /**
-     * reopen the periode
-     * @parameter p_periode_id is the SQL id of parm_periode or the id of 
-     * jrn_periode
-     */
-    this.open_periode=function(p_periode_id) {
-         if ( this.js_obj_name == "") {
-            smoke.alert("ERROR BOX_ADD")
-        }
-         var js_param={"gDossier":this.dossier,
-                            "op":"periode",
-                            "act":"reopen",
-                            "ledger_id":this.p_ledger,
-                            "p_id":p_periode_id,
-                        "js_var":this.js_obj_name
-                    };
-        if ( this.ajax_test !="") {
-            js_param["TestAjaxFile"]=this.ajax_test;
-        }
-        var here=this;
-        smoke.confirm("Confirmer  ?",function(e) {
-            if (e ) {
-                    waiting_box();
-                    new Ajax.Request(here.pcallback,
-                        {
-                            method:"POST",
-                            parameters:js_param,
-                            onSuccess:function(req) {
-                              remove_waiting_box();
-                                var json=req.responseText.evalJSON();
-                                if ( json.status == 'OK')
-                                {  
-                                    $('row_per_'+p_periode_id).update(json.content);
-                                    new Effect.Highlight('row_per_'+p_periode_id ,{startcolor: '#FAD4D4',endcolor: '#F78082' });
-                                } else {
-                                    smoke.alert(json.content);
-                                }
-                        }
-                    });
-                }      
-            });
-    };
-    /**
-     * This DOMID of the DIV containing the form is mod_periode
-     * @param {type} p_frm
-     * @returns {Boolean}
-     */
-    this.save=function(p_frm) {
-        var js_param=$(p_frm).serialize(true);
-        waiting_box();
-        js_param["js_var"]=this.js_obj_name;
-        js_param["act"]="save";
-        js_param["op"]="periode";
-        var here=this;
-        new Ajax.Request(this.pcallback,{
-           method:"POST",
-           parameters:js_param,
-           onSuccess:function (req) {
-               
-               var answer=req.responseText.evalJSON();
-               remove_waiting_box();
-               if ( answer.status == "OK") {
-                   $('row_per_'+js_param['periode_id']).update(answer.content);
-                   removeDiv('mod_periode');
-                   new Effect.Highlight('row_per_'+js_param['periode_id'] ,{startcolor: '#FAD4D4',endcolor: '#F78082' });
-               } else {
-                   smoke.alert(answer.content);
-               }
-           }
-        });
-        return false;
-    };
-    /**
-     * Thanks the object DOMID sel_per_closed[] the selected periodes are
-     * closed 
-     * @see Periode._close
-     */
-    this.close_selected = function () {
-        var here = this;
-        var a_selected = document.getElementsByName('sel_per_close[]');
-        var count=0;
-        var i = 0;
-        for (i = 0; i < a_selected.length; i++) {
-            if (a_selected[i].checked == true) {
-                // Close the selected periode
-              count++;
-            }
-        }
-        if ( count==0){
-            smoke.signal("Sélectionner au moins une période",function(){},{duration:1500});
-            return;
-        }
-        smoke.confirm("Confirmer fermeture de "+count+" periode", function (e) {
-            if (e) {
-                var a_selected = document.getElementsByName('sel_per_close[]');
-                var i = 0;
-                for (i = 0; i < a_selected.length; i++) {
-                    if (a_selected[i].checked == true) {
-                        // Close the selected periode
-                        here._close(a_selected[i].value);
-                    }
-                }
-            }
-        }
-        );
-    };
-    /**
-     * @brief Insert a periode into the list, always at the bottom !
-     * DomId : 
-     *   # FORM id :insert_periode_frm
-     *   # DIV id = periode_add
-     *   # table id = periode_tbl
-     */
-    this.insert_periode=function() {    
-        var p_frm='insert_periode_frm';
-        var js_param=$(p_frm).serialize(true);
-        waiting_box();
-        js_param["js_var"]=this.js_obj_name;
-        js_param["act"]="insert_periode";
-        js_param["op"]="periode";
-        js_param["p_id"]="-1";
-        js_param["ledger_id"]="0";
-        var here=this;
-        new Ajax.Request(this.pcallback,{
-           method:"POST",
-           parameters:js_param,
-           onSuccess:function (req) {
-               var answer=req.responseText.evalJSON();
-               remove_waiting_box();
-               if ( answer.status == "OK") {
-                     var new_row=document.createElement("tr");
-                     $('periode_tbl').append(new_row);
-                     new_row.replace(answer.content);
-                     
-                     // hide the form
-                     $('periode_add').hide();
-                   new Effect.Highlight('row_per_'+answer.p_id ,{startcolor: '#FAD4D4',endcolor: '#F78082' });
-                    alternate_row_color('periode_tbl');
-               } else {
-                   smoke.alert(answer.content);
-               }
-           }
-        });
-        return false;   
-}
-    
-}
-/**
- * Show the periodes from the exercice contained into the id (p_exercice_sel)
- * @param p_table_id DOM ID of the table
- */
-Periode.filter_exercice=function (p_table_id) {
-    var rows=$(p_table_id).rows;
-    var selected_value=$('p_exercice_sel').value;
-    for (var i=1;i<rows.length;i++) {
-        var exercice=rows[i].getAttribute("per_exercice");
-        if ( selected_value == -1 ) {
-            rows[i].show();
-        } else if ( selected_value == exercice) {
-            rows[i].show();
-        } else {
-            rows[i].hide();
-        }
-        
-    }
-};
-
-// keep track of progress bar
-var progressBar = [];
-// idx of progress bar        
-var progressIdx = 0;
-
-/**
- * Start the progress bar 
- * @param {string} p_taskid id to monitor
- * @param {int} p_dossier
- */
-function progress_bar_start(p_taskid,p_message)
-{
-    try {
-        progressIdx++;
-        // block the window
-        var message="Un instant svp";
-        if ( p_message) {
-            message=p_message;
-        }
-        add_div({id:"blocking"+progressIdx,cssclass:"smoke-base smoke-visible "});
-        
-        add_div({id:"message"+progressIdx,cssclass:"inner_box",style:"z-index:1000;position:fixed;top:30%;width:40%;left:30%"});
-        $("message"+progressIdx).update(message);
-        // Create a div
-        add_div({id: "progressDiv" + progressIdx, cssclass: "progressbar", html: '<span id="progressValue">0</span>'});
-        // Check status every sec.
-        progressBar[progressIdx] = setInterval(progress_bar_check.bind(null, progressIdx, p_taskid), 1000);
-    } catch (e) {
-        console.error(e.message);
-    }
-}
-
-/**
- * Check every second the status 
- * @param {integer} p_idx idx of progressbar
- * @param {string} p_taskid  id to monitor
- */
-function progress_bar_check(p_idx, p_taskid)
-{
-    try {
-
-        new Ajax.Request("ajax_misc.php", {
-            parameters: {gDossier: 0, task_id: p_taskid,op:"progressBar"},
-            method:"get",
-            onSuccess: function (req) {
-                try 
-                {
-                    var answer=req.responseText.evalJSON();
-                    var progress_div=$("progressDiv"+progressIdx);
-                    var a_child=progress_div.childNodes;
-                    var i=0;
-                    for (  i=0;i< a_child.length;i++) {
-                        if ( a_child[i].id="progressValue") {
-                            var progressValue = a_child[i];
-                        }
-                    }
-                    var progress = parseFloat(progressValue.innerHTML);
-                    if ( answer.value <= progress ) {
-                        return;
-                    }
-
-                    progressValue.innerHTML = answer.value;
-                    progressValue.setStyle("width:" + answer.value + "%");
-                    if (answer.value== 100) {
-                        clearInterval(progressBar[p_idx]);
-                        progressValue.innerHTML="Success";
-                        Effect.BlindUp("progressDiv"+p_idx,{duration:1.0,scaleContent:false})
-                        $("message"+p_idx).remove();
-                        $("blocking"+p_idx).remove();
-                        setTimeout(function() { $("progressDiv"+progressIdx).remove } , 1100);
-                    }
-                } catch (e) {
-                    clearInterval(progressBar[p_idx]);
-                    document.getElementById("progressValue").innerHTML=req.responseText;
-                    console.error(e.message);
-                }
-            }
-        });
-    } catch (e) {
-        clearInterval(progressBar[p_idx]);
-        console.error(e.message);
-    }
-}
-                                                
-/**
- * In the user's setting  box, update the period list with the choosen exercice
- * @param {int} p_dossier
- */
-function updatePeriodePreference(p_dossier)
-{
-    waiting_box();
-    var exercice=$('exercice_setting').value;
-    new Ajax.Updater('setting_period',"ajax_misc.php",{method:"get",parameters:{ "op":"pref_exercice","gDossier":p_dossier,"exercice":exercice}});  
-    remove_waiting_box();
-}
-/**
- * Update the from and to periode list when changing the exercice
- * @param {int} p_dossier
- * @param {string} p_exercice id of the exercice
- * @param {type} p_periode_from id of the starting periode
- * @param {type} p_periode_to id of the ending periode
- * @param {type} p_last possible value = 1 to show last periode or 0 the first
- */
-function updatePeriode(p_dossier,p_exercice,p_periode_from,p_periode_to,p_last)
-{
-    waiting_box();
-    var exercice=$(p_exercice).value;
-    new Ajax.Updater(p_periode_from,"ajax_misc.php",{method:"get",parameters:{op:"periode_change","gDossier":p_dossier,"exercice":exercice,field:p_periode_from,"type":"from","last":p_last}});
-    new Ajax.Updater(p_periode_to,"ajax_misc.php",{method:"get",parameters:{op:"periode_change","gDossier":p_dossier,"exercice":exercice,field:p_periode_to,"type":"to","last":p_last}});
-    remove_waiting_box();
+    create_anchor_up();
+    init_scroll();
+    sorttable.init
 }

@@ -20,24 +20,22 @@
 // Copyright Author Dany De Bontridder danydb@aevalys.eu
 
 /*!\file
- * \brief file included to manage all the operations for the ledger of sales 
+ * \brief file included to manage all the sold operation
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/lib/icheckbox.class.php';
-require_once NOALYSS_INCLUDE.'/class/acc_ledger_sold.class.php';
-require_once  NOALYSS_INCLUDE.'/class/pre_op_ven.class.php';
-require_once  NOALYSS_INCLUDE.'/class/document.class.php';
-require_once  NOALYSS_INCLUDE.'/class/acc_ledger_info.class.php';
-require_once NOALYSS_INCLUDE.'/lib/ipopup.class.php';
+require_once NOALYSS_INCLUDE.'/class_icheckbox.php';
+require_once NOALYSS_INCLUDE.'/class_acc_ledger_sold.php';
+require_once  NOALYSS_INCLUDE.'/class_pre_op_ven.php';
+require_once  NOALYSS_INCLUDE.'/class_document.php';
+require_once  NOALYSS_INCLUDE.'/class_acc_ledger_info.php';
+require_once NOALYSS_INCLUDE.'/class_ipopup.php';
 
 $gDossier=dossier::id();
-$cn=Dossier::connect();
+$cn=new Database(dossier::id());
 //menu = show a list of ledger
 $str_dossier=dossier::get();
-global $g_parameter;
-$http=new HttpInput();
-$strac=$http->request('ac');
 $ac="ac=".$_REQUEST['ac'];
+global $g_parameter;
 $p_msg="";
 //----------------------------------------------------------------------
 // Encode a new invoice
@@ -93,12 +91,11 @@ $p_msg="";
         var a_tab = ['modele_div_id','repo_div_id','facturation_div_id','reverse_div_id'];
     </script>
 <ul class="tabs">
-    <li class="tabs_selected" style="float: none"><a href="javascript:void(0)" title="<?php echo _("Générer une facture ou charger un document")?>"  onclick="unselect_other_tab(this.parentNode.parentNode);this.parentNode.className='tabs_selected';show_tabs(a_tab,'facturation_div_id')"><?php echo _('Facture')?></a></li>
-    <li class="tabs" style="float: none"> <a href="javascript:void(0)" title="<?php echo _("Choix du dépôt")?>"  onclick="unselect_other_tab(this.parentNode.parentNode);this.parentNode.className='tabs_selected';show_tabs(a_tab,'repo_div_id')"> <?php echo _('Dépôt')?> </a></li>
-    <li class="tabs" style="float: none"> <a href="javascript:void(0)" title="<?php echo _("Modèle à sauver")?>"  onclick="unselect_other_tab(this.parentNode.parentNode);this.parentNode.className='tabs_selected';show_tabs(a_tab,'modele_div_id')"> <?php echo _('Modèle')?> </a></li>
-    <li class="tabs" style="float: none"> <a href="javascript:void(0)" title="<?php echo _("Extourne")?>"  onclick="unselect_other_tab(this.parentNode.parentNode);this.parentNode.className='tabs_selected';show_tabs(a_tab,'reverse_div_id')"> <?php echo _('Extourne')?> </a></li>
+    <li class="tabs_selected"><a href="javascript:void(0)" title="<?php echo _("Générer une facture ou charger un document")?>"  onclick="unselect_other_tab(this.parentNode.parentNode);this.parentNode.className='tabs_selected';show_tabs(a_tab,'facturation_div_id')"><?php echo _('Facture')?></a></li>
+    <li class="tabs"> <a href="javascript:void(0)" title="<?php echo _("Choix du dépôt")?>"  onclick="unselect_other_tab(this.parentNode.parentNode);this.parentNode.className='tabs_selected';show_tabs(a_tab,'repo_div_id')"> <?php echo _('Dépôt')?> </a></li>
+    <li class="tabs"> <a href="javascript:void(0)" title="<?php echo _("Modèle à sauver")?>"  onclick="unselect_other_tab(this.parentNode.parentNode);this.parentNode.className='tabs_selected';show_tabs(a_tab,'modele_div_id')"> <?php echo _('Modèle')?> </a></li>
+    <li class="tabs"> <a href="javascript:void(0)" title="<?php echo _("Extourne")?>"  onclick="unselect_other_tab(this.parentNode.parentNode);this.parentNode.className='tabs_selected';show_tabs(a_tab,'reverse_div_id')"> <?php echo _('Extourne')?> </a></li>
 </ul>
-    
 <?php
             echo $Ledger->select_depot(false, -1);
             echo $Ledger->extra_info();
@@ -112,10 +109,6 @@ $p_msg="";
             $reverse_ck=new ICheckBox('reverse_ck');
             echo _('Extourne opération')." ".$reverse_ck->input()." ";
             echo $reverse_date->input();
-            $msg_reverse=new IText("ext_label");
-            $msg_reverse->placeholder=_("Message extourne");
-            $msg_reverse->size=60;
-            echo _("Message")." ".$msg_reverse->input();
             echo '</div>';
             
 	    echo HtmlInput::hidden('ac',$_REQUEST['ac']);
@@ -179,13 +172,13 @@ show_tab(a_tab,'facturation_div_id');
             }
 
             /* Show button  */
-            echo '<h1> Enregistrement </h1>';
+            echo '<h1 style="float:right;margin-right:20%"> Enregistrement </h1>';
 
             echo $Ledger->confirm($_POST,true);
             /* Show link for Invoice */
             if (isset ($Ledger->doc) )
             {
-                echo '<h2>'._('Document').' </h2>';
+                echo '<h2>Document </h2>';
                 echo $Ledger->doc;
             }
 
@@ -196,14 +189,13 @@ show_tab(a_tab,'facturation_div_id');
              // extourne
             if (isset($_POST['reverse_ck']))
             {
-                $p_date=$http->post('reverse_date', "string",'');
-                $p_msg=$http->post("ext_label");
+                $p_date=HtmlInput::default_value_post('reverse_date', '');
                 if (isDate($p_date)==$p_date)
                 {
                     // reverse the operation
                     try
                     {
-                        $Ledger->reverse($p_date,$p_msg);
+                        $Ledger->reverse($p_date);
                         echo '<p>';
                         echo _('Extourné au ').$p_date;
                         echo '</p>';
@@ -222,35 +214,33 @@ show_tab(a_tab,'facturation_div_id');
                     echo '<p class="notice">'._('Date invalide, opération non extournée').'</p>';
                 }
             }
-            echo '<ul class="aligned-block">';
-            echo "<li>";
+
             echo $Ledger->button_new_operation();
-            echo "</li>";
-            echo "<li>";
-            echo $Ledger->button_copy_operation();
-            echo "</li>"; 
-            echo "</ul>";
+
             echo '</div>';
             return;
         }
     }
-//  ------------------------------
-/* Display a blank form or a form with predef operation */
-//  ------------------------------
+    //  ------------------------------
+    /* Display a blank form or a form with predef operation */
+    //  ------------------------------
 
-$array=(isset($_POST['correct'])||isset ($correct))?$_POST:null;
-$Ledger=new Acc_Ledger_Sold($cn,0);
+    $array=(isset($_POST['correct'])||isset ($correct))?$_POST:null;
+    $Ledger=new Acc_Ledger_Sold($cn,0);
 //
 // pre defined operation
 //
-echo '<div class="content">';
+if ( is_msie() == 0 ) 
+    echo '<div style="position:absolute"  class="content">';
+else
+    echo '<div class="content">';
 
 if (!isset($_REQUEST ['p_jrn']))
 {
     $def_ledger=$Ledger->get_first('ven', 2);
     if (empty($def_ledger))
     {
-        exit(_('Pas de journal disponible'));
+        exit('Pas de journal disponible');
     }
     $Ledger->id=$def_ledger['jrn_def_id'];
 }
@@ -261,7 +251,7 @@ if (isset($_REQUEST['p_jrn_predef']))
     $Ledger->id=$_REQUEST['p_jrn_predef'];
 }
 
-/* echo '<div id="predef_form">';
+echo '<div id="predef_form">';
 echo HtmlInput::hidden('p_jrn_predef', $Ledger->id);
 $op=new Pre_op_ven($cn);
 $op->set('ledger',$Ledger->id);
@@ -270,19 +260,14 @@ $op->set('direct','f');
 $url=http_build_query(array('p_jrn_predef'=>$Ledger->id,'ac'=>$_REQUEST['ac'],'gDossier'=>dossier::id()));
 echo $op->form_get('do.php?'.$url);
 echo '</div>';
-*/
+
 echo '<div class="content">';
 echo '<p class="notice">'.$p_msg.'</p>';
 try
 {
-    $payment=$http->request("e_mp","string", 0);
-    $date_payment=$http->request("mp_date", "string","");
-    $comm_payment=$http->request("e_comm_paiement", "string","");
-    $acompte=$http->request("acompte", "string",0);
-    
     echo "<FORM class=\"print\" NAME=\"form_detail\" METHOD=\"POST\" >";
     /* request for a predefined operation */
-    if (isset($_REQUEST['pre_def'])&&!isset($_POST['correct']) && ! isset($correct))
+    if (isset($_REQUEST['pre_def'])&&!isset($_POST['correct']))
     {
         // used a predefined operation
         //
@@ -293,7 +278,7 @@ try
 
         echo $Ledger->input($p_post);
         echo '<div class="content">';
-        echo $Ledger->input_paid($payment);
+        echo $Ledger->input_paid();
         echo '</div>';
         echo '<script>';
         echo 'compute_all_ledger();';
@@ -307,7 +292,7 @@ try
         echo HtmlInput::hidden("sa", "p");
         echo $Ledger->input($array);
         echo '<div class="content">';
-        echo $Ledger->input_paid($payment,$acompte,$date_payment,$comm_payment);
+        echo $Ledger->input_paid();
         echo '</div>';
         echo '<script>';
         echo 'compute_all_ledger();';
@@ -321,7 +306,7 @@ try
 
         echo $Ledger->input($array);
         echo '<div class="content">';
-        echo $Ledger->input_paid($payment,$acompte,$date_payment,$comm_payment);
+        echo $Ledger->input_paid();
         echo '</div>';
         echo '<script>';
         echo 'compute_all_ledger();';
@@ -347,7 +332,7 @@ echo '<div class="content">';
     {
 		echo '<script> update_pj()</script>';
     }
-	if (!isset($_REQUEST['e_date']) && $g_parameter->MY_DATE_SUGGEST=='Y')
+	if (!isset($_POST['e_date']) && $g_parameter->MY_DATE_SUGGEST=='Y')
 	{
 		echo create_script(" get_last_date()");
 	}

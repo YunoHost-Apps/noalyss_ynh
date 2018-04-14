@@ -28,9 +28,8 @@ $_POST=array (
   'rapt' => '',
   'div' => 'det2',
   'act' => 'save',
-  'op'=>'ledger'
 );
 $_POST['gDossier']=$gDossierLogInput;
 $_GET['gDossier']=$gDossierLogInput;
  $_REQUEST=array_merge($_GET,$_POST);
-include 'ajax_misc.php';
+include 'ajax_ledger.php';

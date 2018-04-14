@@ -27,9 +27,9 @@
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
 global $g_user,$cn,$g_parameter;
-require_once NOALYSS_INCLUDE.'/class/stock.class.php';
-require_once NOALYSS_INCLUDE.'/class/periode.class.php';
-$http=new HttpInput();
+require_once NOALYSS_INCLUDE.'/class_stock.php';
+require_once NOALYSS_INCLUDE.'/class_periode.php';
+
 $stock=new Stock($cn);
 $array=$_GET;
 if ( ! isset ($array['wdate_start']) || ! isset ($array['wdate_end']))

@@ -56,5 +56,5 @@
 		</tr>
 		<?php endfor;?>
 	</table>
-<?php echo HtmlInput::submit("change_stock", _("Sauver"))?>
 </form>
+<?php echo HtmlInput::submit("change_stock", _("Sauver"))?>

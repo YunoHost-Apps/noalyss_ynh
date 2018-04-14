@@ -37,17 +37,21 @@ function todo_list_show(p_id)
     {
          var gDossier = $('gDossier').value;
         var action = new Ajax.Request(
-                'ajax_misc.php',
+                'ajax_todo_list.php',
                 {
                     method: 'get',
                     parameters:
-                            {'show':1, 'id':p_id, 'gDossier':gDossier,op:'todo_list'},
+                            {'show':
+                                        1, 'id':
+                                        p_id, 'gDossier':
+                                        gDossier
+                            },
                     onFailure: todo_list_show_error,
                     onSuccess: function (req)
                     {
                         try
                         {
-                            var todo_div=create_div({id:'todo_list_div'+p_id,cssclass:'add_todo_list'});
+                            var todo_div=create_div({id:'todo_list_div'+p_id,cssclass:'add_todo_list',drag:1});
                            
 
 
@@ -101,10 +105,10 @@ function todo_list_remove(p_ctl)
         var gDossier = $('gDossier').value;
 
         var action = new Ajax.Request(
-                'ajax_misc.php',
+                'ajax_todo_list.php',
                 {
                     method: 'get',
-                    parameters:{'del':1, 'id':p_ctl, 'gDossier':gDossier,op:'todo_list'}
+                    parameters:{'del':1, 'id':p_ctl, 'gDossier':gDossier}
                 }
         );
         return false;
@@ -115,8 +119,7 @@ function todo_list_save(p_form)
     try {
     var form=$('todo_form_'+p_form);
     var json=form.serialize(true);
-    json['op']="todo_list";
-    new Ajax.Request('ajax_misc.php',
+    new Ajax.Request('ajax_todo_list.php',
                     {
                         method:'get',
                        parameters:json,
@@ -132,10 +135,6 @@ function todo_list_save(p_form)
                             {
                                 var rec = req.responseText;
                                 alert_box('erreur :' + rec);
-                            }
-                            if ( getNodeText(tl_id[0]) == '0') {
-                                smoke.alert('Note est vide');
-                                return;
                             }
                             var tr = $('tr'+p_form);
                             if ( p_form == 0) 
@@ -156,8 +155,7 @@ function todo_list_save(p_form)
                     );
         }
         catch (e) {
-            if ( console) console.log(e.message);
-            alert_box('todo_list_save '+e.message);
+            console.log(e.message);
             return false;
         }
         return false;
@@ -200,13 +198,12 @@ function todo_list_share(p_note, p_dossier)
 {
     waiting_node();
     new Ajax.Request(
-            'ajax_misc.php',
+            'ajax_todo_list.php',
             {
                 method: "get",
                 parameters: {"act": 'shared_note',
                     "todo_id": p_note,
-                    "gDossier": p_dossier,
-                    op:'todo_list'
+                    "gDossier": p_dossier
                 },
                 onSuccess: function (p_xml) {
                     try {
@@ -239,10 +236,10 @@ function todo_list_share(p_note, p_dossier)
 function todo_list_set_share(note_id,p_login,p_dossier)
 {
     waiting_node();
-    new Ajax.Request('ajax_misc.php',
+    new Ajax.Request('ajax_todo_list.php',
             {
                 method:"get",
-                parameters: { todo_id:note_id,act:"set_share","gDossier":p_dossier,"login":p_login,op:'todo_list'},
+                parameters: { todo_id:note_id,act:"set_share","gDossier":p_dossier,"login":p_login},
                 onSuccess:function() {
                     remove_waiting_node();
                 }
@@ -252,13 +249,12 @@ function todo_list_set_share(note_id,p_login,p_dossier)
 function todo_list_remove_share(note_id,p_login,p_dossier)
 {
     waiting_node();
-    new Ajax.Request('ajax_misc.php',{
+    new Ajax.Request('ajax_todo_list.php',{
         parameters : {
             'gDossier':p_dossier,
             'todo_id':note_id,
             'login':p_login,
-            'act':"remove_share",
-            op:'todo_list'
+            'act':"remove_share"
         },
         method:"get",
         onSuccess:function (p_xml) {

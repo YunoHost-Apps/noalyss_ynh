@@ -67,7 +67,7 @@ Autocompleter.Base = Class.create({
           update.style.position = 'absolute';
           Position.clone(element, update, {
             setHeight: false,
-	    setWidth:false,
+	    setWidth:true,
             offsetTop: element.offsetHeight
           });
         }
@@ -220,7 +220,7 @@ Autocompleter.Base = Class.create({
   markNext: function() {
     if(this.index < this.entryCount-1) this.index++;
       else this.index = 0;
-    //this.getEntry(this.index).scrollIntoView(false);
+    this.getEntry(this.index).scrollIntoView(false);
   },
 
   getEntry: function(index) {

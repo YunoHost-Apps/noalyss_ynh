@@ -22,14 +22,12 @@ if ( !defined ('ALLOWED')) die('Forbidden');
 /*!\file
  *
  *
- * \brief user managemnt, included from admin-noalyss,
+ * \brief user managemnt, included from admin_repo,
  * action=user_mgt
  *
  */
-require_once NOALYSS_INCLUDE.'/lib/sort_table.class.php';
-require_once NOALYSS_INCLUDE.'/lib/http_input.class.php';
-$http=new HttpInput();
-echo '<div class="content" >';
+require_once NOALYSS_INCLUDE.'/class_sort_table.php';
+echo '<div class="content" style="width:80%;margin-left:10%">';
 /******************************************************/
 // Add user
 /******************************************************/
@@ -38,29 +36,29 @@ if ( isset ($_POST["ADD"]) )
     $cn=new Database();
     $pass5=md5($_POST['PASS']);
     $new_user=new User($cn,0);
-    $new_user->first_name=$http->post('FNAME');
-    $new_user->last_name=$http->post('LNAME');
-    $login=$http->post('LOGIN');
+    $new_user->first_name=HtmlInput::default_value_post('FNAME','');
+    $new_user->last_name=HtmlInput::default_value_post('LNAME','');
+    $login=HtmlInput::default_value_post('LOGIN','');
     $login=str_replace("'","",$login);
     $login=str_replace('"',"",$login);
     $login=str_replace(" ","",$login);
     $login=strtolower($login);
     $new_user->login=$login;
     $new_user->pass=$pass5;
-    $new_user->email=$http->post('EMAIL',"string",'');
-    if ( trim($login)=="")
-    {
-            alert(_("Le login ne peut pas être vide"));
-    }
-    else
-    {
-        $new_user->insert();
-        $new_user->load();
-        $_REQUEST['use_id']=$new_user->id;
-        require_once NOALYSS_INCLUDE.'/user_detail.inc.php';
-        return;
+    $new_user->email=HtmlInput::default_value_post('EMAIL','');
+	if ( trim($login)=="")
+	{
+		alert(_("Le login ne peut pas être vide"));
+	}
+	else
+	{
+            $new_user->insert();
+            $new_user->load();
+            $_REQUEST['use_id']=$new_user->id;
+            require_once NOALYSS_INCLUDE.'/user_detail.inc.php';
+            return;
 
-    }
+	}
 } //SET login
 
 // View user detail
@@ -74,7 +72,7 @@ if ( isset($_REQUEST['det']))
 
 <div id="create_user" style="display:none;width:30%;margin-right: 20%" class="inner_box">
 <?php echo HtmlInput::title_box(_('Ajout Utilisateur'),"create_user","hide");?>
-    <form action="admin-noalyss.php?action=user_mgt" method="POST" onsubmit="return check_form()">
+    <form action="admin_repo.php?action=user_mgt" method="POST" onsubmit="return check_form()">
     <div style="text-align: center">
 <TABLE class="result" >            
        <TR><TD style="text-align: right"> <?php echo _('login')?></TD><TD><INPUT id="input_login" class="input_text"  TYPE="TEXT" NAME="LOGIN"></TD></tr>
@@ -93,12 +91,12 @@ echo HtmlInput::button_action(_("Fermer"), "$('create_user').style.display='none
     <script>
         function check_form() {
             if ($F('input_login') == "") { 
-                    smoke.alert('<?php echo _('Le login ne peut être vide') ?>');
+                    alert('<?php echo _('Le login ne peut être vide') ?>');
                     $('input_login').setStyle({border:"red solid 2px"});
                     return false;
                 }
             if ($F('input_password') == "") { 
-                smoke.alert('<?php echo _('Le mot de passe ne peut être vide') ?>');
+                alert('<?php echo _('Le mot de passe ne peut être vide') ?>');
                 $('input_password').setStyle({border:"red solid 2px"});
                 return false;
             }
@@ -135,7 +133,7 @@ $a_user=$repo->get_user_folder($sql);
 if ( !empty ($a_user) )
 {
 	echo '<span style="display:block">';
-	echo _('Cherche').Icon_Action::infobulle(22);
+	echo _('Filtre').HtmlInput::infobulle(22);
 	echo HtmlInput::filter_table("user", "0,1,2,5","1");
 	echo '</span>';
     echo '<table id="user" class="result">';
@@ -170,13 +168,9 @@ if ( !empty ($a_user) )
         echo td($r_user['use_name']);
         echo td($r_user['use_first_name']);
         echo td($Active);
-        $type=($r_user['use_admin']==1)?_("Administrateur"):_("Utilisateur");
-        echo "<td>".$type."</td>";
-        if ( $r_user['use_admin'] == 0)
-            echo td($r_user['ag_dossier']);
-        else {
-            echo td(_('Tous'));
-        }
+		$type=($r_user['use_admin']==1)?_("Administrateur"):_("Utilisateur");
+		echo "<td>".$type."</td>";
+		echo td($r_user['ag_dossier']);
         echo '</tr>';
     }// foreach
     echo '</table>';

@@ -79,12 +79,10 @@ function compute_total_table(p_table, seq)
         var i = 0;
         var tot = 0;
         var col = document.getElementsByName("val[" + seq + "][]");
-        var rounded_value = 0 ;
         for (i = 0; i < col.length; i++)
         {
             if ( $(p_table).contains(col[i])) {
-                rounded_value = parseFloat(col[i].value);
-                tot += Math.round(rounded_value*100)/100;
+                tot += parseFloat(col[i].value);
             }
         }
         return tot;
@@ -158,11 +156,6 @@ function verify_ca(div)
                     total_amount += parseFloat(array_value[i].value);
                 }
                 var amount = Math.abs(parseFloat(g('amount_t' + idx).value));
-                if (isNaN(amount)) {
-                    amount=0;
-                } else {
-                    amount = Math.round(amount*100)/100;
-                }
                 var diff = amount - total_amount;
 
                 if (Math.round(diff, 2) != 0.0)
@@ -289,7 +282,6 @@ function caod_checkTotal()
         {
             amount = 0.0;
         }
-        amount = Math.round(amount*100)/100;
         if (side.checked == false)
         {
             total_cred += amount;
@@ -338,12 +330,9 @@ function anc_remove_operation(p_dossier, p_oa_group)
                         p_oa_group, "gDossier":
                         p_dossier, "op": "remove_anc"};
             var queryString = encodeJSON(obj);
+            g(p_oa_group).style.display = 'none';
             var e = new Ajax.Request("ajax_misc.php",
-                    {method: 'get', parameters: queryString,onSuccess:function req() {
-                            $("tr"+p_oa_group).remove();
-                    }
-                    
-             });
+                    {method: 'get', parameters: queryString});
              
          } else
          {
@@ -370,7 +359,6 @@ function anc_add_row(tableid)
         var newCell = oRow.insertCell(e);
         var tt = rowToCopy.cells[e].innerHTML;
         var new_tt = tt.replace(/pop0/g, "pop" + nb.value);
-        var new_tt = tt.replace(/qcode0/g, "qcode" + nb.value);
         new_tt = new_tt.replace(/pamount0/g, "pamount" + nb.value);
         new_tt = new_tt.replace(/pdeb0/g, "pdeb" + nb.value);
         newCell.innerHTML = new_tt;
@@ -427,7 +415,6 @@ function anc_key_compute(p_dossier, p_table, p_amount, p_key_id)
                             var code_html = getNodeText(html[0]); // Firefox ne prend que les 4096 car.
                             code_html = unescape_xml(code_html);
                             $(name_ctl).innerHTML = code_html;
-                            code_html.evalScripts();
                             removeDiv('div_anc_key_choice');
                         } catch (e)
                         {
@@ -556,18 +543,4 @@ function anc_key_compute_table()
     }
     $('total_key').innerHTML=Math.round(tot*100)/100;
 
-}
-
-function anc_detail_op(p_oa_group,gDossier) {
-    waiting_box();
-    // create div
-    new Ajax.Request ("ajax_misc.php",{
-                        method:"get",
-                        parameters:{"gDossier":gDossier,"op":"anc_detail_op","oa_group":p_oa_group},
-                        onSuccess:function (req) {
-                            add_div({"id":"anc_detail_op_div","cssclass":"inner_box","style":"position:fixed;top:5%"});
-                            $('anc_detail_op_div').update(req.responseText);
-                            remove_waiting_box();
-                        }
-                    });
 }

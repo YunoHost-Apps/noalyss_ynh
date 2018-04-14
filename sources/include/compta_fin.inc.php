@@ -23,14 +23,14 @@
  * \brief this file is to be included to handle the financial ledger
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once  NOALYSS_INCLUDE.'/class/acc_ledger_fin.class.php';
-require_once NOALYSS_INCLUDE.'/lib/ipopup.class.php';
+require_once  NOALYSS_INCLUDE.'/class_acc_ledger_fin.php';
+require_once NOALYSS_INCLUDE.'/class_ipopup.php';
 global $g_user,$g_parameter;
 
 $gDossier=dossier::id();
 
 
-$cn=Dossier::connect();
+$cn=new Database(dossier::id());
 $menu_action="?ledger_type=fin&ac=".$_REQUEST['ac']."&".dossier::get();
 
 $Ledger=new Acc_Ledger_Fin($cn,0);
@@ -133,6 +133,8 @@ if ( isset($_POST['correct']))
 //----------------------------------------
 // Blank form
 //----------------------------------------
+echo '<div style="position:absolute" class="content">';
+
 echo '<p class="notice">'.$p_msg.'</p>';
 
 echo '<form class="print" name="form_detail" enctype="multipart/form-data" class="print" METHOD="POST">';
@@ -149,7 +151,7 @@ try
     echo HtmlInput::submit('save',_('Sauve'));
     echo HtmlInput::reset(_('Effacer'));
 
-    if ( ! isset($_REQUEST['e_date'])&& $g_parameter->MY_DATE_SUGGEST=='Y')
+    if ( ! isset ($_POST['e_date'])&& $g_parameter->MY_DATE_SUGGEST=='Y')
     {
             echo create_script(" get_last_date();ajax_saldo('first_sold');");
     }else {

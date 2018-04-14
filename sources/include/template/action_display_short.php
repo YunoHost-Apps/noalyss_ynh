@@ -30,11 +30,10 @@ global $g_user;
 $date=new IDate("date_event");
 $date->id="date_event_action_short";
 $title=new IText('title_event');
-$title->size="60";
 $title->css_isze="60%";
 // Description
 $summary=new ITextarea('summary');
-$summary->style='class="itextarea" style="padding:0px;margin:0px"';
+$summary->style.='class="itextarea" style="padding:0px;margin:0px"';
 
 // Type of document / event
 $type=new ISelect("type_event");
@@ -49,7 +48,9 @@ $profile->value=$cn->make_array("select  p_id as value, ".
                 " from profile  "
         . "where "
         . "p_id in "
-        . $g_user->get_writable_profile()
+        . " (select p_granted "
+        . "     from user_sec_action_profile "
+        . "     where ua_right='W' and p_id=".$g_user->get_profile().") "
         . "order by 2");
 
 // priority
@@ -74,45 +75,31 @@ $dest->set_dblclick("fill_ipopcard(this);");
 $dest->set_attribute('ipopup', 'ipopcard');
 $dest->style=' style="vertical-align:0%"';
 
-// Hours
-$hour=new IText('hour_event');
-$hour->size=5;
-
-echo HtmlInput::title_box(_('Nouvel événement'), 'action_add_div',"close","","y");
+echo HtmlInput::title_box(_('Nouvel événement'), 'action_add_div');
 ?>
 <span class="notice" style="float:right" id="action_add_frm_info"></span>
-<form method="get" style="margin-left:5%;margin-right: 10%"  id="action_add_frm" onsubmit="action_save_short(<?php echo Dossier::id()?>);return false">
+<form method="get" id="action_add_frm" onsubmit="action_save_short(<?php echo Dossier::id()?>);return false">
+<p>
     <span>
-    <?php echo _('Date')." ". $date->input()?>
+    Date<?php echo $date->input()?>
     </span>
     <span>
-    <?php echo _('Heure')." ". $hour->input()?>
-    </span>
-    <span>
-    <?php echo _('Type évenement')?>
+    Type évenement
 <?php echo $type->input();?>
     </span>
-    <p></p>
-    <span>
-<?php echo _('Destinataire')?>    <?php echo $dest->input();?>
-    </span>
-    <span>
-    <?php echo _('Priorité')?>
+    Priorité
 <?php echo $priority->input()?>
-    </span>
-    <span>
-    <?php echo _('groupe')?>
+    groupe
 <?php echo $profile->input()?>
-
-    </span>
+</p>
+Destinataire    <?php echo $dest->input();?>
 <p>
     <span>
         <?php echo _('Sujet')?>
         <?php echo $title->input()?>
     </span>
 </p>
-<span > <?php echo _("Description")?>
-</span>
+    <?php echo "Description"?>
 <p>
     <?php echo $summary->input()?>
 </p>
@@ -121,15 +108,6 @@ echo HtmlInput::hidden('gDossier',Dossier::id());
 echo HtmlInput::hidden('op','action_save');
 ?>
 <p style="text-align: center">
-<ol style="list-style: none">
-    <li style="display:inline">
     <?php echo HtmlInput::submit("action_add_submit", _('Valider'));?>
-    </li>
-    <li style="display:inline">
-        <?php echo HtmlInput::button_close("action_add_div")?>
-    </li>
-    
-</ol>
-    
 </p>
 </form>

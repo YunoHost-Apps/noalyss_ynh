@@ -116,7 +116,6 @@ function ajaxFid(p_ctl)
     }
     queryString=queryString+"&j="+jrn+'&gDossier='+gDossier;
     queryString=queryString+'&ctl='+p_ctl.id;
-    queryString=encodeURI(queryString);
 
     var action=new Ajax.Request (
                    "fid.php",
@@ -249,73 +248,5 @@ function ajax_get_failure(request,json)
     alert_box("Ajax do not work for ajax_get");
 
 }
-
-var category_card={};
-
-/**
- * Add an attribute selected in "sel"+p_object_name into the list (id:p_object_name+"_list")
- * this attribut will have the ID:p_object_name+"_elt"+ad_id (ad_id = attr_def.ad_id)
- * @param int p_dossier dossier nb
- * @param int p_fiche_def_ref is the frd_id
- * @param string p_object_name , name of the prefix for id 
- */
-category_card.add_attribut=function (p_dossier,p_fiche_def_ref,p_object_name) {
-    var select=$("sel"+p_object_name);
-    var selected_attr=select.value;
-    new Ajax.Request("ajax_misc.php",{
-       method:"post",
-       parameters:{"gDossier":p_dossier,
-           "objname":p_object_name,
-           "op":"template_cat_category",
-           "action":"add_attribute",
-           "frd_id":p_fiche_def_ref,
-           "ad_id":selected_attr
-       },
-       onSuccess:function(req) {
-           var answer=req.responseText.evalJSON();
-           if ( answer.status == 'OK') {
-               var newli=document.createElement("li")
-               newli.setAttribute("id",p_object_name+"_elt"+selected_attr);
-               newli.innerHTML=answer.content
-               $(p_object_name+"_list").append(newli);
-               select.remove(select.selectedIndex);
-           } else {
-               smoke.alert(answer.message);
-           }
-       }
-    });
-};
-/**
- * Remove an attribute (id:p_object_name+"_elt"+ad_id (ad_id = attr_def.ad_id))
- * from the list (id:p_object_name+"list")
- * @param int p_dossier dossier nb
- * @param string p_object_name , name of the prefix for id 
- * @param int p_fiche_def_ref is the frd_id
- * @param {type} p_attribute_id
- */
-category_card.remove_attribut=function (p_dossier,p_fiche_def_ref,p_object_name,p_attribute_id) {
-    new Ajax.Request("ajax_misc.php",{
-       method:"post",
-       parameters:{"gDossier":p_dossier,
-           "objname":p_object_name,
-           "op":"template_cat_category",
-           "action":"remove_attribute",
-           "frd_id":p_fiche_def_ref,
-           "ad_id":p_attribute_id
-       },
-       onSuccess:function(req) {
-           var answer=req.responseText.evalJSON();
-           if ( answer.status == 'OK') {
-               $(p_object_name+"_elt"+p_attribute_id).remove();
-               var option=document.createElement("option");
-               option.text=answer['content'];
-               option.value=p_attribute_id;
-               $('sel'+p_object_name).add(option);
-           } else {
-               smoke.alert(answer.message);
-           }
-       }
-    });
-};
 
 //-->

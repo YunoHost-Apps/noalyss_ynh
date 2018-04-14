@@ -32,10 +32,12 @@
 		<tr>
 			<th >
 				<?php echo _("Quick Code")?>
-                            <?php echo Icon_Action::infobulle(17)?>
+                            <?php echo HtmlInput::infobulle(17)?>
 			</th>
-			<th >
+			<th class="sorttable_sorted_reverse">
 				<?php echo _("Nom")?>
+                            <span id="sorttable_sortrevind">&nbsp;&blacktriangle;</span>
+
 			</th>
 			<th>
 				<?php echo _("Poste Comptable")?>
@@ -45,7 +47,7 @@
 				<?php echo _("Catégorie")?>
 			</th>
 			<?php endif; ?>
-			<th class="sorttable_nosort">
+			<th>
 				<?php echo _("Selection")?>
 			</th>
 		</tr>

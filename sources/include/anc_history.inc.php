@@ -2,14 +2,10 @@
 
 //This file is part of NOALYSS and is under GPL 
 //see licence.txt
-/**
- *@file
- *@brief Print history for Analytic accounting
- * @see Anc_Listing
- */
+
 
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class/anc_listing.class.php';
+require_once NOALYSS_INCLUDE.'/class_anc_listing.php';
 $list = new Anc_Listing($cn);
 $list->get_request();
 

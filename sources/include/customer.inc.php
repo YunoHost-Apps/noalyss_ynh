@@ -22,13 +22,12 @@
  * the customer category
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/lib/iselect.class.php';
-require_once NOALYSS_INCLUDE.'/lib/ihidden.class.php';
-require_once NOALYSS_INCLUDE.'/class/customer.class.php';
-require_once NOALYSS_INCLUDE.'/lib/ibutton.class.php';
-require_once NOALYSS_INCLUDE.'/class/fiche_def.class.php';
-require_once NOALYSS_INCLUDE.'/lib/http_input.class.php';
-$http=new HttpInput();
+require_once NOALYSS_INCLUDE.'/class_iselect.php';
+require_once NOALYSS_INCLUDE.'/class_ihidden.php';
+require_once NOALYSS_INCLUDE.'/class_customer.php';
+require_once NOALYSS_INCLUDE.'/class_ibutton.php';
+require_once NOALYSS_INCLUDE.'/class_fiche_def.php';
+
 
 
 $low_action = (isset($_REQUEST['sb'])) ? $_REQUEST['sb'] : "list";
@@ -55,7 +54,7 @@ if (isset($_POST['action_fiche']))
             return;
         }
 
-        $f_id = $http->request('f_id',"number");
+        $f_id = $_REQUEST['f_id'];
 
         $fiche = new Customer($cn, $f_id);
         $fiche->remove();
@@ -75,9 +74,9 @@ if ($low_action == "list")
             <?php
             echo '<h2>' . "Exercice " . $g_user->get_exercice() . '</h2>';
             $a=(isset($_GET['query']))?$_GET['query']:"";
-            echo _("Cherche ").HtmlInput::filter_table_form("tiers_tb", '0,1,2', 1,"query",$a);
-
-            $choice_cat=$http->request("choice_cat", "",1);
+            printf (_('Recherche').' <input class="input_text" type="text" name="query" value="%s">',
+             $a);
+            $choice_cat=HtmlInput::default_value_request("choice_cat", 1);
 
             if ( $choice_cat == 1 )
             {
@@ -90,7 +89,7 @@ if ($low_action == "list")
                 echo _('Catégorie :').$sel_card->input();
             } else 
             {
-                $cat=$http->request('cat',"string", '');
+                $cat=HtmlInput::default_value_request('cat', '');
                 echo HtmlInput::hidden("cat",$cat);
                 echo HtmlInput::hidden('choice_cat', 0);
             }

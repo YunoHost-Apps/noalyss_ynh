@@ -35,7 +35,7 @@ $is_public->value='Y';
 $is_public->set_check($this->is_public);
 $dossier=Dossier::id();
 $close_share=" if ( \$('shared_{$this->tl_id}') ){ \$('shared_{$this->tl_id}').remove();}";
-echo HtmlInput::title_box("Note","todo_list_div".$this->tl_id,'close',$close_share,'y');
+echo HtmlInput::title_box("Note","todo_list_div".$this->tl_id,'close',$close_share);
 ?>
 <form id="todo_form_<?php echo $this->tl_id?>" onsubmit="todo_list_save(<?php echo $this->tl_id?>);return false">
     <table>
@@ -63,7 +63,7 @@ echo HtmlInput::title_box("Note","todo_list_div".$this->tl_id,'close',$close_sha
         <?php
         // Section about Public note
         // display only if priv granted
-        if ($g_user->check_action(SHARENOTEPUBLIC) == 1):
+        if ($g_user->check_action(SHARENOTEPUBLIC)):
         ?>
         <tr>
             <td>
@@ -98,16 +98,9 @@ echo HtmlInput::title_box("Note","todo_list_div".$this->tl_id,'close',$close_sha
     <?php echo dossier::hidden(); ?>
     <?php echo HtmlInput::hidden('act','save') ?>
     <?php echo HtmlInput::hidden('id',$this->tl_id) ?>
-    <p style='text-align: center'>
-        <ol style="list-style: none;">
     <?php if ($this->use_login == $_SESSION['g_user']) : ?>
-            <li style="display:inline">
-                <input type="submit" class="smallbutton" value="<?php echo _('Sauve');?>" onclick="todo_list_save(<?php echo $this->tl_id?>);return false">
-             </li>
-     <?php endif; ?>   
-             <li style="display:inline">
-                 <?php echo HtmlInput::button_close("todo_list_div".$this->tl_id);?>
-             </li>
-        </ol>
+    <p style='text-align: center'>
+        <input type="submit" class="smallbutton" value="<?php echo _('Sauve');?>" onclick="todo_list_save(<?php echo $this->tl_id?>);return false">
     </p>
+     <?php endif; ?>   
 </form>

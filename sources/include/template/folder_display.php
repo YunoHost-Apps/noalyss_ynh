@@ -37,7 +37,7 @@ if ( count($a_dossier) == 0 )
     return;
 }
 ?>
-<table id="folder_display_tb" class="result">
+<table class="result">
 <?php
 $nb_dossier=count($a_dossier);
 for ($i=0;$i<$nb_dossier;$i++):
@@ -49,11 +49,6 @@ for ($i=0;$i<$nb_dossier;$i++):
                 echo HtmlInput::button('add_folder',BUTTONADD,  " onclick=\"folder_add({$user_id},{$a_dossier[$i]['dos_id']});\"", ' smallbutton');
             ?>
          
-        </td>
-        <td>
-            <?php
-            echo $a_dossier[$i]['dos_id'];
-            ?>
         </td>
         <td>
             <?php

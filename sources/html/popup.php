@@ -18,62 +18,25 @@
  */
 
 require_once '../include/constant.php';
-require_once NOALYSS_INCLUDE.'/lib/ac_common.php';
-require_once NOALYSS_INCLUDE.'/lib/function_javascript.php';
-require_once NOALYSS_INCLUDE.'/lib/html_input.class.php';
-require_once NOALYSS_INCLUDE.'/lib/icon_action.class.php';
-require_once NOALYSS_INCLUDE.'/class/dossier.class.php';
-require_once NOALYSS_INCLUDE.'/lib/database.class.php';
-require_once NOALYSS_INCLUDE.'/lib/http_input.class.php';
-require_once NOALYSS_INCLUDE.'/class/user.class.php';
-require_once NOALYSS_INCLUDE.'/class/periode.class.php';
-
-$http=new HttpInput();
-/*
- * Check if the user is still connected
- */
-if (  ! isset ($_SESSION['g_user'] ) )
-{
-    echo "<h2>"._('Vous  êtes déconnecté')."</h2>";
-    $backurl=$_SERVER['REQUEST_URI'];
-    $url="index.php?".http_build_query(array('reconnect'=>1,'backurl'=>urlencode($backurl)));
-    redirect($url);
-    exit();
-}
+require_once NOALYSS_INCLUDE.'/ac_common.php';
+require_once NOALYSS_INCLUDE.'/function_javascript.php';
+require_once NOALYSS_INCLUDE.'/class_html_input.php';
+require_once NOALYSS_INCLUDE.'/class_dossier.php';
+require_once NOALYSS_INCLUDE.'/class_database.php';
+require_once NOALYSS_INCLUDE.'/class_user.php';
+require_once NOALYSS_INCLUDE.'/class_periode.php';
 
 
 html_page_start($_SESSION['g_theme']);
 echo '<div style="float:left;">';
-?>
-<script>
-/**
- * All the onload must be here otherwise the other will overwritten
- * @returns {undefined}
- */
-window.onload=function ()
-{
-    create_anchor_up();
-    init_scroll();
-    sorttable.init
-}
-</script>
-<?php
 global $g_user;
-$cn=Dossier::connect();
-$g_user=new User($cn);
-$g_user->Check();
-$g_user->check_dossier(Dossier::id());
-
-if ( basename($_GET['op']) == 'history' )
+if ( basename($_GET['ajax']) == 'ajax_history.php' )
   {
     $href=dossier::get();
-    
-    $exercice=$http->get("exercice","number",0);
-    
+    $cn=new Database(dossier::id());
     /* current year  */
-    if ($exercice == 0 ) {
-        $exercice=$g_user->get_exercice();
-    }
+    $g_user=new User($cn);
+    $exercice=$g_user->get_exercice();
 
     /* get date limit */
     $periode=new Periode($cn);

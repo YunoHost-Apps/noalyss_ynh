@@ -19,7 +19,7 @@
 // Copyright Author Dany De Bontridder danydb@aevalys.eu
 
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class/default_menu.class.php';
+require_once NOALYSS_INCLUDE.'/class_default_menu.php';
 
 global $cn,$g_failed,$g_succeed;
 

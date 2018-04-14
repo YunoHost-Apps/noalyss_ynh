@@ -15,125 +15,133 @@
  *   You should have received a copy of the GNU General Public License
  *   along with NOALYSS; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
+*/
 // Copyright Author Dany De Bontridder danydb@aevalys.eu
-/* ! \file
+/*! \file
  * \brief add, modify, close or delete a period
  */
-if (!defined('ALLOWED'))
-    die('Appel direct ne sont pas permis');
+if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
 $gDossier=dossier::id();
-require_once NOALYSS_INCLUDE.'/lib/iselect.class.php';
-require_once NOALYSS_INCLUDE.'/class/periode.class.php';
+require_once NOALYSS_INCLUDE.'/class_iselect.php';
+require_once  NOALYSS_INCLUDE.'/class_periode.php';
 echo '<div class="content">';
-$cn=Dossier::connect();
+$cn=new Database($gDossier);
 //-----------------------------------------------------
 // Periode
 //-----------------------------------------------------
-require_once NOALYSS_INCLUDE."/class/periode.class.php";
-require_once NOALYSS_INCLUDE."/class/periode_ledger.class.php";
-$http=new HttpInput();
+$action="";
+if ( isset($_REQUEST['action']))
+    $action=$_REQUEST['action'];
+$choose=(isset ($_GET['choose']))?$_GET['choose']:"no";
 
-$p_ledger_id=$http->request("jrn_def_id", "number", 0);
-?>
-<script>
-    var jsper = new Periode(<?php echo $p_ledger_id; ?>);
-    jsper.set_callback("ajax_misc.php");
-    jsper.set_js_obj_name("jsper");
-    jsper.set_dossier('<?php echo Dossier::id(); ?>');
+if ($choose=='Valider') $choose='yes';
 
-</script>
-<?php
-//--------------------------------------------------------------------
-// Add an exercice 
-// receive nb_exercice
-//--------------------------------------------------------------------
-if (isset($_POST['add_exercice']))
+if ( isset ($_POST["add_per"] ))
 {
+    extract($_POST);
     $obj=new Periode($cn);
-    try
+    if ( $obj->insert($p_date_start,$p_date_end,$p_exercice) == 1 )
     {
-        $p_exercice=$http->post("p_exercice", "number");
-        $p_year=$http->post("p_year", "number");
-        $nb_month=$http->post("nb_month", "number");
-        $from_month=$http->post("from_month", "number");
-        $day_opening=$http->post("day_opening", "string", 0);
-        $day_closing=$http->post("day_closing", "string", 0);
-        $exercice=new Periode($cn);
-        $exercice->insert_exercice($p_exercice, $p_year, $from_month, $nb_month,
-                $day_opening, $day_closing);
+        alert(_('Valeurs invalides'));
     }
-    catch (Exception $ex)
-    {
-        echo_warning($ex->getMessage());
-    }
+    $choose="yes";
+
 }
-//-------------------------------------------------------------------
-// Select a ledger or global
-//-------------------------------------------------------------------
-echo '<form method="GET" >';
-echo dossier::hidden();
-$sel_jrn=$cn->make_array("select jrn_def_id, jrn_def_name from ".
-        " jrn_def order by jrn_def_name");
-$sel_jrn[]=array('value'=>0, 'label'=>_('Global : periode pour tous les journaux'));
-$wSel=new ISelect();
-$wSel->value=$sel_jrn;
-$wSel->name='jrn_def_id';
-$wSel->selected=$p_ledger_id;
-echo _("Choisissez global ou uniquement le journal à fermer").$wSel->input();
-echo HtmlInput::submit('choose', 'Valider');
-echo HtmlInput::hidden('ac', $_REQUEST['ac']);
-echo "</form>";
-// display a filter by exercice
-echo _("Montrer l'exercice");
-$max_exercice=$cn->get_value("select max(p_exercice) from parm_periode");
-$p_exercice=$http->request("p_exercice","string",$max_exercice);
-Periode::filter_exercice($p_exercice);
+if (isset($_POST['add_exercice']))
+  {
+    $obj=new Periode($cn);
+    $exercice=$cn->get_value('select max(p_exercice::float)+1 from parm_periode');
+    if ( $obj->insert_exercice($exercice,$_POST['nb_exercice']) == 1 )
+    {
+        alert(_('Valeurs invalides'));
+    }
 
-$js_close_selected="jsper.close_selected()";
-echo HtmlInput::button_action(_("Fermer les périodes sélectionnées"),
-        $js_close_selected);
-
+    $choose="yes";
+  }
 /*
- * Display all the periode for all ledgers
- */
-if ($p_ledger_id==0)
+ * Close selected periode
+ */  
+if ( isset($_POST['close_per']) )
 {
-    echo HtmlInput::button_action(_("Ajout exercice"),
-            "\$('exercice_add').show()");
-//-------------------------------------------------------------------
-// Add a new Exercice
-//-------------------------------------------------------------------
-    echo '<div id="exercice_add" style="display:none" class="inner_box">';
-    Periode::form_exercice_add();
-    echo '</div>';
-//-------------------------------------------------------------------
-// Add a new Periode
-//-------------------------------------------------------------------
-    echo HtmlInput::button_action(_("Ajout période"), "\$('periode_add').show()");
-    echo '<div id="periode_add" style="display:none;width:auto" class="inner_box">';
-    Periode::form_periode_add("jsper");
-    echo '</div>';
+	if (isset($_POST['sel_per_close'] ) ) {
+		$a_per_to_close=$_POST['sel_per_close'];
+		for ($i=0;$i < count($a_per_to_close);$i++) {
+			$per=new Periode($cn);
+			 $jrn_def_id=(isset($_GET['jrn_def_id']))?$_GET['jrn_def_id']:0;
+                         $per->jrn_def_id=$jrn_def_id;
+			 $per->set_periode($a_per_to_close[$i]);
+			$per->close();
+		
+		}
+	}
+	$choose="yes";
+}
 
-//-------------------------------------------------------------------
-// List of Periode
-//-------------------------------------------------------------------
-    $periode=new Parm_Periode_SQL($cn);
-    Periode::display_periode_global("jsper");
+
+if ( $action== "delete_per" )
+{
+    $p_per=$_GET["p_per"];
+// Check if the periode is not used
+    if ( $cn->count_sql("select * from jrnx where j_tech_per=$p_per") != 0 )
+    {
+        alert(' Désolé mais cette période est utilisée');
+    }
+    else
+    {
+        $count=$cn->get_value("select count(*) from parm_periode;");
+        if ( $count > 1 ) {
+            $Res=$cn->exec_sql("delete from parm_periode where p_id=$p_per");
+        } else
+        {
+            alert(' Désolé mais vous devez avoir au moins une période');
+        }
+    }
+    $choose="yes";
+}
+if ( $action == 'reopen')
+  {
+    $jrn_def_id=(isset($_GET['jrn_def_id']))?$_GET['jrn_def_id']:0;
+    $per=new Periode($cn);
+    $jrn_def_id=(isset($_GET['jrn_def_id']))?$_GET['jrn_def_id']:0;
+    $per->set_jrn($jrn_def_id);
+    $per->set_periode($_GET['p_per']);
+    $per->reopen();
+
+    $choose="yes";
+  }
+if ( $choose=="yes" )
+{
+    echo '<p>';
+    echo HtmlInput::button_anchor('Autre Journal ?','?choose=no&ac='.$_REQUEST['ac'].'&gDossier='.dossier::id());
+    echo '</p>';
+    $per=new Periode($cn);
+    $jrn=(isset($_GET['jrn_def_id']))?$_GET['jrn_def_id']:0;
+    $per->set_jrn($jrn);
+
+    $per->display_form_periode();
+    $nb_exercice=new ISelect("nb_exercice");
+    $nb_exercice->value=array(
+			      array('value'=>12,'label'=>"12 périodes"),
+			      array('value'=>13,'label'=>"13 périodes")
+			      );
+
+    require_once NOALYSS_INCLUDE.'/template/periode_add_exercice.php';
 }
 else
 {
-    echo '<p class="info">'._("Pour ajouter, effacer ou modifier une période, il faut choisir global").'</p>';
-    $ledger=new Acc_Ledger($cn, $p_ledger_id);
-    echo h2($ledger->get_name());
-
-    $periode_ledger=new Periode_Ledger_Table(0);
-    $ret=$periode_ledger->get_resource_periode_ledger($p_ledger_id);
-    $periode_ledger->display_table($ret, "jsper");
+    echo '<form method="GET" >';
+    echo dossier::hidden();
+    $sel_jrn=$cn->make_array("select jrn_def_id, jrn_def_name from ".
+                             " jrn_def order by jrn_def_name");
+    $sel_jrn[]=array('value'=>0,'label'=>'Global : periode pour tous les journaux');
+    $wSel=new ISelect();
+    $wSel->value=$sel_jrn;
+    $wSel->name='jrn_def_id';
+    echo "Choisissez global ou uniquement le journal à fermer".$wSel->input();
+    echo   HtmlInput::submit('choose','Valider');
+    echo HtmlInput::hidden('ac',$_REQUEST['ac']);
+    echo "</form>";
+    echo '<p class="info"> Pour ajouter, effacer ou modifier une p&eacute;riode, il faut choisir global</p>';
 }
-
 echo '</div>';
 ?>
-<script>
-    Periode.filter_exercice('periode_tbl');
-</script>

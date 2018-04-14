@@ -8,12 +8,8 @@ Ensuite copier bootstrap.php.example vers bootstrap.php et modifier les variable
 
 Testing commande en ligne
 =========================
-
 Génération
  php <chemin>/phpunit-skelgen.phar --bootstrap bootstrap.php --test -- Intervat ../include/class_transform_intervat.php
-ou
- php <chemin>/phpunit-skelgen.phar generate-test --bootstrap bootstrap.php -- Acc_Account_Ledger ../include/class/class_acc_account_ledger.php
-
 test (depuis repertoire include)
  php <chemin>/phpunit.phar  --tap --colors --bootstrap ../bootstrap.php class_acc_accountTest.php
 
@@ -25,5 +21,3 @@ Génération pour tous les fichiers
 =================================
 Permet de voir les lignes de code qui ont été testées
 php <chemin>/phpunit.phar --coverage-html html --bootstrap bootstrap.php include
-
-exemple depuis NETBEANS "/usr/bin/php" "/home/dany/Program/phpunit-skelgen.phar" "--ansi" "generate-test" "--bootstrap=/home/dany/developpement/phpcompta/noalyss/unit-test/bootstrap.php" "View_SQL" "/home/dany/developpement/phpcompta/noalyss/include/lib/view_sql.class.php" "View_SQLTest" "/home/dany/developpement/phpcompta/noalyss/unit-test/include/lib/view_sql.classTest.php"

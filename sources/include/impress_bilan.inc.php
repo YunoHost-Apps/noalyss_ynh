@@ -17,8 +17,8 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once  NOALYSS_INCLUDE.'/class/acc_bilan.class.php';
-require_once NOALYSS_INCLUDE.'/class/exercice.class.php';
+require_once  NOALYSS_INCLUDE.'/class_acc_bilan.php';
+require_once NOALYSS_INCLUDE.'/class_exercice.php';
 
 //ini_set("memory_limit","150M");
 /*! \file
@@ -31,7 +31,7 @@ require_once NOALYSS_INCLUDE.'/class/exercice.class.php';
 //-----------------------------------------------------
 // Show the jrn and date
 //-----------------------------------------------------
-require_once NOALYSS_INCLUDE.'/lib/database.class.php';
+require_once NOALYSS_INCLUDE.'/class_database.php';
 global $g_user;
 //-----------------------------------------------------
 // Form
@@ -61,13 +61,6 @@ $filter_year=" where p_exercice='".sql_string($exercice)."'";
 echo '<FORM  METHOD="GET">';
 echo HtmlInput::hidden('type','bilan');
 echo dossier::hidden();
-
-// By default , show last day of exercice
-if ($bilan->to == -1 ){
-    $t_periode=new Periode($cn);
-    list($per_max,$per_min)=$t_periode->get_limit($exercice);
-    $bilan->to=$per_min->p_id;
-}
 echo $bilan->display_form ($filter_year);
 echo '<span class="notice"> '._('Attention : si le bilan n\'est pas équilibré.<br> Vérifiez <ul>
        <li>L\'affectation du résultat est fait</li>

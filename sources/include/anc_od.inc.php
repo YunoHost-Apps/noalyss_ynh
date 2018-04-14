@@ -26,14 +26,14 @@
  *
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/lib/ihidden.class.php';
-require_once NOALYSS_INCLUDE.'/lib/iselect.class.php';
-require_once  NOALYSS_INCLUDE.'/class/anc_operation.class.php';
-require_once  NOALYSS_INCLUDE.'/class/anc_plan.class.php';
-require_once  NOALYSS_INCLUDE.'/class/anc_group_operation.class.php';
+require_once NOALYSS_INCLUDE.'/class_ihidden.php';
+require_once NOALYSS_INCLUDE.'/class_iselect.php';
+require_once NOALYSS_INCLUDE.'/class_anc_account.php';
+require_once  NOALYSS_INCLUDE.'/class_anc_operation.php';
+require_once  NOALYSS_INCLUDE.'/class_anc_plan.php';
+require_once  NOALYSS_INCLUDE.'/class_anc_group_operation.php';
 
 global $g_user;
-$http=new HttpInput();
 
 $str_dossier=Dossier::get();
 $pa=new Anc_Plan($cn);
@@ -41,7 +41,7 @@ $m=$pa->get_list();
 if ( ! $m )
 {
 
-    echo '<div ><h2 class="error">'._('Aucun plan analytique défini').'</h2></div>';
+    echo '<div style="float:left;width:60%;margin-left:20%"><h2 class="error">'._('Aucun plan analytique défini').'</h2></div>';
     return;
 }
 
@@ -51,8 +51,9 @@ if ( ! $m )
 // show the left menu
 //----------------------------------------------------------------------
 echo '
+<div class="content" >
 <div class="menu2">
-<table clsas="mtitle">
+<table>
 <tr>
 <td  class="mtitle" >
 <A class="mtitle" HREF="?ac='.$_REQUEST['ac'].'&new&'.$str_dossier.'"> '._('Nouveau').' </A>
@@ -62,6 +63,7 @@ echo '
 </td>
 </tr>
 </table>
+</div>
 </div>
 ';
 
@@ -101,7 +103,7 @@ if ( isset($_GET['see']))
 
     $periode_start=$cn->make_array("select p_id,to_char(p_start,'DD-MM-YYYY') from parm_periode $filter_year order by  p_start,p_end",1);
     $g_user=new User($cn);
-    $current=$http->get("p_periode","number",$g_user->get_periode());
+    $current=(isset($_GET['p_periode']))?$_GET['p_periode']:$g_user->get_periode();
     $w->value=$periode_start;
     $w->selected=$current;
     echo _('Filtrer par période').":".$w->input().HtmlInput::submit('gl_submit','Valider').'</form>';
@@ -138,7 +140,7 @@ if ( isset($_GET['new']))
     $wSubmit=new IHidden("p_action","ca_od");
     $wSubmit->table=0;
     echo '<div class="redcontent"  >';
-    echo '<form id="anc_od_frm" method="post" onsubmit="return validate_anc(\'anc_od_frm\');return false;">';
+    echo '<form method="post">';
     echo dossier::hidden();
     echo $wSubmit->input();
     echo $a->form();
@@ -152,30 +154,6 @@ if ( isset($_GET['new']))
     ';
 
     echo '</div>';
-    $msg_comment=_("Commentaire vide");
-    $msg_date=_("Date invalide");
-echo <<<EOF
-<script> 
-    function validate_anc(p_frm_id) {
-    try {
-        if ($('pdesc').value.length==0) {
-            smoke.alert('$msg_comment');
-            return false;
-        }
-        if ( ! check_date($(p_frm_id)['pdate'].value) ) {
-            smoke.alert('$msg_date');
-            return false;
-        }
-        } catch (e) {
-            smoke.alert(e.message);
-        }
-        return ;
-    }
-    
-</script>;    
-
-EOF;
-    
    return;
 }
 

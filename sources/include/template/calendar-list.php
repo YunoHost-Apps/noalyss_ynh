@@ -27,8 +27,7 @@
 ?>
 <div class="content" id="user_cal" style="width:100%">
 <?php 
-    $http=new HttpInput();
-    $short=$http->get('from',"string", 0);
+    $short=HtmlInput::default_value_get('from', 0);
     $js=sprintf("calendar_zoom({gDossier:%d,invalue:'%s',outvalue:'%s',distype:'%s','notitle':%d})",
             dossier::id(),'per_div','calendar_zoom_div','cal',$notitle);
     echo HtmlInput::anchor(_('Calendrier'),''," onclick=\"{$js}\"")   ;

@@ -28,42 +28,46 @@
  *
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class/acc_ledger_purchase.class.php';
-require_once NOALYSS_INCLUDE.'/class/acc_ledger_fin.class.php';
-require_once NOALYSS_INCLUDE.'/class/acc_ledger_sold.class.php';
-require_once NOALYSS_INCLUDE.'/class/acc_ledger.class.php';
-require_once NOALYSS_INCLUDE.'/class/acc_ledger_search.class.php';
-global $g_user,$cn,$http;
+require_once NOALYSS_INCLUDE.'/class_acc_ledger_purchase.php';
+require_once NOALYSS_INCLUDE.'/class_acc_ledger_fin.php';
+require_once NOALYSS_INCLUDE.'/class_acc_ledger_sold.php';
+require_once NOALYSS_INCLUDE.'/class_acc_ledger.php';
+global $g_user,$cn;
 $p_array = $_GET;
-$ledger_type=$http->get("ledger_type","string", 'ALL');
-
-$Ledger=new Acc_Ledger_Search($ledger_type,0,'search_op');
+$ledger_type=HtmlInput::default_value_get("ledger_type", 'ALL');
 switch($ledger_type)
 {
         case 'ACH':
+                $Ledger = new Acc_Ledger_Purchase($cn, 0);
                 $ask_pay=1;
                 break;
         case 'ODS':
+                $Ledger=new Acc_Ledger($cn,0);
                 $ask_pay=0;
                 $p_array['ledger_type']='ODS';
+                $Ledger->type='ODS';
                 break;
         case 'ALL':
+                $Ledger=new Acc_Ledger($cn,0);
                 $ask_pay=0;
                 $p_array['ledger_type']='ALL';
+                $Ledger->type='ALL';
                 break;
         case 'VEN':
+                $Ledger=new Acc_Ledger_Sold($cn,0);
                 $ask_pay=1;
                 break;
         case 'FIN':
+                $Ledger=new Acc_Ledger_Fin($cn,0);
                 $ask_pay=0;
                 break;
 
 }
 echo '<div class="content">';
 // Check privilege
-$p_jrn=$http->request("p_jrn", "string",-1);
+$p_jrn=HtmlInput::default_value_request("p_jrn", -1);
 if (isset($_REQUEST['p_jrn']) &&
-		$g_user->check_jrn($p_jrn) == 'X')
+		$g_user->check_jrn($_REQUEST['p_jrn']) == 'X')
 {
 
 	NoAccess();
@@ -71,14 +75,13 @@ if (isset($_REQUEST['p_jrn']) &&
 }
 
 $Ledger->id = $p_jrn;
-
+echo $Ledger->display_search_form();
 //------------------------------
 // UPdate the payment
 //------------------------------
 if (isset($_GET ['paid']))
 {
-    $ledger_paid=new Acc_Ledger($cn,$p_jrn);
-    $ledger_paid->update_paid($_GET);
+	$Ledger->update_paid($_GET);
 }
 
 
@@ -100,6 +103,7 @@ else
 }
 /*  compute the sql stmt */
 list($sql, $where) = $Ledger->build_search_sql($p_array);
+
 $max_line = $cn->count_sql($sql);
 
 $step = $_SESSION['g_pagesize'];
@@ -108,12 +112,11 @@ $offset = (isset($_GET['offset'])) ? $_GET['offset'] : 0;
 $bar = navigation_bar($offset, $max_line, $step, $page);
 
 echo $msg;
-echo $Ledger->display_search_form();
-echo $bar;
 echo '<form method="GET" id="fpaida" class="print">';
 echo HtmlInput::hidden("ac", $_REQUEST['ac']);
 echo HtmlInput::hidden('ledger_type',$ledger_type);
 echo dossier::hidden();
+echo $bar;
 
 list($count, $html) = $Ledger->list_operation($sql, $offset, $ask_pay);
 echo $html;

@@ -31,14 +31,14 @@
  * Must return at least tva, htva and tvac
  */
 require_once '../include/constant.php';
-require_once  NOALYSS_INCLUDE.'/lib/database.class.php';
-require_once  NOALYSS_INCLUDE.'/class/acc_compute.class.php';
-require_once  NOALYSS_INCLUDE.'/class/dossier.class.php';
-require_once  NOALYSS_INCLUDE.'/class/acc_tva.class.php';
-require_once  NOALYSS_INCLUDE.'/class/user.class.php';
+require_once  NOALYSS_INCLUDE.'/class_database.php';
+require_once  NOALYSS_INCLUDE.'/class_acc_compute.php';
+require_once  NOALYSS_INCLUDE.'/class_dossier.php';
+require_once  NOALYSS_INCLUDE.'/class_acc_tva.php';
+require_once  NOALYSS_INCLUDE.'/class_user.php';
 
 // Check if the needed field does exist
-extract ($_GET, EXTR_SKIP );
+extract ($_GET);
 foreach (array('t','c','p','q','n','gDossier') as $a)
 {
     if ( ! isset (${$a}) )
@@ -48,7 +48,7 @@ foreach (array('t','c','p','q','n','gDossier') as $a)
     }
 
 }
-$cn=Dossier::connect();
+$cn=new Database(dossier::id());
 $User=new User($cn);
 $User->Check();
 // Retrieve the rate of vat, it $t == -1 it means no VAT

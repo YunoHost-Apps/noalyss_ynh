@@ -24,11 +24,11 @@ if ( !defined ('ALLOWED') )  die('Appel direct ne sont pas permis');
  * @brief Manage the tags
  *
  */
-require_once NOALYSS_INCLUDE.'/class/tag.class.php';
-require_once NOALYSS_INCLUDE.'/lib/single_record.class.php';
+require_once NOALYSS_INCLUDE.'/class_tag.php';
+require_once NOALYSS_INCLUDE.'/class_tool_uos.php';
 
 $tag=new Tag($cn);
-$uos=new Single_Record('tag');
+$uos=new Tool_Uos('tag');
 if ( isset ($_POST['save_tag_sb']))
 {
     if ( ! isset ($_POST['remove']))

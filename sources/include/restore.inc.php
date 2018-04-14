@@ -19,10 +19,9 @@
 
 // Copyright Author Dany De Bontridder danydb@aevalys.eu
 if ( !defined ('ALLOWED')) die('Forbidden');
-require_once NOALYSS_INCLUDE.'/lib/iradio.class.php';
-require_once NOALYSS_INCLUDE.'/lib/ifile.class.php';
-require_once NOALYSS_INCLUDE.'/lib/http_input.class.php';
-$http=new HttpInput();
+require_once NOALYSS_INCLUDE.'/class_iradio.php';
+require_once NOALYSS_INCLUDE.'/class_ifile.php';
+
 /*!\file
  * \brief restaure a database
  */
@@ -72,28 +71,28 @@ if ( isset ($_REQUEST['sa'] ))
     // Restore a folder (dossier)
     if ( $_REQUEST['t']=='d')
     {
-        echo '<div class="content">';
+        echo '<div class="content" style="width:80%;margin-left:10%">';
 
         $cn=new Database();
         $id=$cn->get_next_seq('dossier_id');
 
         if ( strlen(trim($_REQUEST['database'])) == 0 )
-        {
+		{
             $lname=$id." Restauration :".sql_string($_FILES['file']['name']);
-        }
+		}
         else
-        {
+		{
             $lname=$id." ".$_REQUEST['database'];
-        }
+		}
 
-        if (strlen(trim($_REQUEST['desc']))==0)
-        {
-            $ldesc=$lname;
-        }
-        else
-        {
-            $ldesc=sql_string($_REQUEST['desc']);
-        }
+		if (strlen(trim($_REQUEST['desc']))==0)
+		{
+			$ldesc=$lname;
+		}
+		else
+		{
+			$ldesc=sql_string($_REQUEST['desc']);
+		}
 
         $sql="insert into ac_dossier (dos_id,dos_name,dos_description) values ($1,$2,$3)";
         $cn->start();
@@ -132,11 +131,9 @@ if ( isset ($_REQUEST['sa'] ))
         }
         $new_cn=new Database($id);
 
-        $new_cn->apply_patch($name);
+        $new_cn->apply_patch($name,0);
         echo '<span class="error">'._('Ne pas recharger la page, sinon votre base de données sera restaurée une fois de plus').'</span>';
 	Dossier::synchro_admin($id);
-        User::remove_inexistant_user($id);
-        $new_cn->clean_orphan_lob();
         echo $retour;
 
         echo '</div>';
@@ -152,16 +149,16 @@ if ( isset ($_REQUEST['sa'] ))
         $id=$cn->get_next_seq('s_modid');
 
         if ( strlen(trim($_REQUEST['database'])) == 0 )
-            $lname=$id." Restauration :".$_FILES['file']['name'];
+            $lname=$id." Restauration :".sql_string($_FILES['file']['name']);
         else
             $lname=$id." ".$_REQUEST['database'];
-        
-        $ldesc=$http->post("desc");
-        $sql="insert into modeledef (mod_id,mod_name,mod_desc) values ($1,$2,$3)";
+
+
+        $sql="insert into modeledef (mod_id,mod_name,mod_desc) values (".$id.",'Restauration".$lname."','".$ldesc."') ";
         $cn->start();
         try
         {
-            $cn->exec_sql($sql,array($id,$lname,$ldesc));
+            $cn->get_value($sql);
 
         }
         catch ( Exception $e)
@@ -194,8 +191,8 @@ if ( isset ($_REQUEST['sa'] ))
 
         $new_cn=new Database($id,'mod');
 
-        $new_cn->apply_patch($name);
-        $new_cn->clean_orphan_lob();
+        $new_cn->apply_patch($name,0);
+
         echo '<span class="error">'._('Ne pas recharger la page, sinon votre base de données sera restaurée une fois de plus').'</span>';
         echo $retour;
 
@@ -205,11 +202,11 @@ if ( isset ($_REQUEST['sa'] ))
 else
 {
     echo '<div class="content" style="width:80%;margin-left:10%">';
-    echo '<form method="POST" action="admin-noalyss.php" enctype="multipart/form-data" >';
+    echo '<form method="POST" action="admin_repo.php" enctype="multipart/form-data" >';
     echo HtmlInput::hidden('action','restore');
     echo HtmlInput::hidden('sa','r');
     echo '<table>';
-    echo '<tr><td>'._("Nom de la base de donnée").Icon_Action::infobulle(29)
+    echo '<tr><td>'._("Nom de la base de donnée").HtmlInput::infobulle(29)
 			.'</td>';
     $wNom=new IText();
     $wNom->name="database";

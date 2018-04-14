@@ -40,7 +40,7 @@ for ($e = 0; $e < count($obj->det->array); $e++)
 {
 	$row = '';
 	$q = $obj->det->array;
-	$view_history = HtmlInput::history_account($q[$e]['j_poste'], $q[$e]['j_poste'], "", $exercice);
+	$view_history = sprintf('<A class="detail" style="text-decoration:underline" HREF="javascript:view_history_account(\'%s\',\'%s\')" >%s</A>', $q[$e]['j_poste'], $gDossier, $q[$e]['j_poste']);
 
 	$row.=td($view_history);
 
@@ -48,8 +48,7 @@ for ($e = 0; $e < count($obj->det->array); $e++)
 	{
 		$fiche = new Fiche($cn);
 		$fiche->get_by_qcode($q[$e]['j_qcode']);
-                $view_history=HtmlInput::history_card($fiche->id, $q[$e]['j_qcode'], "", $exercice);
-
+		$view_history = sprintf('<A class="detail" style="text-decoration:underline" HREF="javascript:view_history_card(\'%s\',\'%s\')" >%s</A>', $fiche->id, $gDossier, $q[$e]['j_qcode']);
 	}
 	else
 		$view_history = '';

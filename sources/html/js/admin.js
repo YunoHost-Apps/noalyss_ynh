@@ -15,10 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-/**
- * @file 
- * @brief contains the javascript for the administration page
- */
+
 /**
  * Display the forbidden folders if the request comes from a form
  * with an input text (id:database_filter_input) then this text is 
@@ -34,6 +31,7 @@ function folder_display(p_user)
      */
     var p_filter = "";
     if ($('database_filter_input')) {
+        console.log($('database_filter_input').value);
         p_filter = $('database_filter_input').value;
     }
     /*
@@ -63,7 +61,7 @@ function folder_display(p_user)
             var content = getNodeText(html[0]);
             // fill up the div
             folder.innerHTML = unescape_xml(content);
-            folder.innerHTML.evalScripts();
+
             // show it
             folder.show();
             $('database_filter_input').focus();
@@ -126,9 +124,9 @@ function folder_add(p_user, p_dossier)
             var nb = $('database_list').rows.length + 1;
             var row = new Element('tr', {'id': 'row' + p_dossier});
             if (nb % 2 == 0) {
-                row.addClassName('even');
-            } else {
                 row.addClassName('odd');
+            } else {
+                row.addClassName('even');
             }
             row.innerHTML = unescape_xml(content);
             $('database_list').appendChild(row);
@@ -171,7 +169,7 @@ function display_admin_answer(p_dossier,p_action)
             folder.show();
             remove_waiting_box();
         } catch (e) {
-                alert_box(e.message);
+            console.log(e.message);
         }
         }
     });

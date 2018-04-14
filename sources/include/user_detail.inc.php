@@ -21,19 +21,19 @@
  * \brief Users Security
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/lib/ac_common.php';
-require_once NOALYSS_INCLUDE.'/lib/database.class.php';
-require_once NOALYSS_INCLUDE.'/lib/user_menu.php';
-require_once  NOALYSS_INCLUDE.'/class/user.class.php';
-require_once NOALYSS_INCLUDE.'/lib/http_input.class.php';
-$http=new HttpInput();
+require_once NOALYSS_INCLUDE.'/ac_common.php';
+require_once NOALYSS_INCLUDE.'/class_database.php';
+require_once NOALYSS_INCLUDE.'/user_menu.php';
+require_once  NOALYSS_INCLUDE.'/class_user.php';
+
 $rep = new Database();
-try {
-$uid = $http->request('use_id');
-} catch (Exception $ex) {
-     echo_error($ex->getMessage());
-     throw $ex;
+
+if (!isset($_REQUEST['use_id']))
+{
+    html_page_stop();
+    return;
 }
+$uid = $_REQUEST['use_id'];
 $UserChange = new User($rep, $uid);
 
 if ($UserChange->id == false)
@@ -45,7 +45,7 @@ if ($UserChange->id == false)
 /*  
  * Update user changes 
  */
-$sbaction=$http->post('sbaction',"string", "");
+$sbaction=HtmlInput::default_value_post('sbaction', "");
 if ($sbaction == "save")
 {
     $uid = $_POST['UID'];
@@ -60,11 +60,11 @@ if ($sbaction == "save")
     }
     else
     {
-        $UserChange->first_name =$http->post('fname');
-        $UserChange->last_name = $http->post('lname');
-        $UserChange->active = $http->post('Actif');
-        $UserChange->admin = $http->post('Admin');
-        $UserChange->email = $http->post('email');
+        $UserChange->first_name =HtmlInput::default_value_post('fname',null);
+        $UserChange->last_name = HtmlInput::default_value_post('lname',null);
+        $UserChange->active = HtmlInput::default_value_post('Actif',-1);
+        $UserChange->admin = HtmlInput::default_value_post('Admin',-1);
+        $UserChange->email = HtmlInput::default_value_post('email',null);
         if ($UserChange->active ==-1 || $UserChange->admin ==-1)
         {
             die ('Missing data');
@@ -90,18 +90,9 @@ else if ($sbaction == "delete")
     $cn = new Database();
     $Res = $cn->exec_sql("delete from jnt_use_dos where use_id=$1", array($uid));
     $Res = $cn->exec_sql("delete from ac_users where use_id=$1", array($uid));
-    //------------------------------------
-    // Remove user from all the dossiers
-    //------------------------------------
-    $a_dossier=$cn->get_array('select dos_id from ac_dossier');
-    if ( is_array($a_dossier) ) {
-        $nb=count($a_dossier);
-        for ( $i=0;$i<$nb;$i++)
-            User::remove_inexistant_user($a_dossier[$i]['dos_id']);
-    }
-    
+
     echo "<center><H2 class=\"info\"> Utilisateur " . h($_POST['fname']) . " " . h($_POST['lname']) . " est effacé</H2></CENTER>";
-    require_once NOALYSS_INCLUDE.'/lib/iselect.class.php';
+    require_once NOALYSS_INCLUDE.'/class_iselect.php';
     require_once NOALYSS_INCLUDE.'/user.inc.php';
     return;
 }

@@ -26,8 +26,8 @@
  *
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
-require_once NOALYSS_INCLUDE.'/class/stock_goods.class.php';
-require_once NOALYSS_INCLUDE.'/class/stock.class.php';
+require_once NOALYSS_INCLUDE.'/class_stock_goods.php';
+require_once NOALYSS_INCLUDE.'/class_stock.php';
 global $cn;
 
 $inv=new Stock_Goods($cn);
@@ -43,7 +43,7 @@ if ( isset ($_POST['save']))
 	}catch(Exception $e)
 	{
 		 alert($e->getMessage());
-		$array=$_POST;
+		$array=input($_POST);
 	}
 } else if ( isset ($_GET['reprise_frm']) )
 {

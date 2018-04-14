@@ -2,11 +2,11 @@
 //This file is part of NOALYSS and is under GPL 
 //see licence.txt
 $str_anc="";
-?><?php require_once NOALYSS_TEMPLATE.'/ledger_detail_top.php'; ?>
+?><?php require_once NOALYSS_INCLUDE.'/template/ledger_detail_top.php'; ?>
 <div class="content" style="padding:0;">
     <?php
-    require_once NOALYSS_INCLUDE.'/class/noalyss_parameter_folder.class.php';
-    $owner = new Noalyss_Parameter_Folder($cn);
+    require_once NOALYSS_INCLUDE.'/class_own.php';
+    $owner = new Own($cn);
     ?>
 
     <?php if ($access == 'W') : ?>
@@ -144,20 +144,7 @@ $str_anc="";
                     $x = count($a_anc);
                     /* set the width of the col */
                     /* add hidden variables pa[] to hold the value of pa_id */
-                      $str_anc.='<tr>'.
-                           '<th>'.
-                           _('Code').
-                           '</th>'.
-                           '<th>'.
-                           _('Poste').
-                           '</th>'.
-                           '<th>'.
-                           _('Montant').
-                           '</th>'.
-                           '<th colspan="' . $x . '">' 
-                           . _('Compt. Analytique') .Anc_Plan::hidden($a_anc). 
-                           '</th>'.
-                           '</tr>';
+                    $str_anc.='<tr><th>Code</th><th>Montant</th><th colspan="' . $x . '">' . _('Compt. Analytique') . Anc_Plan::hidden($a_anc).'</th></tr>';
 
                 }
                 echo '</tr>';
@@ -192,8 +179,10 @@ $str_anc="";
                     }
                     $row.=td($input->input() . $hidden);
                     $row.=td($sym_tva, 'style="text-align:center"');
-                    $pu = $q['qp_unit'];
-                    $row.=td(nbm($pu,4), 'class="num"');
+                    $pu = 0;
+                    if ($q['qp_quantite'] != 0)
+                        $pu = bcdiv($q['qp_price'], $q['qp_quantite']);
+                    $row.=td(nbm($pu), 'class="num"');
                     $row.=td(nbm($q['qp_quantite']), 'class="num"');
 
                     $no_ded = bcadd($q['qp_dep_priv'], $q['qp_nd_amount']);
@@ -230,15 +219,12 @@ $str_anc="";
                             $anc_op = new Anc_Operation($cn);
                             $anc_op->j_id = $q['j_id'];
                             $anc_op->in_div=$div;
-                            $side=($q['j_debit'] == 'f')?'C':'D';
-
-                            echo HtmlInput::hidden('opanc[]', $anc_op->j_id);
+                            echo HtmlInput::hidden('op[]', $anc_op->j_id);
                             /* compute total price */
                             bcscale(2);
                             $str_anc.='<tr>';
                             $str_anc.=td($qcode);
-                            $str_anc.=td($poste);
-                            $str_anc.=td(nbm($htva)." {$side}");
+                            $str_anc.=td(nbm($htva));
                             $str_anc.=$anc_op->display_table(1, $htva, $div);
                         } else
                         {
@@ -264,6 +250,6 @@ $str_anc="";
 
 
 <?php
-require_once NOALYSS_TEMPLATE.'/ledger_detail_bottom.php';
+require_once NOALYSS_INCLUDE.'/template/ledger_detail_bottom.php';
 ?>
 </div>

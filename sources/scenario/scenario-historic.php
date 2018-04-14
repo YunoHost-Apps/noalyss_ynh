@@ -21,6 +21,4 @@ $_POST=array (
 $_POST['gDossier']=$gDossierLogInput;
 $_GET['gDossier']=$gDossierLogInput;
  $_REQUEST=array_merge($_GET,$_POST);
- global $http;
- $http=new HttpInput();
 include 'history_operation.inc.php';

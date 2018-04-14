@@ -24,74 +24,47 @@
  */
 if ( ! defined ('ALLOWED') ) die('Appel direct ne sont pas permis');
 
-require_once  NOALYSS_INCLUDE.'/class/user.class.php';
-require_once NOALYSS_INCLUDE.'/class/acc_bilan.class.php';
+require_once  NOALYSS_INCLUDE.'/class_user.php';
+require_once NOALYSS_INCLUDE.'/class_acc_bilan.php';
 
 global $g_captcha,$g_failed,$g_succeed;
-$cn=Dossier::connect();
+
+$cn=new Database(dossier::id());
 $exercice=$g_user->get_exercice();
 echo '<div class="content">';
-$sql_year="  j_tech_per in (select p_id from parm_periode where p_exercice='".$g_user->get_exercice()."')";
+
+$sql_year=" and j_tech_per in (select p_id from parm_periode where p_exercice='".$g_user->get_exercice()."')";
 echo '<div class="myfieldset"><h1 class="legend">'._('Vérification des journaux').'</h1>';
 
-$sql="
-    with jdebit as (
-	select sum (j_montant) as amount,j_debit , jr_def_id 
-	from jrnx join jrn on (j_grpt=jr_grpt_id)
-	where 
-	$sql_year
-	and
-	j_debit='t'
-	group by jr_def_id,j_debit
-	),
-jcredit as (
-	select sum (j_montant) as amount,j_debit , jr_def_id 
-	from jrnx join jrn on (j_grpt=jr_grpt_id)
-	where 
-	$sql_year
-	and 
-	j_debit='f'
-	group by jr_def_id,j_debit
-	)
-select jrn_def_id,
-	jrn_def_name,
-	jdebit.amount as deb,
-	jcredit.amount as cred
-	from jrn_def 
-join  jdebit on (Jdebit.jr_def_id=jrn_def.jrn_def_id)
-join  jcredit on (jcredit.jr_def_id=jrn_def.jrn_def_id)
-where jcredit.amount<>jdebit.amount
-order by jrn_def_name
-    ";
+$sql="select jrn_def_id,jrn_def_name from jrn_def";
 $res=$cn->exec_sql($sql);
 $jrn=Database::fetch_all($res);
-
-$nb_jrn= count($jrn);
-if ( $jrn ===false  ) {
-    echo $g_succeed." "._("Aucune anomalie dans les montants des journaux");
-}
 echo '<table class="result">';
 echo tr(th(_('Journal')).th(_('Débit'),' style="display:right"').th(_("Crédit"),' style="display:right"').th(_("Différence"),' style="display:right"').th(''));
-
-$nb_jrn=count($jrn);
-if ( $jrn === false) $nb_jrn=0;
 $ix=0;
-for ($i=0;$i<$nb_jrn;$i++)
+foreach ($jrn as $l)
 {
-    $l=$jrn[$i];
     $id=$l['jrn_def_id'];
     $name=$l['jrn_def_name'];
-    $deb=$l['deb'];
-    $cred=$l['cred'];
+    $deb=$cn->get_value("select sum (j_montant) from jrnx where j_debit='t' and j_jrn_def=$id $sql_year ");
+    $cred=$cn->get_value("select sum (j_montant) from jrnx where j_debit='f' and j_jrn_def=$id  $sql_year ");
+
+    if ( $cred == $deb )
+    {
+    $result =$g_succeed;
+}
+else
+{
     $result = $g_failed;
+}
     $class=($ix%2==0)?'odd':"even";
     print tr(td($name).td(nbm($deb),'class="num"').td(nbm($cred),'class="num"').td(nbm($result),'class="num"').td($result),"class=\"$class\"");
     $ix++;
 
 }
 
-$deb=$cn->get_value("select sum (j_montant) from jrnx where j_debit='t' and $sql_year ");
-$cred=$cn->get_value("select sum (j_montant) from jrnx where j_debit='f' and $sql_year ");
+$deb=$cn->get_value("select sum (j_montant) from jrnx where j_debit='t' $sql_year ");
+$cred=$cn->get_value("select sum (j_montant) from jrnx where j_debit='f' $sql_year ");
 
 if ( $cred == $deb )
 {
@@ -126,46 +99,33 @@ echo '</div>';
         <?php echo _('Fiches ayant changé de poste comptable');?>
     </h2>
     <?php
-    $sql_year_target=" j_tech_per in (select p_id from parm_periode where p_exercice='".$g_user->get_exercice()."')";
+    $sql_year_target=" target.j_tech_per in (select p_id from parm_periode where p_exercice='".$g_user->get_exercice()."')";
+    $sql_year_source=" source.j_tech_per in (select p_id from parm_periode where p_exercice='".$g_user->get_exercice()."')";
 
-    $sql_fiche_id="
-        select count(*),f_id from (
-        select distinct 
-                f_id,j_poste 
-        from jrnx 
-        where
-        $sql_year_target
-) as m
-group by f_id
-having count(*) > 1
+    $sql_qcode="select distinct source.f_id,source.j_qcode 
+            from jrnx as source ,jrnx as target 
+            where
+            source.j_id < target.j_id 
+            and source.j_poste<>target.j_poste 
+            and source.j_qcode = target.j_qcode
+            and $sql_year_source and $sql_year_target
            ";
-    
-    $a_fiche_id=$cn->get_array($sql_fiche_id);
-    
-    $sql_poste="select distinct j_poste,pcm_lib from jrnx join tmp_pcmn on (pcm_val=j_poste) where f_id =$1 and $sql_year";
-    $sql_qcode="select ad_value as qcode from fiche_detail where f_id=$1 and ad_id=".ATTR_DEF_QUICKCODE;
+    $sql_poste="select distinct j_poste,pcm_lib from jrnx join tmp_pcmn on (pcm_val=j_poste) where j_qcode =$1 $sql_year";
+    $a_qcode=$cn->get_array($sql_qcode);
     $res=$cn->prepare('get_poste',$sql_poste);
-    $resQcode=$cn->prepare('get_qcode',$sql_qcode);
-    if ( $res == false || $resQcode == false ) {
-        echo "ERREUR ".__FILE__.":".__LINE__."prepare failed";
-    }
     echo _("Résultat");
-    if (count($a_fiche_id) == 0) { echo " OK $g_succeed";}  else { echo " "._('Attention ').$g_failed;}
+    if (count($a_qcode) == 0) { echo " OK $g_succeed";}  else { echo " "._('Attention ').$g_failed;}
     ?>
     <ol>
     <?php
-    for ($i=0;$i<count($a_fiche_id);$i++):
-        $poste=$cn->execute('get_poste',array($a_fiche_id[$i]['f_id']));
-        $tmp_qcode=$cn->execute('get_qcode',array($a_fiche_id[$i]['f_id']));
-        $qcode=Database::fetch_all($tmp_qcode);
-        if ( $qcode[0]['qcode']=="") {
-            continue;
-        }
+    for ($i=0;$i<count($a_qcode);$i++):
+        $poste=$cn->execute('get_poste',array($a_qcode[$i]['j_qcode']));
     ?>
         <li><?php 
-                echo HtmlInput::card_detail($qcode[0]['qcode'],$qcode[0]['qcode'],' style="display:inline"') ;
+                echo HtmlInput::card_detail($a_qcode[$i]["j_qcode"],$a_qcode[$i]["j_qcode"],' style="display:inline"') ;
                 echo " ";
-                echo HtmlInput::history_card($a_fiche_id[$i]["f_id"],_("Hist."),' display:inline'); 
+                echo HtmlInput::history_card($a_qcode[$i]["f_id"],_("Hist."),' display:inline'); 
+                        
                 ?>
         
         </li>
@@ -201,7 +161,7 @@ $sql_account_used="
     join vw_fiche_attr as v_attr on (vw.f_id=v_attr.f_id)
     join jrn on (jrnx.j_grpt=jrn.jr_grpt_id) 
     where 
-        jrnx.f_id is null and $sql_year order by 1
+        jrnx.f_id is null  $sql_year order by 1
 ";
        
 $sql_concerned_operation="select vw.f_id,jrnx.j_date,jrnx.j_id,jrn.jr_id,jrnx.j_poste,jr_internal ,jr_comment
@@ -209,7 +169,7 @@ $sql_concerned_operation="select vw.f_id,jrnx.j_date,jrnx.j_id,jrn.jr_id,jrnx.j_
     join jrnx using (j_poste) 
     join jrn on (jrnx.j_grpt=jrn.jr_grpt_id) 
     where 
-    jrnx.f_id is null and vw.f_id= $1 and $sql_year";
+    jrnx.f_id is null and vw.f_id= $1 $sql_year";
 $a_account_used=$cn->get_array($sql_account_used);
 $nb_account_used=count ($a_account_used);
     if ( $nb_account_used == 0 ) 

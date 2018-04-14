@@ -1,12 +1,12 @@
 <?php
 //This file is part of NOALYSS and is under GPL 
 //see licence.txt
-?>
-<div id="security_action_tbl">
-    
-    <?php
+?><?php
 
 	function display_security_fieldset($p_legend,$p_array,$sec_User) {
+  $array=array(array('value'=>0,'label'=>_("Pas d'accès")),
+	       array('value'=>1,'label'=>_('Accès')),
+		     );
 
 	$gDossier=dossier::id();
 	?>
@@ -23,18 +23,19 @@
 
 			<?php
 				$right=$sec_User->check_action($l_line['ac_id']);
-                                $is_switch=new Inplace_Switch(sprintf('action%d',$l_line['ac_id']),$right);
-                                $is_switch->set_callback("ajax_misc.php");
-                                $is_switch->add_json_param("op", "action_access");
-                                $is_switch->add_json_param("gDossier",$gDossier);
-                                $is_switch->add_json_param("ac_id",$l_line['ac_id']);
-                                $is_switch->add_json_param("user_id",$sec_User->id);
-                                ?>
-			<td >
-                            
 
-			<?php  echo $is_switch->input();  ?>
-                         
+			$a=new ISelect();
+				$a->name=sprintf('action%d',$l_line['ac_id']);
+				$a->value=$array;
+				$a->selected=$right;
+				if ( $right==1) {
+				?>
+			<td style="border:lightgreen 2px solid; ">
+			<?php } else { ?>
+			<td style="border:red 2px solid; " align="right">
+				<?php }?>
+
+			<?php  echo $a->input();  ?>
 			</td>
 		</tr>
 		<?php
@@ -71,4 +72,3 @@ $array=$cn->get_array("select ac_id, ac_description from action  where ac_id >=$
     array(1200,1300));
     display_security_fieldset(_('Note'),$array,$sec_User); 
 ?>
-</div>

@@ -2,18 +2,14 @@
 //This file is part of NOALYSS and is under GPL 
 //see licence.txt
 ?><?php 
-require_once NOALYSS_TEMPLATE.'/ledger_detail_top.php';
-require_once NOALYSS_INCLUDE.'/class/anc_operation.class.php';
-require_once NOALYSS_INCLUDE.'/class/anc_plan.class.php';
+require_once NOALYSS_INCLUDE.'/template/ledger_detail_top.php';
+require_once NOALYSS_INCLUDE.'/class_anc_operation.php';
+require_once NOALYSS_INCLUDE.'/class_anc_plan.php';
  $str_anc="";
- $cn=Dossier::connect();
- // find out exercice
- $periode_id=new Periode($cn,$obj->det->jr_tech_per);
- $exercice=$periode_id->get_exercice();
 ?>
 <?php 
-require_once NOALYSS_INCLUDE.'/class/noalyss_parameter_folder.class.php';
-require_once  NOALYSS_INCLUDE.'/class/anc_plan.class.php';
+require_once NOALYSS_INCLUDE.'/class_own.php';
+require_once  NOALYSS_INCLUDE.'/class_anc_plan.php';
 ?>
 <div class="content" style="padding:0">
 
@@ -90,8 +86,8 @@ require_once  NOALYSS_INCLUDE.'/class/anc_plan.class.php';
 
 <div class="myfieldset">
 <?php 
-  require_once NOALYSS_INCLUDE.'/class/noalyss_parameter_folder.class.php';
-  $owner=new Noalyss_Parameter_Folder($cn);
+  require_once NOALYSS_INCLUDE.'/class_own.php';
+  $owner=new Own($cn);
 ?>
 <table class="result">
 <tr>
@@ -115,13 +111,16 @@ echo '</tr>';
 $amount_idx=0;
   for ($e=0;$e<count($obj->det->array);$e++) {
     $row=''; $q=$obj->det->array;
-    $view_history = HtmlInput::history_account($q[$e]['j_poste'], $q[$e]['j_poste'], "", $exercice);
+    $view_history= sprintf('<A class="detail" style="text-decoration:underline" HREF="javascript:view_history_account(\'%s\',\'%s\')" >%s</A>',
+			   $q[$e]['j_poste'], $gDossier, $q[$e]['j_poste']);
+
     $row.=td($view_history);
 
     if ( $q[$e]['j_qcode'] !='') {
       $fiche=new Fiche($cn);
       $fiche->get_by_qcode($q[$e]['j_qcode']);
-      $view_history=HtmlInput::history_card($fiche->id, $q[$e]['j_qcode'], "", $exercice);
+      $view_history= sprintf('<A class="detail" style="text-decoration:underline" HREF="javascript:view_history_card(\'%s\',\'%s\')" >%s</A>',
+			   $fiche->id, $gDossier, $q[$e]['j_qcode']);
     }
     else
       $view_history='';
@@ -167,13 +166,11 @@ $amount_idx=0;
 	$anc_op=new Anc_Operation($cn);
 	$anc_op->j_id=$q[$e]['j_id'];
         $anc_op->in_div=$div;
-        $side=($q[$e]['j_debit'] == 'f')?'C':'D';
-
         $str_anc.='<tr>';
-	$str_anc.=HtmlInput::hidden('opanc[]',$anc_op->j_id);
+	$str_anc.=HtmlInput::hidden('op[]',$anc_op->j_id);
         $str_anc.=td($q[$e]['j_qcode']);
         $str_anc.=td($q[$e]['j_poste']);
-        $str_anc.=td(nbm($q[$e]['j_montant'])." {$side}");
+        $str_anc.=td($q[$e]['j_montant']);
 	$str_anc.=$anc_op->display_table(1,$q[$e]['j_montant'],$div);
         $str_anc.='</tr>';
 	$amount_idx++;
@@ -190,6 +187,6 @@ $amount_idx=0;
 </table>
 </div>
 <?php 
-require_once NOALYSS_TEMPLATE.'/ledger_detail_bottom.php';
+require_once NOALYSS_INCLUDE.'/template/ledger_detail_bottom.php';
 ?>
 </div>
