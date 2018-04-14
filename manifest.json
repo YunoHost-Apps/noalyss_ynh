@@ -5,7 +5,6 @@
         "en": "Accounting free software (Beligum and French accounting)",
         "fr": "Logiciel libre de comptabilité (comptabilité Belge et Française)"
     },
-    "url": "http://www.noalyss.eu/",
     "license": "GPL-2",
     "maintainer": {
         "name": "bram",
@@ -18,17 +17,14 @@
             {
                 "name": "domain",
                 "ask": {
-                    "en": "Choose a domain for NOALYSS",
-                    "fr": "Choisir un domaine pour NOALYSS"
+                    "en": "Choose a domain for NOALYSS"
                 },
                 "example": "domain.org"
             },
             {
                 "name": "path",
-                "type": "path",
                 "ask": {
-                    "en": "Choose a path for NOALYSS",
-                    "fr": "Choisir un chemin pour NOALYSS"
+                    "en": "Choose a path for NOALYSS"
                 },
                 "example": "/compta",
                 "default": "/compta"
