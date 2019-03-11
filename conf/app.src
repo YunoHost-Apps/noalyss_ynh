@@ -1,0 +1,6 @@
+SOURCE_URL=http://download.noalyss.eu/version-7.0/noalyss-7015.tar.gz
+SOURCE_FORMAT=tar.gz
+SOURCE_IN_SUBDIR=true
+SOURCE_FILENAME=noalyss-7015.tar.gz
+SOURCE_SUM=586bd23eaa207a824b37eb94e6666e3992fb2d1846503d7f9cd85df84e18180c
+SOURCE_SUM_PRG=sha256sum
