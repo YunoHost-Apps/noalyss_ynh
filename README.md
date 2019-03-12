@@ -42,13 +42,12 @@ At the end of the installation process, you need to open https://domain/path/ins
 * TODO ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/REPLACEBYYOURAPP%20%28Community%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/REPLACEBYYOURAPP/)
 * TODO Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/ci/logs/REPLACEBYYOURAPP%20%28Community%29.svg)](https://ci-stretch.nohost.me/ci/apps/REPLACEBYYOURAPP/)
 
-See the [french README](./README_fr#architectures-supportées)
+See the [french README](./README_fr.md#architectures-supportées)
 
-# Questions and Todos
+## Questions and Todos
 
-See the [french README](./README_fr#questions-et-todos)
+See the [french README](./README_fr.md#questions-et-todos)
 
 ## Additional information
 
-See the [french README](./README_fr) because it's the current main README.
-
+See the [french README](./README_fr.md) because it's the current main README.
