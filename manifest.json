@@ -10,9 +10,9 @@
     "url": "http://noalyss.be",
     "license": "free",
     "maintainer": {
-        "name": "bram",
-        "email": "cortex@worlddomination.be",
-        "url": "http://worlddomination.be"
+        "name": "tierce",
+        "email": "github@computhings.be",
+        "url": "https://computhings.be"
     },
     "requirements": {
         "yunohost": ">= 3.0"
