@@ -1,7 +1,0 @@
-Fiche_Attr
-attr_def
- ad_id       | integer
- ad_text     | text
- ad_type     | numeric
- tech_user   | text
- tech_date   | date
