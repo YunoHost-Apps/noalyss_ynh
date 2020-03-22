@@ -317,4 +317,5 @@ systemctl reload nginx
 #=================================================
 
 ynh_print_info "Installation of $app completed"
+ynh_print_info "Default Noalyss admin / pass are phpcompta. Enjoy !"
 ynh_print_info "Go to https://$domain$path_url/install.php to continue !"
