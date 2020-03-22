@@ -1,6 +1,6 @@
-SOURCE_URL=http://download.noalyss.eu/version-7.0/noalyss-7015.tar.gz
+SOURCE_URL=http://download.noalyss.eu/derniere-version/noalyss-7201.tar.gz
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true
-SOURCE_FILENAME=noalyss-7015.tar.gz
-SOURCE_SUM=586bd23eaa207a824b37eb94e6666e3992fb2d1846503d7f9cd85df84e18180c
+SOURCE_FILENAME=noalyss-7201.tar.gz
+SOURCE_SUM=90d7f2b4644eff4170d8049b90687530ce2eb49bf98ebc2ec638354b3bb64068 
 SOURCE_SUM_PRG=sha256sum
