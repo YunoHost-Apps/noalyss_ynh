@@ -6,13 +6,13 @@
         "en": "Accounting free software (Beligum and French accounting)",
         "fr": "Logiciel libre de comptabilité (comptabilité Belge et Française)"
     },
-    "version": "7.0.15",
-    "url": "http://noalyss.be",
+    "version": "7.2",
+    "url": "http://noalyss.eu",
     "license": "free",
     "maintainer": {
-        "name": "bram",
-        "email": "cortex@worlddomination.be",
-        "url": "http://worlddomination.be"
+        "name": "datatierce",
+        "email": "github@computhings.be",
+        "url": "https://computhings.be"
     },
     "requirements": {
         "yunohost": ">= 3.0"
