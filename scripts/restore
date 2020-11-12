@@ -9,7 +9,6 @@
 #Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
 source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
-source ../settings/scripts/_psql.sh
 
 #=================================================
 # MANAGE SCRIPT FAILURE
@@ -96,9 +95,9 @@ ynh_install_app_dependencies $pkg_dependencies
 ynh_print_info "Restoring the Postgres database..."
 
 db_pwd=$(ynh_app_setting_get $app mysqlpwd)
-noalyss_psql_test_if_first_run
-noalyss_psql_setup_db $db_name $db_name $(ynh_app_setting_get $app psqlpwd)
-noalyss_psql_execute_file_as_root ./db.sql $db_name
+ynh_psql_test_if_first_run
+ynh_psql_setup_db $db_name $db_name $(ynh_app_setting_get $app psqlpwd)
+ynh_psql_execute_file_as_root ./db.sql $db_name
 
 #=================================================
 # RESTORE SYSTEMD

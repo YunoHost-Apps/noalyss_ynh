@@ -9,7 +9,6 @@
 #Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
 source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
-source ../settings/scripts/_psql.sh
 
 #=================================================
 # MANAGE SCRIPT FAILURE
@@ -61,7 +60,7 @@ ynh_backup "/etc/php/7.0/fpm/pool.d/$app.conf"
 #=================================================
 ynh_print_info "Backing up the Postgres database..."
 
-noalyss_psql_dump_db $app > db.sql
+ynh_psql_dump_db $app > db.sql
 
 #=================================================
 # SPECIFIC BACKUP
