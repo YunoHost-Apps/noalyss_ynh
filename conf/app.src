@@ -1,0 +1,6 @@
+SOURCE_URL=https://download.noalyss.eu/dernier-version/noalyss-8002.tar.gz
+SOURCE_SUM=c6d0f4a1c213f2975601fb2f4af34419232558095b079e7536994204dda86b74
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=tar.gz
+SOURCE_IN_SUBDIR=true
+SOURCE_FILENAME=
