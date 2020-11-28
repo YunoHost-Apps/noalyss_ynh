@@ -144,8 +144,8 @@ cp ../conf/noalyss.conf $final_path/include/config.inc.php
 
 ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$final_path/include/config.inc.php"
 ynh_replace_string --match_string="__DB_PASS__" --replace_string="$db_pwd" --target_file="$final_path/include/config.inc.php"
-ynh_replace_string --match_string="__ADMIN__" --replace_string="$admin" --target_file="$final_path/include/config.inc.php"
-ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$final_path/include/config.inc.php"
+#ynh_replace_string --match_string="__ADMIN__" --replace_string="$admin" --target_file="$final_path/include/config.inc.php"
+#ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$final_path/include/config.inc.php"
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
