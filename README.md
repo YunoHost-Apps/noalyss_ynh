@@ -23,7 +23,7 @@ If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to
 
 ## Configuration
 
-At the end of the installation process, you need to open https://domain/path/install.php to start using it.
+At the end of the installation process, you need to open `https://domain/noalyss/install.php` to start using it.
 
 ## Documentation
 

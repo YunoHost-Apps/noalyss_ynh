@@ -24,7 +24,7 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 ### Configuration
 
-À la fin de l'installation de l'application il faut se rendre sur https://domaine/chemin/install.php pour terminer la procédure.
+À la fin de l'installation de l'application il faut se rendre sur `https://domaine/noalysse/install.php` pour terminer la procédure.
 
 ### Documentation
 
