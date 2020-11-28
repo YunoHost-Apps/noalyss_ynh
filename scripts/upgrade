@@ -139,7 +139,7 @@ chown $app: $final_path/include/constant.php
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-yunohost service add $app --description "Accounting free software" --log "/var/log/$app/$app.log"
+#yunohost service add $app --description "Accounting free software" --log "/var/log/$app/$app.log"
 
 #=================================================
 # SETUP APPLICATION WITH CURL

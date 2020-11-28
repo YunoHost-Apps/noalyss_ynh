@@ -69,6 +69,7 @@ ynh_system_user_create $app
 
 # Restore permissions on app files
 chown -R $app: $final_path
+chown $app: $final_path/include/constant.php
 
 #=================================================
 # RESTORE THE PHP-FPM CONFIGURATION
@@ -103,7 +104,7 @@ ynh_psql_execute_file_as_root --file="./db.sql" --database=$db_name
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-yunohost service add $app --log "/var/log/$app/$app.log"
+#yunohost service add $app --log "/var/log/$app/$app.log"
 
 #=================================================
 # GENERIC FINALIZATION
