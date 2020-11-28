@@ -109,7 +109,7 @@ ynh_system_user_create --username=$app
 ynh_script_progression --message="Configuring PHP-FPM..." --weight=3
 
 # Create a dedicated PHP-FPM config
-ynh_add_fpm_config --package="$extra_php_dependencies"
+ynh_add_fpm_config --usage=low --footprint=low --package="$extra_php_dependencies"
 phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 
 # #=================================================
@@ -127,7 +127,7 @@ phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 # # Installation with cURL
 # installUrl="/install.php?submit"
 
-# ynh_local_curl $installUrl "install=2" "db_type=psql" "hostname=localhost" "db_username=$db_user" "db_password=$db_pwd" "database_name=$db_name" "admin_username=" "admin_password=" "db_table_prefix=$db_name" "db_table_plugin_prefix=plugin" "db_table_suffix=_table" "timezone=UTC"
+# ynh_local_curl $installUrl "install=2" "lang=fr_FR.utf8"
 
 # # Remove the `install.php` directory from within the Noalyss installation path.
 # # The scripts within this directory should not be accessible on a live Noalyss site

@@ -25,8 +25,10 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
+db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+db_user=$db_name
+db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
@@ -71,8 +73,12 @@ chown -R $app: $final_path
 #=================================================
 # RESTORE THE PHP-FPM CONFIGURATION
 #=================================================
+ynh_script_progression --message="Restoring PHP-FPM configuration..."
 
 ynh_restore_file "/etc/php/$phpversion/fpm/pool.d/$app.conf"
+
+# Recreate a dedicated PHP-FPM config
+ynh_add_fpm_config --usage=low --footprint=low --package="$extra_php_dependencies"
 
 #=================================================
 # SPECIFIC RESTORATION
@@ -85,14 +91,13 @@ ynh_script_progression --message="Reinstalling dependencies..."
 ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
-# RESTORE THE POSTGRES DATABASE
+# RESTORE THE POSTGRESQL DATABASE
 #=================================================
-ynh_script_progression --message="Restoring the Postgres database..."
+ynh_script_progression --message="Restoring the PostgreSQL database..." --weight=6
 
-db_pwd=$(ynh_app_setting_get $app mysqlpwd)
 ynh_psql_test_if_first_run
-ynh_psql_setup_db $db_name $db_name $(ynh_app_setting_get $app psqlpwd)
-ynh_psql_execute_file_as_root ./db.sql $db_name
+ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
+ynh_psql_execute_file_as_root --file="./db.sql" --database=$db_name
 
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
@@ -105,10 +110,10 @@ yunohost service add $app --log "/var/log/$app/$app.log"
 #=================================================
 # RELOAD NGINX AND PHP-FPM
 #=================================================
-ynh_script_progression --message="Reloading nginx web server and PHP-FPM..."
+ynh_script_progression --message="Reloading NGINX web server and PHP-FPM..."
 
-systemctl reload php$phpversion-fpm
-systemctl reload nginx
+ynh_systemd_action --service_name=php$phpversion-fpm --action=reload
+ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT
