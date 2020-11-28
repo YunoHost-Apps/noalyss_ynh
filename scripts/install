@@ -131,7 +131,7 @@ phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 # # Remove the `install.php` directory from within the Noalyss installation path.
 # # The scripts within this directory should not be accessible on a live Noalyss site
 # # or on any installation that is accessible via the Internet.
-# ynh_secure_remove "$final_path/html/install.php"
+ynh_secure_remove "$final_path/html/install.php"
 
 # # Set the user chosen at installation as administrator
 # #ynh_mysql_connect_as --user="$db_user" --password="$db_pwd" --database="$db_name" <<< "UPDATE ${db_name}_user_table SET username = '$admin' WHERE id = 1;"
