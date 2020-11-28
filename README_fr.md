@@ -1,7 +1,7 @@
 ## Noalyss pour Yunohost
 
-[![Integration level](https://dash.yunohost.org/integration/noalyss.svg)](https://dash.yunohost.org/appci/app/noalyss)  
-[![Install noalyss with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=noalyss)
+[![Integration level](https://dash.yunohost.org/integration/noalyss.svg)](https://dash.yunohost.org/appci/app/noalyss) ![](https://ci-apps.yunohost.org/ci/badges/noalyss.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/noalyss.maintain.svg)  
+[![Installer noalyss avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=noalyss)
 
 *[Read this readme in english.](./README.md)*
 
@@ -10,9 +10,9 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 ### Vue d'ensemble
 
-[Noalyss](http://noalyss.eu) est une application de comptabilité belge et française que vous pourrez modifier suivant vos envies.  L'interface est disponible en anglais, français et néerlandais.
+[Noalyss](http://noalyss.eu) est une application de comptabilité belge et française que vous pourrez modifier suivant vos envies. L'interface est disponible en anglais, français et néerlandais.
 
-**Version incluse:** 7.2
+**Version incluse:** 8.0
 
 ### Captures d'écran
 
@@ -28,7 +28,8 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 ### Documentation
 
-* [documentation officielle](http://www.noalyss.eu/?page_id=1031).
+ * Documentation officielle : https://wiki.noalyss.eu/doku.php
+ * Documentation YunoHost :
 
 ### Caractéristiques spécifiques YunoHost
 
@@ -39,9 +40,8 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 ##### Architectures supportées
 
-* TODO x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/noalyss%20%28Community%29.svg)](https://ci-apps.yunohost.org/ci/apps/noalyss/)
-* TODO ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/noalyss%20%28Community%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/noalyss/)
-* TODO Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/ci/logs/noalyss%20%28Community%29.svg)](https://ci-stretch.nohost.me/ci/apps/noalyss/)
+* x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/noalyss%20%28Community%29.svg)](https://ci-apps.yunohost.org/ci/apps/noalyss/)
+* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/noalyss%20%28Community%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/noalyss/)
 
 ##### sur LIME2 (Ynh 3.2.1, sur carte microSD)
 _(les essais portent sur install,backup,remove,restore)_
@@ -98,3 +98,31 @@ Il faut les sources de Noalyss et différentes versions sont disponibles. Actuel
 
 - [Version actuelle 7.2](http://download.noalyss.eu/derniere-version/)
 - [Versions antérieures](http://download.noalyss.eu/noalyss-package/)
+
+## Limitations
+
+* Limitations connues.
+
+## Informations additionnelles
+
+* Autres informations que vous souhaitez ajouter sur cette application.
+
+## Liens
+
+ * Signaler un bug : https://github.com/YunoHost-Apps/REPLACEBYYOURAPP_ynh/issues
+ * Site de l'application : https://www.noalyss.eu/
+ * Dépôt de l'application principale : Lien vers le dépôt officiel de l'application principale.
+ * Site web YunoHost : https://yunohost.org/
+
+---
+
+## Informations pour les développeurs
+
+Merci de faire vos pull request sur la [branche testing](https://github.com/YunoHost-Apps/noalyss_ynh/tree/testing).
+
+Pour essayer la branche testing, procédez comme suit.
+```
+sudo yunohost app install https://github.com/YunoHost-Apps/noalyss_ynh/tree/testing --debug
+ou
+sudo yunohost app upgrade noalyss -u https://github.com/YunoHost-Apps/noalyss_ynh/tree/testing --debug
+```

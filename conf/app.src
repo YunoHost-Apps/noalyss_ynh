@@ -1,6 +1,6 @@
-SOURCE_URL=http://download.noalyss.eu/derniere-version/noalyss-7201.tar.gz
+SOURCE_URL=https://download.noalyss.eu/dernier-version/noalyss-8002.tar.gz
+SOURCE_SUM=c6d0f4a1c213f2975601fb2f4af34419232558095b079e7536994204dda86b74
+SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true
-SOURCE_FILENAME=noalyss-7201.tar.gz
-SOURCE_SUM=90d7f2b4644eff4170d8049b90687530ce2eb49bf98ebc2ec638354b3bb64068 
-SOURCE_SUM_PRG=sha256sum
+SOURCE_FILENAME=
