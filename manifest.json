@@ -1,21 +1,21 @@
 {
-    "name": "NOALYSS (phpcompta)",
+    "name": "Noalyss",
     "id": "noalyss",
     "packaging_format": 1,
     "description": {
         "en": "Accounting free software (Beligum and French accounting)",
         "fr": "Logiciel libre de comptabilité (comptabilité Belge et Française)"
     },
-    "version": "7.2~ynh1",
+    "version": "8.0~ynh1",
     "url": "http://noalyss.eu",
-    "license": "free",
+    "license": "AGPL-3.0-only",
     "maintainer": {
         "name": "datatierce",
         "email": "github@computhings.be",
         "url": "https://computhings.be"
     },
     "requirements": {
-        "yunohost": ">= 3.8"
+        "yunohost": ">= 4.0.0"
     },
     "multi_instance": false,
     "services": [
@@ -40,8 +40,29 @@
                     "en": "Choose a path for Noalyss",
                     "fr": "Choisissez un chemin pour Noalyss"
                 },
-                "example": "/compta",
-                "default": "/compta"
+                "example": "/noalyss",
+                "default": "/noalyss"
+            },
+            {
+                "name": "admin",
+                "type": "user",
+                "ask": {
+                    "en": "Choose the Mantis administrator",
+                    "fr": "Choisissez l’administrateur de Mantis"
+                }
+            },
+                        {
+                "name": "password",
+                "type": "password",
+                "ask": {
+                    "en": "Set the administrator password",
+                    "fr": "Définissez le mot de passe administrateur"
+                },
+                "help": {
+                    "en": "Use the help field to add an information for the admin about this question.",
+                    "fr": "Utilisez le champ aide pour ajouter une information à l'intention de l'administrateur à propos de cette question."
+                },
+                "example": "Choose a password"
             },
             {
                 "name": "is_public",
