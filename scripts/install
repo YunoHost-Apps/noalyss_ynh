@@ -125,14 +125,14 @@ phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 # ynh_script_progression --message="Finalizing installation..." --weight=10
 
 # # Installation with cURL
-# installUrl="/admin/install.php?submit"
+# installUrl="/install.php?submit"
 
 # ynh_local_curl $installUrl "install=2" "db_type=psql" "hostname=localhost" "db_username=$db_user" "db_password=$db_pwd" "database_name=$db_name" "admin_username=" "admin_password=" "db_table_prefix=$db_name" "db_table_plugin_prefix=plugin" "db_table_suffix=_table" "timezone=UTC"
 
-# # Remove the `admin/` directory from within the MantisBT installation path.
-# # The scripts within this directory should not be accessible on a live MantisBT site
+# # Remove the `install.php` directory from within the Noalyss installation path.
+# # The scripts within this directory should not be accessible on a live Noalyss site
 # # or on any installation that is accessible via the Internet.
-# ynh_secure_remove "$final_path/admin"
+# ynh_secure_remove "$final_path/html/install.php"
 
 # # Set the user chosen at installation as administrator
 # #ynh_mysql_connect_as --user="$db_user" --password="$db_pwd" --database="$db_name" <<< "UPDATE ${db_name}_user_table SET username = '$admin' WHERE id = 1;"
