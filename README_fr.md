@@ -36,7 +36,7 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 ##### Support multi-utilisateurs
 
 * Pas d'authentification LDAP, les utilisateur·ice·s sont gérés dans l'application.
-* Plusieurs utilisateur·ice·s sont donc possibles et disponibles pour les différents dossiers comptables.  Une gestion des accès est prise en charge dans Noalyss.
+* Plusieurs utilisateur·ice·s sont donc possibles et disponibles pour les différents dossiers comptables. Une gestion des accès est prise en charge dans Noalyss.
 
 ##### Architectures supportées
 
