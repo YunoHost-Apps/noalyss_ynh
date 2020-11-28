@@ -159,6 +159,7 @@ ynh_store_file_checksum "$final_path/include/config.inc.php"
 
 # Set permissions to app files
 chown -R $app: $final_path
+chown $app: $final_path/include/constant.php
 
 #=================================================
 # SETUP LOGROTATE
@@ -172,7 +173,7 @@ ynh_use_logrotate
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-yunohost service add $app --log "/var/log/$app/$app.log"
+yunohost service add $app --description "Accounting free software" --log "/var/log/$app/$app.log"
 
 #=================================================
 # SETUP SSOWAT
@@ -196,6 +197,8 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info "Installation of $app completed"
+ynh_script_progression --message="Installation of $app completed" --last
+
+
 ynh_print_info "Default Noalyss admin / pass are phpcompta. Enjoy !"
 ynh_print_info "Go to https://$domain$path_url/install.php to continue !"
