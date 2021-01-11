@@ -109,7 +109,7 @@ Il faut les sources de Noalyss et différentes versions sont disponibles. Actuel
 
 ## Liens
 
- * Signaler un bug : https://github.com/YunoHost-Apps/REPLACEBYYOURAPP_ynh/issues
+ * Signaler un bug : https://github.com/YunoHost-Apps/noalyss_ynh/issues
  * Site de l'application : https://www.noalyss.eu/
  * Dépôt de l'application principale : Lien vers le dépôt officiel de l'application principale.
  * Site web YunoHost : https://yunohost.org/
