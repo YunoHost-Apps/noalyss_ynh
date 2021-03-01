@@ -1,7 +1,7 @@
 ## Noalyss pour Yunohost
 
 [![Integration level](https://dash.yunohost.org/integration/noalyss.svg)](https://dash.yunohost.org/appci/app/noalyss) ![](https://ci-apps.yunohost.org/ci/badges/noalyss.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/noalyss.maintain.svg)  
-[![Installer noalyss avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=noalyss)
+[![Installer noalyss avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=noalyss)
 
 *[Read this readme in english.](./README.md)*
 
@@ -12,7 +12,7 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 [Noalyss](http://noalyss.eu) est une application de comptabilité belge et française que vous pourrez modifier suivant vos envies. L'interface est disponible en anglais, français et néerlandais.
 
-**Version incluse:** 8.0
+**Version incluse:** 8.1.0.1
 
 ### Captures d'écran
 
