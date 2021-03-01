@@ -6,7 +6,7 @@
         "en": "Accounting free software (Beligum and French accounting)",
         "fr": "Logiciel libre de comptabilité (comptabilité Belge et Française)"
     },
-    "version": "8.0~ynh1",
+    "version": "8.1.0.1~ynh1",
     "url": "http://noalyss.eu",
     "license": "AGPL-3.0-only",
     "maintainer": {
@@ -15,12 +15,12 @@
         "url": "https://computhings.be"
     },
     "requirements": {
-        "yunohost": ">= 4.0.0"
+        "yunohost": ">= 4.1.0"
     },
     "multi_instance": false,
     "services": [
         "nginx",
-        "php7.0-fpm"
+        "php7.3-fpm"
     ],
     "arguments": {
         "install" : [
@@ -50,6 +50,15 @@
                     "en": "Choose the Mantis administrator",
                     "fr": "Choisissez l’administrateur de Mantis"
                 }
+            },
+            {
+                "name": "password",
+                "type": "password",
+                "ask": {
+                    "en": "Set the administrator password",
+                    "fr": "Définissez le mot de passe administrateur"
+                },
+                "example": "Choose a password"
             },
             {
                 "name": "is_public",
