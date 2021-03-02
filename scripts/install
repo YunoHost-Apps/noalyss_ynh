@@ -193,5 +193,5 @@ ynh_systemd_action --service_name=nginx --action=reload
 
 ynh_script_progression --message="Installation of $app completed" --last
 
-ynh_print_info "Default Noalyss admin / pass are phpcompta. Enjoy !"
-ynh_print_info "Go to https://$domain$path_url/install.php to continue !"
+ynh_print_info "Default Noalys: admin / password: phpcompta. Enjoy!"
+ynh_print_info "Go to https://$domain$path_url/install.php to continue!"
