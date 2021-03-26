@@ -6,7 +6,6 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
-#Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
 source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
@@ -14,11 +13,6 @@ source /usr/share/yunohost/helpers
 # MANAGE SCRIPT FAILURE
 #=================================================
 
-ynh_clean_setup () {
-	#### Remove this function if there's nothing to clean before calling the remove script.
-	true
-}
-# Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
 
 #=================================================
@@ -28,15 +22,18 @@ ynh_print_info "Loading settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get $app domain)
-path_url=$(ynh_app_setting_get $app path)
-final_path=$(ynh_app_setting_get $app final_path)
-db_name=$(ynh_app_setting_get $app db_name)
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+path_url=$(ynh_app_setting_get --app=$app --key=path)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
+db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+db_user=$db_name
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
 #=================================================
-ynh_print_info "Validating restoration parameters..."
+ynh_script_progression --message="Validating restoration parameters..."
 
 ynh_webpath_available $domain $path_url \
 	|| ynh_die "Path not available: ${domain}${path_url}"
@@ -54,14 +51,14 @@ ynh_restore_file "/etc/nginx/conf.d/$domain.d/$app.conf"
 #=================================================
 # RESTORE THE APP MAIN DIR
 #=================================================
-ynh_print_info "Restoring the app main directory..."
+ynh_script_progression --message="Restoring the app main directory..."
 
 ynh_restore_file "$final_path"
 
 #=================================================
 # RECREATE THE DEDICATED USER
 #=================================================
-ynh_print_info "Recreating the dedicated system user..."
+ynh_script_progression --message="Recreating the dedicated system user..."
 
 # Create the dedicated user (if not existing)
 ynh_system_user_create $app
@@ -72,40 +69,36 @@ ynh_system_user_create $app
 
 # Restore permissions on app files
 chown -R $app: $final_path
+chown $app: $final_path/include/constant.php
 
 #=================================================
 # RESTORE THE PHP-FPM CONFIGURATION
 #=================================================
+ynh_script_progression --message="Restoring PHP-FPM configuration..."
 
-ynh_restore_file "/etc/php/7.0/fpm/pool.d/$app.conf"
+ynh_restore_file "/etc/php/$phpversion/fpm/pool.d/$app.conf"
+
+# Recreate a dedicated PHP-FPM config
+ynh_add_fpm_config --usage=low --footprint=low --package="$extra_php_dependencies"
 
 #=================================================
 # SPECIFIC RESTORATION
 #=================================================
 # REINSTALL DEPENDENCIES
 #=================================================
-ynh_print_info "Reinstalling dependencies..."
+ynh_script_progression --message="Reinstalling dependencies..."
 
 # Define and install dependencies
-ynh_install_app_dependencies $pkg_dependencies
+ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
-# RESTORE THE POSTGRES DATABASE
+# RESTORE THE POSTGRESQL DATABASE
 #=================================================
-ynh_print_info "Restoring the Postgres database..."
+ynh_script_progression --message="Restoring the PostgreSQL database..." --weight=6
 
-db_pwd=$(ynh_app_setting_get $app mysqlpwd)
 ynh_psql_test_if_first_run
-ynh_psql_setup_db $db_name $db_name $(ynh_app_setting_get $app psqlpwd)
-ynh_psql_execute_file_as_root ./db.sql $db_name
-
-#=================================================
-# RESTORE SYSTEMD
-#=================================================
-#ynh_print_info "Restoring the systemd configuration..."
-
-#ynh_restore_file "/etc/systemd/system/$app.service"
-#systemctl enable $app.service
+ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
+ynh_psql_execute_file_as_root --file="./db.sql" --database=$db_name
 
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
@@ -114,29 +107,17 @@ ynh_psql_execute_file_as_root ./db.sql $db_name
 #yunohost service add $app --log "/var/log/$app/$app.log"
 
 #=================================================
-# RESTORE THE CRON FILE
-#=================================================
-
-#ynh_restore_file "/etc/cron.d/$app"
-
-#=================================================
-# RESTORE THE LOGROTATE CONFIGURATION
-#=================================================
-
-#ynh_restore_file "/etc/logrotate.d/$app"
-
-#=================================================
 # GENERIC FINALIZATION
 #=================================================
 # RELOAD NGINX AND PHP-FPM
 #=================================================
-ynh_print_info "Reloading nginx web server and php-fpm..."
+ynh_script_progression --message="Reloading NGINX web server and PHP-FPM..."
 
-systemctl reload php7.0-fpm
-systemctl reload nginx
+ynh_systemd_action --service_name=php$phpversion-fpm --action=reload
+ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info "Restoration completed for $app"
+ynh_script_progression --message="Restoration completed for $app"
