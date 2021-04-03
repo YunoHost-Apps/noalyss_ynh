@@ -37,7 +37,8 @@
             },
             {
                 "name": "admin",
-                "type": "user"
+                "type": "user",
+                "example": "johndoe"
             },
             {
                 "name": "password",
