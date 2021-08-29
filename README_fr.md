@@ -13,7 +13,7 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 Logiciel libre de comptabilité (comptabilité Belge et Française)
 
-**Version incluse :** 8.1.0.1~ynh1
+**Version incluse :** 8.1.0.1~ynh2
 
 **Démo :** http://demo.noalyss.eu/index.php
 

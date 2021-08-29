@@ -17,7 +17,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 Accounting free software (Beligum and French accounting)
 
-**Shipped version:** 8.1.0.1~ynh1
+**Shipped version:** 8.1.0.1~ynh2
 
 **Demo:** http://demo.noalyss.eu/index.php
 
