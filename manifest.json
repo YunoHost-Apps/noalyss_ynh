@@ -6,8 +6,14 @@
         "en": "Accounting free software (Beligum and French accounting)",
         "fr": "Logiciel libre de comptabilité (comptabilité Belge et Française)"
     },
-    "version": "8.1.0.1~ynh1",
+    "version": "8.1.0.1~ynh2",
     "url": "http://noalyss.eu",
+    "upstream": {
+        "license": "AGPL-3.0-only",
+        "website": "http://noalyss.eu",
+        "demo": "http://demo.noalyss.eu/index.php",
+        "admindoc": "https://wiki.noalyss.eu/doku.php"
+    },
     "license": "AGPL-3.0-only",
     "maintainer": {
         "name": "datatierce",
@@ -15,7 +21,7 @@
         "url": "https://computhings.be"
     },
     "requirements": {
-        "yunohost": ">= 4.1.7"
+        "yunohost": ">= 4.2.4"
     },
     "multi_instance": false,
     "services": [
