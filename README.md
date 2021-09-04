@@ -15,9 +15,9 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 ## Overview
 
-Accounting free software (Beligum and French accounting)
+Noalyss est un serveur de comptabilité destiné à être hébergé sur Internet afin de contenir la comptabilité d’un nombre illimité de sociétés et d’utilisateurs ne se connaissant pas. Chaque société a ses propres dossiers comptables , ses propres utilisateurs, et ne peut pas interférer avec la comptabilité des autres, à moins d’y être expressément autorisé.
 
-**Shipped version:** 8.1.0.1~ynh2
+**Shipped version:** 9.0.1.0~ynh1
 
 **Demo:** http://demo.noalyss.eu/index.php
 
