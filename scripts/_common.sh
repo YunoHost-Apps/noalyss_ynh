@@ -17,7 +17,6 @@ extra_php_dependencies="php${YNH_PHP_VERSION}-pgsql php${YNH_PHP_VERSION}-zip ph
 # EXPERIMENTAL HELPERS
 #=================================================
 
-
 # Send an email to inform the administrator
 #
 # usage: ynh_send_readme_to_admin app_message [recipients]
