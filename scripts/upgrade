@@ -84,21 +84,8 @@ if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
 	ynh_script_progression --message="Upgrading source files..." --weight=5
 
-	# Create a temporary directory
-	tmpdir="$(mktemp -d)"
-
-	cp -a "$final_path/include/config.inc.php" "$tmpdir/config.inc.php"
-
-	# Remove the app directory securely
-	ynh_secure_remove --file=$final_path
-
 	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir=$final_path
-
-	cp -a "$tmpdir/config.inc.php" "$final_path/include/config.inc.php"
-
-	# Remove the tmp directory securely
-	ynh_secure_remove --file="$tmpdir"
+	ynh_setup_source --dest_dir=$final_path --keep="$final_path/include/config.inc.php"
 fi
 
 chmod 750 "$final_path"

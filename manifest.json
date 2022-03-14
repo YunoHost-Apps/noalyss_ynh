@@ -6,7 +6,7 @@
         "en": "Accounting free software (Beligum and French accounting)",
         "fr": "Logiciel libre de comptabilité (comptabilité Belge et Française)"
     },
-    "version": "9.0.2.0~ynh2",
+    "version": "9.0.2.5~ynh1",
     "url": "http://noalyss.eu",
     "upstream": {
         "license": "AGPL-3.0-only",
