@@ -135,12 +135,12 @@ ynh_add_fpm_config --usage=low --footprint=low
 # =================================================
 # MODIFY A CONFIG FILE
 # =================================================
-ynh_script_progression --message="Modifying $app config file..."
+# ynh_script_progression --message="Modifying $app config file..."
 
-ynh_add_config --template="../conf/noalyss.conf" --destination="$final_path/include/config.inc.php"
+# ynh_add_config --template="../conf/noalyss.conf" --destination="$final_path/include/config.inc.php"
 
-chmod 400 "$final_path/include/config.inc.php"
-chown $app:$app "$final_path/include/config.inc.php"
+# chmod 400 "$final_path/include/config.inc.php"
+# chown $app:$app "$final_path/include/config.inc.php"
 
 #=================================================
 # SETUP LOGROTATE
