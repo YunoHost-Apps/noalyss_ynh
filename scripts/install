@@ -117,6 +117,8 @@ ynh_add_config --template="../conf/noalyss.conf" --destination="$final_path/incl
 chmod 650 "$final_path/include/config.inc.php"
 chown $app: "$final_path/include/config.inc.php"
 
+ynh_secure_remove --file="/var/www/noalyss/html/install.php"
+
 #=================================================
 # SETUP LOGROTATE
 #=================================================
