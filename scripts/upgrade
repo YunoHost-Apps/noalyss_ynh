@@ -116,31 +116,6 @@ ynh_script_progression --message="Upgrading PHP-FPM configuration..." --weight=1
 ynh_add_fpm_config --usage=low --footprint=low
 
 #=================================================
-# SETUP APPLICATION WITH CURL
-#=================================================
-
-# # Set the app as temporarily public for cURL call
-# ynh_permission_update --permission "main" --add "visitors"
-
-# # Reload NGINX
-# ynh_systemd_action --service_name=nginx --action=reload
-
-# ynh_script_progression --message="Finalizing installation..." --weight=10
-
-# # Installation with cURL
-# installUrl="/install.php?submit"
-
-# ynh_local_curl $installUrl "install=2" "lang=fr_FR.utf8"
-
-# # Remove the `install.php` directory from within the Noalyss installation path.
-# # The scripts within this directory should not be accessible on a live Noalyss site
-# # or on any installation that is accessible via the Internet.
-# ynh_secure_remove "$final_path/html/install.php"
-
-# # Set the user chosen at installation as administrator
-# #ynh_mysql_connect_as --user="$db_user" --password="$db_pwd" --database="$db_name" <<< "UPDATE ${db_name}_user_table SET username = '$admin' WHERE id = 1;"
-
-#=================================================
 # RELOAD NGINX
 #=================================================
 ynh_script_progression --message="Reloading NGINX web server..." --weight=1
