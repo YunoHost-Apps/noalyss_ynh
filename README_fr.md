@@ -17,7 +17,7 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 Noalyss est un serveur de comptabilité destiné à être hébergé sur Internet afin de contenir la comptabilité d’un nombre illimité de sociétés et d’utilisateurs ne se connaissant pas. Chaque société a ses propres dossiers comptables , ses propres utilisateurs, et ne peut pas interférer avec la comptabilité des autres, à moins d’y être expressément autorisé.
 
-**Version incluse :** 9.0.2.5~ynh2
+**Version incluse :** 9.0.2.5~ynh3
 
 
 **Démo :** http://demo.noalyss.eu/index.php
