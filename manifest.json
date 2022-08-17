@@ -6,7 +6,7 @@
         "en": "Accounting free software (Belgian and French accounting)",
         "fr": "Logiciel libre de comptabilité (comptabilité Belge et Française)"
     },
-    "version": "9.0.2.5~ynh2",
+    "version": "9.0.2.5~ynh3",
     "url": "http://noalyss.eu",
     "upstream": {
         "license": "AGPL-3.0-only",
@@ -21,7 +21,7 @@
         "url": "https://computhings.be"
     },
     "requirements": {
-        "yunohost": ">= 4.3.0"
+        "yunohost": ">= 11.0.9"
     },
     "multi_instance": false,
     "services": [
