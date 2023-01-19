@@ -70,6 +70,12 @@ ynh_app_setting_set --app=$app --key=db_name --value=$db_name
 ynh_psql_test_if_first_run
 ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
 
+#give permission to dedicated role to create databases (required for default install of noalyss)
+if [ -n "$user" ]; then
+	sql="ALTER USER $db_user CREATEDB"
+	ynh_psql_execute_as_root --sql="$sql"
+fi
+
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
@@ -117,8 +123,6 @@ ynh_add_config --template="../conf/noalyss.conf" --destination="$final_path/incl
 chmod 650 "$final_path/include/config.inc.php"
 chown $app: "$final_path/include/config.inc.php"
 
-ynh_secure_remove --file="/var/www/noalyss/html/install.php"
-
 #=================================================
 # SETUP LOGROTATE
 #=================================================
@@ -148,20 +152,26 @@ ynh_systemd_action --service_name=nginx --action=reload
 #=================================================
 # SEND A README FOR THE ADMIN
 #=================================================
-ynh_script_progression --message="Sending a readme for the admin..."
+ynh_script_progression --message="Sending a readme to the admin email address. Please check it to complete the installation process."
 
-message="Noalyss was successfully installed :)
+message="Noalyss installation is almost finished :)
 
-Please open your $app domain: https://$domain$path_url
+Please open the admin configuration page of your $app domain: https://$domain$path_url/install.php
+From here, complete the registration process by:
+1. Choosing language and clicking on \"Continuer\" (FR) / \"Continue\" (EN).
+2. Scroll the page down and click on the button \"Commencer la mise à jour ou l\'installation ?\" (FR) / \"Start the update or the installation ?\" (EN)
+3. Scroll to the bottom of the page and click on the button \"Essai effacement install.php et se connecter à NOALYSS\" (FR) / \"Try erasing install.php and log into NOALYSS\" (EN)
 
-Complete the registration process from the setup page displayed.
-Details for PostgreSQL database to be enterted while registration process:
+Once donce, you will be able to log into Noalyss with your credentials:
+$app domain: https://$domain$path_url
+$app admin user: $admin
+$app admin password: $password
 
-Database login:    $app
-Database name:     $app
+Please find also for reference the credential for the dedicated PostgreSQL database user:
+Database dedicated user: $app
 Database password: $db_pwd
 
-If you are facing any problem or want to improve this app, please open a new issue here: https://github.com/YunoHost-Apps/noalysse_ynh/issues"
+If you are facing any problem or want to improve this app, please <a href=\"https://github.com/YunoHost-Apps/noalysse_ynh/issues\">open a new issue here</a> or post a message <a href=\"https://forum.yunohost.org/t/noalyss-beligum-and-french-accounting/7356/\">in the forum</a> 
 
 ynh_send_readme_to_admin "$message"
 
