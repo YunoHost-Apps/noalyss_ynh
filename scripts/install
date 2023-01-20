@@ -26,7 +26,6 @@ admin=$YNH_APP_ARG_ADMIN
 password=$YNH_APP_ARG_PASSWORD
 phpversion=$YNH_PHP_VERSION
 timezone="$(cat /etc/timezone)"
-
 app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
@@ -64,14 +63,15 @@ ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 #=================================================
 ynh_script_progression --message="Creating a PostgreSQL database..." --weight=2
 
-db_name=$(ynh_sanitize_dbid --db_name=$app)
-db_user=$db_name
-ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-ynh_psql_test_if_first_run
-ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
+db_user=$(ynh_sanitize_dbid --db_name=$app)
+ynh_app_setting_set --app=$app --key=db_user --value=$db_user
 
-#give permission to dedicated role to create databases (required for default install of noalyss)
-if [ -n "$user" ]; then
+ynh_psql_test_if_first_run 										# Make sure PSQL is installed
+ynh_psql_setup_db --db_user=$db_user --db_name="$db_user_tmp"   # This helper will create db_user, generate db_user_pwd. But it will also create a database Noalyss does not need, hence the "tmp" flag    
+ynh_psql_drop_db "$db_user_tmp"									# Remove the useless database just created with the "tmp" flag.
+
+# Give permission to db_user to create databases, as with version 9025 at least, standard Noalyss operation (can be tweaked with shared server install process - with potentially less features?) will require to create several databases: one admin database (account_repository), one database per accounting template (two are populated at install by default: mod1, mod2, etc.), one per accounting folder that will be created while using the app, etc.
+if [ -n "$db_user" ]; then 
 	sql="ALTER USER $db_user CREATEDB"
 	ynh_psql_execute_as_root --sql="$sql"
 fi
