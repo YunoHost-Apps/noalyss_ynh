@@ -140,18 +140,12 @@ ynh_psql_dump_all_user_dbs() {
 	
 	local dbs_to_dump = ynh_psql_list_user_dbs $db_user
 	if [ -n "$dbs_to_dump" ]; then	   # Check that the list of database(s) is not empty 
-		local app_tag		
-		if [ -n "$app" ]; then
-			app_tag = "${app}-"
-		else 
-			app_tag = ""
-		fi
 		
 		local db_name
 		for $db_name in $dbs_to_dump   # Iterate through the list of database(s) to dump
 		do
 			if ynh_psql_database_exists --database=$db_name; then # Check if the database exists
-				ynh_psql_dump_db $db_name > "${app_tag}${db_name}-dump.sql" # Dump the database to a filename format of app-db_name-dump.sql, or of db_name-dump.sql if app parameter was not supplied  
+				ynh_psql_dump_db $db_name > "$app-$db_name-dump.sql" # Dump the database to a filename format of app-db_name-dump.sql, or of db_name-dump.sql if app parameter was not supplied  
 				ynh_print_info --message="Dumped database $db_name associated to role $db_user"
 			else
 				ynh_print_warn --message="Database $db_name not found"
