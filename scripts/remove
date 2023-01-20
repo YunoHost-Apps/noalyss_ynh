@@ -17,8 +17,7 @@ ynh_script_progression --message="Loading installation settings..."
 app=$YNH_APP_INSTANCE_NAME
 
 domain=$(ynh_app_setting_get --app=$app --key=domain)
-db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-db_user=$db_name
+db_user=$(ynh_app_setting_get --app=$app --key=db_user) 
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 
 #=================================================
@@ -27,22 +26,7 @@ final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 ynh_script_progression --message="Removing all associated PostgreSQL database(s) and role"
 
 # Remove all existing databases associated with the app's dedicated user a database if it exists
-sql="COPY (SELECT datname FROM pg_database JOIN pg_authid ON pg_database.datdba = pg_authid.oid WHERE rolname = '${db_user}') TO STDOUT"
-dbs_to_drop=ynh_psql_execute_as_root --sql="$sql" #Fetch database(s) associated to role $db_user
-
-if [[ -n "$dbs_to_drop" ]]; then # Check that the list of database(s) is not empty 
-	for $db_name in $dbs_to_drop   # Iterate through the list of database(s) to remove
-	do
-		if ynh_psql_database_exists --database=$db_name; then # Check if the database exists
-			ynh_psql_drop_db $db_name                         # Remove the database
-			ynh_print_info --message="Removed database $db_name associated to role $db_user"
-		else
-			ynh_print_warn --message="Database $db_name not found"
-		fi
-	done
-else 
-	ynh_print_warn --message="No associated database to role $db_user was found"
-fi
+ynh_psql_remove_all_user_dbs --user=$db_user; 
 
 # Remove dedicated PostgreSQL role
 if ynh_psql_user_exists --user=$db_user; then
