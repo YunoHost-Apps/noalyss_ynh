@@ -67,8 +67,8 @@ db_user=$(ynh_sanitize_dbid --db_name=$app)
 ynh_app_setting_set --app=$app --key=db_user --value=$db_user
 
 ynh_psql_test_if_first_run 										# Make sure PSQL is installed
-ynh_psql_setup_db --db_user=$db_user --db_name="$db_user_tmp"   # This helper will create db_user, generate db_user_pwd. But it will also create a database Noalyss does not need, hence the "tmp" flag    
-ynh_psql_drop_db "$db_user_tmp"									# Remove the useless database just created with the "tmp" flag.
+ynh_psql_setup_db --db_user=$db_user --db_name="${db_user}_tmp"   # This helper will create db_user, generate db_user_pwd. But it will also create a database Noalyss does not need, hence the "tmp" flag    
+ynh_psql_drop_db "${db_user}_tmp"									# Remove the useless database just created with the "tmp" flag.
 
 # Give permission to db_user to create databases, as with version 9025 at least, standard Noalyss operation (can be tweaked with shared server install process - with potentially less features?) will require to create several databases: one admin database (account_repository), one database per accounting template (two are populated at install by default: mod1, mod2, etc.), one per accounting folder that will be created while using the app, etc.
 if [ -n "$db_user" ]; then 

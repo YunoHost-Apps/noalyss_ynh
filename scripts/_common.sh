@@ -131,7 +131,7 @@ ynh_psql_remove_all_user_dbs() {
 ynh_psql_dump_all_user_dbs() {
     # Declare an array to define the options of this helper.
     local legacy_args=ua
-    local -A args_array=([u]=db_user= [a]=app=)) 
+    local -A args_array=([u]=db_user= [a]=app=)
     local db_user
     local app
     # Manage arguments with getopts
