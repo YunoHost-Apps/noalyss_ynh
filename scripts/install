@@ -171,7 +171,7 @@ Please find also for reference the credential for the dedicated PostgreSQL datab
 Database dedicated user: $app
 Database password: $db_pwd
 
-If you are facing any problem or want to improve this app, please <a href=\"https://github.com/YunoHost-Apps/noalysse_ynh/issues\">open a new issue here</a> or post a message <a href=\"https://forum.yunohost.org/t/noalyss-beligum-and-french-accounting/7356/\">in the forum</a> 
+If you are facing any problem or want to improve this app, please <a href=\"https://github.com/YunoHost-Apps/noalysse_ynh/issues\">open a new issue here</a> or post a message <a href=\"https://forum.yunohost.org/t/noalyss-beligum-and-french-accounting/7356/\">in the forum</a>"
 
 ynh_send_readme_to_admin "$message"
 
