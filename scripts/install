@@ -154,24 +154,29 @@ ynh_systemd_action --service_name=nginx --action=reload
 #=================================================
 ynh_script_progression --message="Sending a readme to the admin email address. Please check it to complete the installation process."
 
-message="Noalyss installation is almost finished :)
+message="Noalyss installation is *almost* complete :)
 
-Please open the admin configuration page of your $app domain: https://$domain$path_url/install.php
-From here, complete the registration process by:
-1. Choosing language and clicking on \"Continuer\" (FR) / \"Continue\" (EN).
+To conclude, please open the admin configuration page of your ${app^} domain: https://$domain$path_url/install.php
+You will have to:
+1. Choose the locale and click on \"Continuer\" (FR) / \"Continue\" (EN).
 2. Scroll the page down and click on the button \"Commencer la mise à jour ou l\'installation ?\" (FR) / \"Start the update or the installation ?\" (EN)
 3. Scroll to the bottom of the page and click on the button \"Essai effacement install.php et se connecter à NOALYSS\" (FR) / \"Try erasing install.php and log into NOALYSS\" (EN)
 
-Once donce, you will be able to log into Noalyss with your credentials:
-$app domain: https://$domain$path_url
-$app admin user: $admin
-$app admin password: $password
+Once done, you will be able to log into Noalyss with your credentials:
+-------------------------------------------
+${app^}\'s domain: https://$domain$path_url
+${app^}\'s admin user: $admin
+${app^}\'s admin password: $password
+-------------------------------------------
+Link to Noalyss' user documentation: https://www.noalyss.eu/?page_id=1031 
 
 Please find also for reference the credential for the dedicated PostgreSQL database user:
-Database dedicated user: $app
-Database password: $db_pwd
-
-If you are facing any problem or want to improve this app, please <a href=\"https://github.com/YunoHost-Apps/noalysse_ynh/issues\">open a new issue here</a> or post a message <a href=\"https://forum.yunohost.org/t/noalyss-beligum-and-french-accounting/7356/\">in the forum</a>"
+-------------------------------------------
+Database's dedicated user: $app
+Database's password: $db_pwd
+-------------------------------------------
+If you are facing any problem or want to improve this app, please open a new issue here: https://github.com/YunoHost-Apps/noalysse_ynh/issues
+... Or post a message in the forum: https://forum.yunohost.org/t/noalyss-beligum-and-french-accounting/7356"
 
 ynh_send_readme_to_admin "$message"
 
