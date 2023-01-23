@@ -91,7 +91,7 @@ ynh_psql_restore_all_app_dbs_dumps --db_user=$db_user --db_user_pwd=db_user_pwd
 if [ -n "$db_user" ]; then 
 	sql="ALTER USER $db_user CREATEDB"
 	ynh_psql_execute_as_root --sql="$sql"
-	sql= "ALTER USER noalyss WITH PASSWORD '${db_user_pwd}'" #Workaround to restore the backed up password, since as of 23 January 2023, there seems to be a bug in ynh_psql_setup_db() helper (YNH Core) forcing password reset.
+	sql= "ALTER USER noalyss WITH PASSWORD \"$db_user_pwd\"" #Workaround to restore the backed up password, since as of 23 January 2023, there seems to be a bug in ynh_psql_setup_db() helper (YNH Core) forcing password reset.
 	ynh_psql_execute_as_root --sql="$sql"
 fi
 
