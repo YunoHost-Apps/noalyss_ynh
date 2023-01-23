@@ -164,19 +164,21 @@ You will have to:
 
 Once done, you will be able to log into Noalyss with your credentials:
 -------------------------------------------
-${app^}\'s domain: https://$domain$path_url
-${app^}\'s admin user: $admin
-${app^}\'s admin password: $password
+${app^}'s domain: https://$domain$path_url
+${app^}'s admin user: $admin
+${app^}'s admin password: $password
 -------------------------------------------
 Link to Noalyss' user documentation: https://www.noalyss.eu/?page_id=1031 
+
 
 Please find also for reference the credential for the dedicated PostgreSQL database user:
 -------------------------------------------
 Database's dedicated user: $app
 Database's password: $db_pwd
 -------------------------------------------
+
 If you are facing any problem or want to improve this app, please open a new issue here: https://github.com/YunoHost-Apps/noalysse_ynh/issues
-... Or post a message in the forum: https://forum.yunohost.org/t/noalyss-beligum-and-french-accounting/7356"
+Or post a message in the forum: https://forum.yunohost.org/t/noalyss-beligum-and-french-accounting/7356"
 
 ynh_send_readme_to_admin "$message"
 
