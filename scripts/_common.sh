@@ -109,7 +109,7 @@ ynh_psql_remove_all_user_dbs() {
 	if [ -n "$dbs_to_drop" ]; then	   # Check that the list of database(s) is not empty 
 		
 		local db_name
-		for db_name in $dbs_to_drop   # Iterate through the list of database(s) to remove
+		for db_name in $dbs_to_drop   # Iterate through the list of database(s) to remove. Note: this would fail in case databases names would contain space character or characters such as "*". IFS parsing method would then be required. 
 		do
 			if ynh_psql_database_exists --database=$db_name; then # Check if the database exists
 				ynh_psql_drop_db $db_name                         # Remove the database
@@ -143,7 +143,7 @@ ynh_psql_dump_all_user_dbs() {
 	if [ -n "$dbs_to_dump" ]; then	   # Check that the list of database(s) is not empty 
 		
 		local db_name
-		for db_name in $dbs_to_dump   # Iterate through the list of database(s) to dump
+		for db_name in $dbs_to_dump   # Iterate through the list of database(s) to dump. Note: this would fail in case databases names would contain space character or characters such as "*". IFS parsing method would then be required. 
 		do
 			if ynh_psql_database_exists --database=$db_name; then # Check if the database exists
 				ynh_psql_dump_db $db_name > "$app-$db_name-dump.sql" # Dump the database to a filename format of app-db_name-dump.sql, or of db_name-dump.sql if app parameter was not supplied  
