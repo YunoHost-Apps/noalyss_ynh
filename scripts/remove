@@ -26,7 +26,7 @@ final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 ynh_script_progression --message="Removing all associated PostgreSQL database(s) and role"
 
 # Remove all existing databases associated with the app's dedicated user a database if it exists
-ynh_psql_remove_all_user_dbs --user=$db_user; 
+ynh_psql_remove_all_user_dbs --db_user=$db_user; 
 
 # Remove dedicated PostgreSQL role
 if ynh_psql_user_exists --user=$db_user; then

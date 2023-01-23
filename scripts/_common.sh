@@ -83,11 +83,11 @@ ynh_psql_list_user_dbs() {
 	
 	if ynh_psql_user_exists --user=$db_user; then # Check that the db_user exists
 		local sql="COPY (SELECT datname FROM pg_database JOIN pg_authid ON pg_database.datdba = pg_authid.oid WHERE rolname = '${db_user}') TO STDOUT"
-		local dbs_list=ynh_psql_execute_as_root --sql="$sql" # Fetch database(s) associated to role $db_user
-		return dbs_list
+		local dbs_list=$(ynh_psql_execute_as_root --sql="$sql") # Fetch database(s) associated to role $db_user as a string using space as delimiter (ex: "db1 db2 db3 db4")
+		echo "$dbs_list"
 	else
 		ynh_print_err --message="User \'$db_user\' does not exist"
-		return ""
+		echo ""
 	fi
 }
 
@@ -105,10 +105,11 @@ ynh_psql_remove_all_user_dbs() {
     # Manage arguments with getopts
     ynh_handle_getopts_args "$@"
 	
-	local dbs_to_drop = ynh_psql_list_user_dbs $db_user
+	local dbs_to_drop=$(ynh_psql_list_user_dbs $db_user) 
 	if [ -n "$dbs_to_drop" ]; then	   # Check that the list of database(s) is not empty 
+		
 		local db_name
-		for $db_name in $dbs_to_drop   # Iterate through the list of database(s) to remove
+		for db_name in $dbs_to_drop   # Iterate through the list of database(s) to remove
 		do
 			if ynh_psql_database_exists --database=$db_name; then # Check if the database exists
 				ynh_psql_drop_db $db_name                         # Remove the database
@@ -138,11 +139,11 @@ ynh_psql_dump_all_user_dbs() {
     ynh_handle_getopts_args "$@"
     app="${app:-}"
 	
-	local dbs_to_dump = ynh_psql_list_user_dbs $db_user
+	local dbs_to_dump=$(ynh_psql_list_user_dbs $db_user)
 	if [ -n "$dbs_to_dump" ]; then	   # Check that the list of database(s) is not empty 
 		
 		local db_name
-		for $db_name in $dbs_to_dump   # Iterate through the list of database(s) to dump
+		for db_name in $dbs_to_dump   # Iterate through the list of database(s) to dump
 		do
 			if ynh_psql_database_exists --database=$db_name; then # Check if the database exists
 				ynh_psql_dump_db $db_name > "$app-$db_name-dump.sql" # Dump the database to a filename format of app-db_name-dump.sql, or of db_name-dump.sql if app parameter was not supplied  
@@ -187,7 +188,7 @@ ynh_psql_restore_all_app_dbs_dumps(){
 		local db_name
 		db_name="${filename#${app}-}"							# Remove "$app-" prefix from filename string to parse db_name. Will do nothing if there is no match.
 		db_name="${db_name%-dump.sql}"							# Remove "-dump.sql" suffix from filename string to parse db_name. Will do nothing if there is no match.
-		db_name=ynh_sanitize_dbid --db_name="$db_name"
+		db_name=$(ynh_sanitize_dbid --db_name="$db_name")
 		
 		if [[ "${filename#${app}-}" = "$filename" || -z "$db_name" ]] ; then  	# Check whether app_ID is included in filename OR $db_name is empty
 			ynh_print_warn --message="File ignored: $filename. Filename not matching expected format (appID-db_name-dump.sql)"
