@@ -5,7 +5,7 @@ It shall NOT be edited by hand.
 
 # Noalyss for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/noalyss.svg)](https://dash.yunohost.org/appci/app/noalyss) ![Working status](https://ci-apps.yunohost.org/ci/badges/noalyss.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/noalyss.maintain.svg)  
+[![Integration level](https://dash.yunohost.org/integration/noalyss.svg)](https://dash.yunohost.org/appci/app/noalyss) ![Working status](https://ci-apps.yunohost.org/ci/badges/noalyss.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/noalyss.maintain.svg)
 [![Install Noalyss with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=noalyss)
 
 *[Lire ce readme en français.](./README_fr.md)*
@@ -18,7 +18,6 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 Noalyss est un serveur de comptabilité destiné à être hébergé sur Internet afin de contenir la comptabilité d’un nombre illimité de sociétés et d’utilisateurs ne se connaissant pas. Chaque société a ses propres dossiers comptables , ses propres utilisateurs, et ne peut pas interférer avec la comptabilité des autres, à moins d’y être expressément autorisé.
 
 **Shipped version:** 9.0.2.5~ynh3
-
 
 **Demo:** http://demo.noalyss.eu/index.php
 
