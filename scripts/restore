@@ -85,13 +85,11 @@ ynh_restore_file --origin_path="/etc/php/$phpversion/fpm/pool.d/$app.conf"
 #=================================================
 ynh_script_progression --message="Restoring the PostgreSQL database..."
 
-ynh_psql_restore_all_app_dbs_dumps --db_user=$db_user --db_user_pwd=db_user_pwd
+ynh_psql_restore_all_app_dbs_dumps --db_user=$db_user --db_user_pwd=$db_user_pwd
 
 # Give permission to db_user to create databases, as with version 9025 at least, standard Noalyss operation (can be tweaked with shared server install process - with potentially less features?) will require to create several databases: one admin database (account_repository), one database per accounting template (two are populated at install by default: mod1, mod2, etc.), one per accounting folder that will be created while using the app, etc.
 if [ -n "$db_user" ]; then 
 	sql="ALTER USER $db_user CREATEDB"
-	ynh_psql_execute_as_root --sql="$sql"
-	sql="ALTER USER noalyss WITH PASSWORD '$db_user_pwd'" #Workaround to restore the backed up password, since as of 23 January 2023, there seems to be a bug in ynh_psql_setup_db() helper (YNH Core) forcing password reset.
 	ynh_psql_execute_as_root --sql="$sql"
 fi
 	
