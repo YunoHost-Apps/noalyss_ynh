@@ -123,6 +123,9 @@ ynh_add_config --template="../conf/noalyss.conf" --destination="$final_path/incl
 chmod 650 "$final_path/include/config.inc.php"
 chown $app: "$final_path/include/config.inc.php"
 
+# Make sure to keep an archive of Noalyss' install.php script in case Noalyss' admin user should be updated in the future since the original one will be deleted at the end of install process (cf. instructions in config.inc.php)
+cp "$final_path/html/install.php" "$final_path/html/install.php.archive" 
+
 #=================================================
 # SETUP LOGROTATE
 #=================================================
