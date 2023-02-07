@@ -5,7 +5,9 @@
 
 YNH_PHP_VERSION="8.0"
 
-pkg_dependencies="postgresql apt-transport-https libgd-dev php${YNH_PHP_VERSION}-pgsql php${YNH_PHP_VERSION}-zip php${YNH_PHP_VERSION}-mbstring php${YNH_PHP_VERSION}-bcmath php${YNH_PHP_VERSION}-xml php${YNH_PHP_VERSION}-gmp php${YNH_PHP_VERSION}-gd php-php-gettext"
+php_dependencies="php${YNH_PHP_VERSION}-pgsql php${YNH_PHP_VERSION}-zip php${YNH_PHP_VERSION}-mbstring php${YNH_PHP_VERSION}-bcmath php${YNH_PHP_VERSION}-xml php${YNH_PHP_VERSION}-gmp php${YNH_PHP_VERSION}-gd"
+
+pkg_dependencies="postgresql libgd-dev php-php-gettext $php_dependencies"
 
 #=================================================
 # COMMON HELPERS
