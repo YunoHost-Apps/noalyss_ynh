@@ -123,7 +123,7 @@ ynh_add_config --template="../conf/noalyss.conf" --destination="$final_path/incl
 chmod 650 "$final_path/include/config.inc.php"
 chown $app: "$final_path/include/config.inc.php"
 
-# Make sure to keep an archive of Noalyss' install.php script in case Noalyss' admin user should be updated in the future since the original one will be deleted at the end of install process (cf. instructions in config.inc.php)
+# Keep an archive of Noalyss' install.php script for it to be reachable by YNH restore script since the original file is deleted at the end of the install process (this archive is currently left unused, but it could be useful for future potential implementation such as scripting the admin admin user change - cf. annotations in Noalyss' /inlude/config.inc.php for use case).
 cp "$final_path/html/install.php" "$final_path/html/install.php.archive" 
 
 #=================================================
