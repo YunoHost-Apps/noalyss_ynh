@@ -5,7 +5,7 @@
 		admin="john"
 		language="fr"
 		is_public=1
-		password="strongpassword"
+		password="someSuperStrongPassword1234"
 	; Checks
 		pkg_linter=1
 		setup_sub_dir=1
@@ -24,5 +24,5 @@ Notification=none
 ;;; Upgrade options
 	; commit=620065d7dcf5584b22222a7f32505575c460c2c9
 		name=Merge pull request #31 from YunoHost-Apps/testing
-		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&language=fr&is_public=1&password=pass&port=666&
+		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&language=fr&is_public=1&password=someSuperStrongPassword1234&port=666&
 
