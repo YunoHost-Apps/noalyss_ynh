@@ -17,17 +17,24 @@ ynh_script_progression --message="Loading installation settings..."
 app=$YNH_APP_INSTANCE_NAME
 
 domain=$(ynh_app_setting_get --app=$app --key=domain)
-db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-db_user=$db_name
+db_user=$(ynh_app_setting_get --app=$app --key=db_user) 
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 
 #=================================================
-# REMOVE THE POSTGRESQL DATABASE
+# REMOVE THE POSTGRESQL DATABASE(S) & ROLE
 #=================================================
-ynh_script_progression --message="Removing the PostgreSQL database"
+ynh_script_progression --message="Removing all associated PostgreSQL database(s) and role"
 
-# Remove a database if it exists, along with the associated user
-ynh_psql_remove_db --db_user=$db_user --db_name=$db_name
+# Remove all existing databases associated with the app's dedicated user a database if it exists
+ynh_psql_remove_all_user_dbs --db_user=$db_user; 
+
+# Remove dedicated PostgreSQL role
+if ynh_psql_user_exists --user=$db_user; then
+    ynh_psql_drop_user $db_user
+	ynh_print_info --message="Removed PostgreSQL role $db_user"
+else
+    ynh_print_warn --message="User $db_user not found"
+fi 
 
 #=================================================
 # REMOVE APP MAIN DIR
