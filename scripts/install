@@ -26,7 +26,6 @@ admin=$YNH_APP_ARG_ADMIN
 password=$YNH_APP_ARG_PASSWORD
 phpversion=$YNH_PHP_VERSION
 timezone="$(cat /etc/timezone)"
-
 app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
@@ -64,11 +63,18 @@ ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 #=================================================
 ynh_script_progression --message="Creating a PostgreSQL database..." --weight=2
 
-db_name=$(ynh_sanitize_dbid --db_name=$app)
-db_user=$db_name
-ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-ynh_psql_test_if_first_run
-ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
+db_user=$(ynh_sanitize_dbid --db_name=$app)
+ynh_app_setting_set --app=$app --key=db_user --value=$db_user
+
+ynh_psql_test_if_first_run 										# Make sure PSQL is installed
+ynh_psql_setup_db --db_user=$db_user --db_name="${db_user}_tmp"   # This helper will create db_user, generate db_user_pwd. But it will also create a database Noalyss does not need, hence the "tmp" flag    
+ynh_psql_drop_db "${db_user}_tmp"									# Remove the useless database just created with the "tmp" flag.
+
+# Give permission to db_user to create databases, as with version 9025 at least, standard Noalyss operation (can be tweaked with shared server install process - with potentially less features?) will require to create several databases: one admin database (account_repository), one database per accounting template (two are populated at install by default: mod1, mod2, etc.), one per accounting folder that will be created while using the app, etc.
+if [ -n "$db_user" ]; then 
+	sql="ALTER USER $db_user CREATEDB"
+	ynh_psql_execute_as_root --sql="$sql"
+fi
 
 #=================================================
 # CREATE DEDICATED USER
@@ -81,7 +87,7 @@ ynh_system_user_create --username=$app --home_dir="$final_path"
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Setting up source files..."
+ynh_script_progression --message="Setting up source files..." --weight=5
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
@@ -92,20 +98,20 @@ chmod -R o-rwx "$final_path"
 chown -R $app:www-data "$final_path"
 
 #=================================================
-# NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Configuring NGINX web server..."
-
-# Create a dedicated NGINX config
-ynh_add_nginx_config
-
-#=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
 ynh_script_progression --message="Configuring PHP-FPM..." --weight=3
 
 # Create a dedicated PHP-FPM config
 ynh_add_fpm_config --usage=low --footprint=low
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Configuring NGINX web server..." --weight=2
+
+# Create a dedicated NGINX config
+ynh_add_nginx_config
 
 # =================================================
 # MODIFY A CONFIG FILE
@@ -117,7 +123,8 @@ ynh_add_config --template="../conf/noalyss.conf" --destination="$final_path/incl
 chmod 650 "$final_path/include/config.inc.php"
 chown $app: "$final_path/include/config.inc.php"
 
-ynh_secure_remove --file="/var/www/noalyss/html/install.php"
+# Keep an archive of Noalyss' install.php script for it to be reachable by YNH restore script since the original file is deleted at the end of the install process (this archive is currently left unused, but it could be useful for future potential implementation such as scripting the admin admin user change - cf. annotations in Noalyss' /inlude/config.inc.php for use case).
+cp "$final_path/html/install.php" "$final_path/html/install.php.archive" 
 
 #=================================================
 # SETUP LOGROTATE
@@ -148,20 +155,33 @@ ynh_systemd_action --service_name=nginx --action=reload
 #=================================================
 # SEND A README FOR THE ADMIN
 #=================================================
-ynh_script_progression --message="Sending a readme for the admin..."
+ynh_script_progression --message="Sending a readme to the admin email address. Please check it to complete the installation process."
 
-message="Noalyss was successfully installed :)
+message="Noalyss installation is *almost* complete :)
 
-Please open your $app domain: https://$domain$path_url
+To conclude, please open the admin configuration page of your ${app^} domain: https://$domain$path_url/install.php
+You will have to:
+1. Select the language you want and click on \"Continuer\" (FR) / \"Continue\" (EN).
+2. Scroll the page down and click on the button \"Commencer la mise à jour ou l'installation ?\" (FR) / \"Start the update or the installation ?\" (EN)
+3. Scroll to the bottom of the page and click on the button \"Essai effacement install.php et se connecter à NOALYSS\" (FR) / \"Try erasing install.php and log into NOALYSS\" (EN)
 
-Complete the registration process from the setup page displayed.
-Details for PostgreSQL database to be enterted while registration process:
+Once done, you will be able to log into Noalyss with your credentials:
+-------------------------------------------
+${app^}'s domain: https://$domain$path_url
+${app^}'s admin user: $admin
+${app^}'s admin password: $password
+-------------------------------------------
+Link to Noalyss' user documentation: https://www.noalyss.eu/?page_id=1031 
 
-Database login:    $app
-Database name:     $app
-Database password: $db_pwd
 
-If you are facing any problem or want to improve this app, please open a new issue here: https://github.com/YunoHost-Apps/noalysse_ynh/issues"
+Please find also for reference the credential for the dedicated PostgreSQL database user:
+-------------------------------------------
+Database's dedicated user: $app
+Database's dedicated user's password: $db_pwd
+-------------------------------------------
+
+If you are facing any problem or want to improve this app, please open a new issue here: https://github.com/YunoHost-Apps/noalysse_ynh/issues
+Or post a message in the forum: https://forum.yunohost.org/t/noalyss-beligum-and-french-accounting/7356"
 
 ynh_send_readme_to_admin "$message"
 
