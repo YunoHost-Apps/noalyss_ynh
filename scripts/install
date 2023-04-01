@@ -10,86 +10,16 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# MANAGE SCRIPT FAILURE
-#=================================================
-
-#REMOVEME? ynh_abort_if_errors
-
-#=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
 
-#REMOVEME? domain=$YNH_APP_ARG_DOMAIN
-#REMOVEME? path=$YNH_APP_ARG_PATH
-#REMOVEME? is_public=$YNH_APP_ARG_IS_PUBLIC
-#REMOVEME? admin=$YNH_APP_ARG_ADMIN
-#REMOVEME? password=$YNH_APP_ARG_PASSWORD
-#REMOVEME? phpversion=$YNH_PHP_VERSION
 timezone="$(cat /etc/timezone)"
-#REMOVEME? app=$YNH_APP_INSTANCE_NAME
-
-#=================================================
-# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
-#=================================================
-#REMOVEME? ynh_script_progression --message="Validating installation parameters..." --weight=1
-
-#REMOVEME? install_dir=/var/www/$app
-#REMOVEME? test ! -e "$install_dir" || ynh_die "This path already contains a folder"
-
-# Register (book) web path
-#REMOVEME? ynh_webpath_register --app=$app --domain=$domain --path=$path
-
-#=================================================
-# STORE SETTINGS FROM MANIFEST
-#=================================================
-#REMOVEME? ynh_script_progression --message="Storing installation settings..."
-
-#REMOVEME? ynh_app_setting_set --app=$app --key=domain --value=$domain
-#REMOVEME? ynh_app_setting_set --app=$app --key=path --value=$path
-#REMOVEME? ynh_app_setting_set --app=$app --key=admin --value=$admin
-ynh_app_setting_set --app=$app --key=phpversion --value=$phpversion
-
-#=================================================
-# STANDARD MODIFICATIONS
-#=================================================
-# INSTALL DEPENDENCIES
-#=================================================
-#REMOVEME? ynh_script_progression --message="Installing dependencies..."
-
-#REMOVEME? ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
-
-#=================================================
-# CREATE A POSTGRESQL DATABASE
-#=================================================
-#REMOVEME? ynh_script_progression --message="Creating a PostgreSQL database..." --weight=2
-
-#REMOVEME? db_user=$(ynh_sanitize_dbid --db_name=$app)
-#REMOVEME? ynh_app_setting_set --app=$app --key=db_user --value=$db_user
-
-#REMOVEME? ynh_psql_test_if_first_run 										# Make sure PSQL is installed
-#REMOVEME? ynh_psql_setup_db --db_user=$db_user --db_name="${db_user}_tmp"   # This helper will create db_user, generate db_user_pwd. But it will also create a database Noalyss does not need, hence the "tmp" flag    
-ynh_psql_drop_db "${db_user}_tmp"									# Remove the useless database just created with the "tmp" flag.
-
-# Give permission to db_user to create databases, as with version 9025 at least, standard Noalyss operation (can be tweaked with shared server install process - with potentially less features?) will require to create several databases: one admin database (account_repository), one database per accounting template (two are populated at install by default: mod1, mod2, etc.), one per accounting folder that will be created while using the app, etc.
-if [ -n "$db_user" ]; then 
-	sql="ALTER USER $db_user CREATEDB"
-	ynh_psql_execute_as_root --sql="$sql"
-fi
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-#REMOVEME? ynh_script_progression --message="Configuring system user..." --weight=1
-
-# Create a system user
-#REMOVEME? ynh_system_user_create --username=$app --home_dir="$install_dir"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression --message="Setting up source files..." --weight=5
 
-#REMOVEME? ynh_app_setting_set --app=$app --key=install_dir --value=$install_dir
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$install_dir"
 
@@ -123,9 +53,6 @@ ynh_add_config --template="../conf/noalyss.conf" --destination="$install_dir/inc
 chmod 650 "$install_dir/include/config.inc.php"
 chown $app: "$install_dir/include/config.inc.php"
 
-# Keep an archive of Noalyss' install.php script for it to be reachable by YNH restore script since the original file is deleted at the end of the install process (this archive is currently left unused, but it could be useful for future potential implementation such as scripting the admin admin user change - cf. annotations in Noalyss' /inlude/config.inc.php for use case).
-cp "$install_dir/html/install.php" "$install_dir/html/install.php.archive" 
-
 #=================================================
 # SETUP LOGROTATE
 #=================================================
@@ -133,57 +60,6 @@ ynh_script_progression --message="Configuring log rotation..."
 
 # Use logrotate to manage application logfile(s)
 ynh_use_logrotate
-
-#=================================================
-# SETUP SSOWAT
-#=================================================
-#REMOVEME? ynh_script_progression --message="Configuring permissions..."
-
-# Make app public if necessary or protect it
-#REMOVEME? if [ $is_public -eq 1 ]
-then
-#REMOVEME? 	ynh_permission_update --permission="main" --add="visitors"
-fi
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-#REMOVEME? ynh_script_progression --message="Reloading NGINX web server..." --weight=2
-
-#REMOVEME? ynh_systemd_action --service_name=nginx --action=reload
-
-#=================================================
-# SEND A README FOR THE ADMIN
-#=================================================
-ynh_script_progression --message="Sending a readme to the admin email address. Please check it to complete the installation process."
-
-message="Noalyss installation is *almost* complete :)
-
-To conclude, please open the admin configuration page of your ${app^} domain: https://$domain$path/install.php
-You will have to:
-1. Select the language you want and click on \"Continuer\" (FR) / \"Continue\" (EN).
-2. Scroll the page down and click on the button \"Commencer la mise à jour ou l'installation ?\" (FR) / \"Start the update or the installation ?\" (EN)
-3. Scroll to the bottom of the page and click on the button \"Essai effacement install.php et se connecter à NOALYSS\" (FR) / \"Try erasing install.php and log into NOALYSS\" (EN)
-
-Once done, you will be able to log into Noalyss with your credentials:
--------------------------------------------
-${app^}'s domain: https://$domain$path
-${app^}'s admin user: $admin
-${app^}'s admin password: $password
--------------------------------------------
-Link to Noalyss' user documentation: https://www.noalyss.eu/?page_id=1031 
-
-
-Please find also for reference the credential for the dedicated PostgreSQL database user:
--------------------------------------------
-Database's dedicated user: $app
-Database's dedicated user's password: $db_pwd
--------------------------------------------
-
-If you are facing any problem or want to improve this app, please open a new issue here: https://github.com/YunoHost-Apps/noalysse_ynh/issues
-Or post a message in the forum: https://forum.yunohost.org/t/noalyss-beligum-and-french-accounting/7356"
-
-ynh_send_readme_to_admin "$message"
 
 #=================================================
 # END OF SCRIPT
