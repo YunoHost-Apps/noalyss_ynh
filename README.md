@@ -27,12 +27,6 @@ Noalyss est un serveur de comptabilité destiné à être hébergé sur Internet
 
 ![Screenshot of Noalyss](./doc/screenshots/Sélection_099_0.png)
 
-## Disclaimers / important information
-
-## Configuration
-
-At the end of the installation process, you need to open `https://domain/noalyss/install.php` to start using it.
-
 ## Documentation and resources
 
 * Official app website: <http://noalyss.eu>
