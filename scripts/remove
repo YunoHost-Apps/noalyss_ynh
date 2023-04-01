@@ -10,41 +10,6 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# LOAD SETTINGS
-#=================================================
-#REMOVEME? ynh_script_progression --message="Loading installation settings..."
-
-#REMOVEME? app=$YNH_APP_INSTANCE_NAME
-
-#REMOVEME? domain=$(ynh_app_setting_get --app=$app --key=domain)
-#REMOVEME? db_user=$(ynh_app_setting_get --app=$app --key=db_user) 
-#REMOVEME? #REMOVEME? install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
-
-#=================================================
-# REMOVE THE POSTGRESQL DATABASE(S) & ROLE
-#=================================================
-#REMOVEME? ynh_script_progression --message="Removing all associated PostgreSQL database(s) and role"
-
-# Remove all existing databases associated with the app's dedicated user a database if it exists
-ynh_psql_remove_all_user_dbs --db_user=$db_user; 
-
-# Remove dedicated PostgreSQL role
-if ynh_psql_user_exists --user=$db_user; then
-    ynh_psql_drop_user $db_user
-	ynh_print_info --message="Removed PostgreSQL role $db_user"
-else
-    ynh_print_warn --message="User $db_user not found"
-fi 
-
-#=================================================
-# REMOVE APP MAIN DIR
-#=================================================
-#REMOVEME? ynh_script_progression --message="Removing app main directory"
-
-# Remove the app directory securely
-#REMOVEME? ynh_secure_remove --file="$install_dir"
-
-#=================================================
 # REMOVE NGINX CONFIGURATION
 #=================================================
 ynh_script_progression --message="Removing NGINX web server configuration"
@@ -61,30 +26,12 @@ ynh_script_progression --message="Removing PHP-FPM configuration"
 ynh_remove_fpm_config
 
 #=================================================
-# REMOVE DEPENDENCIES
-#=================================================
-#REMOVEME? ynh_script_progression --message="Removing dependencies"
-
-# Remove metapackage and its dependencies
-#REMOVEME? ynh_remove_app_dependencies
-
-#=================================================
 # REMOVE LOGROTATE CONFIGURATION
 #=================================================
 ynh_script_progression --message="Removing logrotate configuration"
 
 # Remove the app-specific logrotate config
 ynh_remove_logrotate
-
-##=================================================
-## GENERIC FINALIZATION
-#=================================================
-# REMOVE DEDICATED USER
-#=================================================
-#REMOVEME? ynh_script_progression --message="Removing the dedicated system user"
-
-# Delete a system user
-#REMOVEME? ynh_system_user_delete --username=$app
 
 #=================================================
 # END OF SCRIPT
