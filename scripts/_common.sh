@@ -3,11 +3,11 @@
 # COMMON VARIABLES
 #=================================================
 
-YNH_PHP_VERSION="8.0"
+#REMOVEME? YNH_PHP_VERSION="8.0"
 
-php_dependencies="php${YNH_PHP_VERSION}-pgsql php${YNH_PHP_VERSION}-zip php${YNH_PHP_VERSION}-mbstring php${YNH_PHP_VERSION}-bcmath php${YNH_PHP_VERSION}-xml php${YNH_PHP_VERSION}-gmp php${YNH_PHP_VERSION}-gd"
+#REMOVEME? php_dependencies="php${YNH_PHP_VERSION}-pgsql php${YNH_PHP_VERSION}-zip php${YNH_PHP_VERSION}-mbstring php${YNH_PHP_VERSION}-bcmath php${YNH_PHP_VERSION}-xml php${YNH_PHP_VERSION}-gmp php${YNH_PHP_VERSION}-gd"
 
-pkg_dependencies="postgresql libgd-dev php-php-gettext $php_dependencies"
+#REMOVEME? pkg_dependencies="postgresql libgd-dev php-php-gettext $php_dependencies"
 
 #=================================================
 # COMMON HELPERS
@@ -182,7 +182,7 @@ ynh_psql_restore_all_app_dbs_dumps(){
 		ynh_die --message="No global app_ID variable defined in the script"
 	fi
 
-	ynh_psql_test_if_first_run  # Make sure PSQL is installed
+#REMOVEME? 	ynh_psql_test_if_first_run  # Make sure PSQL is installed
 	
 	local filename
 	for filename in *-dump.sql	# Loop among all files ending with "-dump.sql" in the current folder  
@@ -198,10 +198,10 @@ ynh_psql_restore_all_app_dbs_dumps(){
 		else														
 		    db_user_pwd="${db_user_pwd:-}"
 			if [ -z "$db_user_pwd" ]; then 
-				db_user_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd) 				# Try to retrieve db_user_pwd from the app's settings. It may prove empty during the first loop, but will get populated before the second loop by ynh_psql_setup_db() below.   
+#REMOVEME? #REMOVEME? 				db_user_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd) 				# Try to retrieve db_user_pwd from the app's settings. It may prove empty during the first loop, but will get populated before the second loop by ynh_psql_setup_db() below.   
 			fi
 			
-			ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_user_pwd	# Check that the db_user exists or create it generating a random password and then create an empty database named $db_name.  
+#REMOVEME? 			ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_user_pwd	# Check that the db_user exists or create it generating a random password and then create an empty database named $db_name.  
 			ynh_psql_execute_file_as_root --file="./${filename}" --database=$db_name		# Restore the dabatase from the corresponding dump file
 			
 			ynh_print_info --message="Restored database $db_name, owned by PostgreSQL user $db_user"

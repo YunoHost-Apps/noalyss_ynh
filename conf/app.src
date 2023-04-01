@@ -1,5 +1,0 @@
-SOURCE_URL=https://download.noalyss.eu/noalyss-package/version-90/noalyss-9025.tar.gz
-SOURCE_SUM=bead66fc92f6551e2cb0e7c0978e593211bb73131ece115543eb278092106448
-SOURCE_SUM_PRG=sha256sum
-SOURCE_FORMAT=tar.gz
-SOURCE_IN_SUBDIR=true
