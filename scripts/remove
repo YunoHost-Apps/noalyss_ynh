@@ -10,81 +10,20 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# LOAD SETTINGS
+# REMOVE SYSTEM CONFIGURATIONS
 #=================================================
-ynh_script_progression --message="Loading installation settings..."
-
-app=$YNH_APP_INSTANCE_NAME
-
-domain=$(ynh_app_setting_get --app=$app --key=domain)
-db_user=$(ynh_app_setting_get --app=$app --key=db_user) 
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-
+# REMOVE SYSTEMD SERVICE 
 #=================================================
-# REMOVE THE POSTGRESQL DATABASE(S) & ROLE
-#=================================================
-ynh_script_progression --message="Removing all associated PostgreSQL database(s) and role"
-
-# Remove all existing databases associated with the app's dedicated user a database if it exists
-ynh_psql_remove_all_user_dbs --db_user=$db_user; 
-
-# Remove dedicated PostgreSQL role
-if ynh_psql_user_exists --user=$db_user; then
-    ynh_psql_drop_user $db_user
-	ynh_print_info --message="Removed PostgreSQL role $db_user"
-else
-    ynh_print_warn --message="User $db_user not found"
-fi 
-
-#=================================================
-# REMOVE APP MAIN DIR
-#=================================================
-ynh_script_progression --message="Removing app main directory"
-
-# Remove the app directory securely
-ynh_secure_remove --file="$final_path"
-
-#=================================================
-# REMOVE NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Removing NGINX web server configuration"
+ynh_script_progression --message="Removing system configurations related to $app..." --weight=1
 
 # Remove the dedicated NGINX config
 ynh_remove_nginx_config
 
-#=================================================
-# REMOVE PHP-FPM CONFIGURATION
-#=================================================
-ynh_script_progression --message="Removing PHP-FPM configuration"
-
 # Remove the dedicated PHP-FPM config
 ynh_remove_fpm_config
 
-#=================================================
-# REMOVE DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Removing dependencies"
-
-# Remove metapackage and its dependencies
-ynh_remove_app_dependencies
-
-#=================================================
-# REMOVE LOGROTATE CONFIGURATION
-#=================================================
-ynh_script_progression --message="Removing logrotate configuration"
-
 # Remove the app-specific logrotate config
 ynh_remove_logrotate
-
-##=================================================
-## GENERIC FINALIZATION
-#=================================================
-# REMOVE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Removing the dedicated system user"
-
-# Delete a system user
-ynh_system_user_delete --username=$app
 
 #=================================================
 # END OF SCRIPT
