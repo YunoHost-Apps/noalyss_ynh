@@ -16,4 +16,5 @@ Link to Noalyss' user documentation: https://www.noalyss.eu/?page_id=1031
 Please find also for reference the credential for the dedicated PostgreSQL database user:
 
 Database user: __DB_USER__
+Database name: __DB_USER__
 Database password: __DB_PWD__
