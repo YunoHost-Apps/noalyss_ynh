@@ -34,13 +34,11 @@ ynh_script_progression --message="Configuring PHP-FPM..." --weight=3
 # Create a dedicated PHP-FPM config
 ynh_add_fpm_config --usage=low --footprint=low
 
-#=================================================
-# NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Configuring NGINX web server..." --weight=2
-
 # Create a dedicated NGINX config
 ynh_add_nginx_config
+
+# Use logrotate to manage application logfile(s)
+ynh_use_logrotate
 
 # =================================================
 # MODIFY A CONFIG FILE
@@ -51,14 +49,6 @@ ynh_add_config --template="../conf/noalyss.conf" --destination="$install_dir/inc
 
 chmod 650 "$install_dir/include/config.inc.php"
 chown $app: "$install_dir/include/config.inc.php"
-
-#=================================================
-# SETUP LOGROTATE
-#=================================================
-ynh_script_progression --message="Configuring log rotation..."
-
-# Use logrotate to manage application logfile(s)
-ynh_use_logrotate
 
 #=================================================
 # END OF SCRIPT
