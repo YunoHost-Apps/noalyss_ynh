@@ -30,7 +30,7 @@ Noalyss is an accounting server intended to be hosted on the Internet in order t
 
 * Official app website: <http://noalyss.eu>
 * Official admin documentation: <https://wiki.noalyss.eu/doku.php>
-* YunoHost documentation for this app: <https://yunohost.org/app_noalyss>
+* YunoHost Store: <https://apps.yunohost.org/app/noalyss>
 * Report a bug: <https://github.com/YunoHost-Apps/noalyss_ynh/issues>
 
 ## Developer info
