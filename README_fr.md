@@ -30,7 +30,7 @@ Noalyss est un serveur de comptabilité destiné à être hébergé sur Internet
 
 * Site officiel de l’app : <http://noalyss.eu>
 * Documentation officielle de l’admin : <https://wiki.noalyss.eu/doku.php>
-* Documentation YunoHost pour cette app : <https://yunohost.org/app_noalyss>
+* YunoHost Store: <https://apps.yunohost.org/app/noalyss>
 * Signaler un bug : <https://github.com/YunoHost-Apps/noalyss_ynh/issues>
 
 ## Informations pour les développeurs
