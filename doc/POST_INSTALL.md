@@ -1,4 +1,4 @@
-To conclude, please open the admin configuration page of your NOALYSS domain: https://__DOMAIN____PATH__install.php
+To conclude, please open the admin configuration page of your NOALYSS domain: https://__DOMAIN____PATH__/install.php
 You will have to:
 1. Select the language you want and click on "Continuer" (FR) / "Continue" (EN).
 2. Scroll the page down and click on the button "Commencer la mise à jour ou l'installation ?" (FR) / "Start the update or the installation ?\" (EN)
