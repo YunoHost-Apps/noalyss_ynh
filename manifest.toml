@@ -5,9 +5,9 @@ name = "Noalyss"
 description.en = "Accounting free software (Belgian and French accounting)"
 description.fr = "Logiciel libre de comptabilité (comptabilité Belge et Française)"
 
-version = "9.1.0.7~ynh2"
+version = "9.1.0.7~ynh3"
 
-maintainers = ["datatierce"]
+maintainers = []
 
 [upstream]
 license = "AGPL-3.0-only"
