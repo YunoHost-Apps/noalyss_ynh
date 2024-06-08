@@ -3,7 +3,7 @@
 请勿手动编辑。
 -->
 
-# YunoHost 的 Noalyss
+# YunoHost 上的 Noalyss
 
 [![集成程度](https://dash.yunohost.org/integration/noalyss.svg)](https://dash.yunohost.org/appci/app/noalyss) ![工作状态](https://ci-apps.yunohost.org/ci/badges/noalyss.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/noalyss.maintain.svg)
 
