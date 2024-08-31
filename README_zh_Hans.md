@@ -5,7 +5,7 @@
 
 # YunoHost 上的 Noalyss
 
-[![集成程度](https://dash.yunohost.org/integration/noalyss.svg)](https://dash.yunohost.org/appci/app/noalyss) ![工作状态](https://ci-apps.yunohost.org/ci/badges/noalyss.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/noalyss.maintain.svg)
+[![集成程度](https://dash.yunohost.org/integration/noalyss.svg)](https://ci-apps.yunohost.org/ci/apps/noalyss/) ![工作状态](https://ci-apps.yunohost.org/ci/badges/noalyss.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/noalyss.maintain.svg)
 
 [![使用 YunoHost 安装 Noalyss](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=noalyss)
 

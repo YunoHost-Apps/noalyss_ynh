@@ -5,7 +5,7 @@ EZ editatu eskuz.
 
 # Noalyss YunoHost-erako
 
-[![Integrazio maila](https://dash.yunohost.org/integration/noalyss.svg)](https://dash.yunohost.org/appci/app/noalyss) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/noalyss.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/noalyss.maintain.svg)
+[![Integrazio maila](https://dash.yunohost.org/integration/noalyss.svg)](https://ci-apps.yunohost.org/ci/apps/noalyss/) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/noalyss.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/noalyss.maintain.svg)
 
 [![Instalatu Noalyss YunoHost-ekin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=noalyss)
 

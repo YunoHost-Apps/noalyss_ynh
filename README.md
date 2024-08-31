@@ -5,7 +5,7 @@ It shall NOT be edited by hand.
 
 # Noalyss for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/noalyss.svg)](https://dash.yunohost.org/appci/app/noalyss) ![Working status](https://ci-apps.yunohost.org/ci/badges/noalyss.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/noalyss.maintain.svg)
+[![Integration level](https://dash.yunohost.org/integration/noalyss.svg)](https://ci-apps.yunohost.org/ci/apps/noalyss/) ![Working status](https://ci-apps.yunohost.org/ci/badges/noalyss.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/noalyss.maintain.svg)
 
 [![Install Noalyss with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=noalyss)
 
