@@ -5,7 +5,7 @@ EZ editatu eskuz.
 
 # Noalyss YunoHost-erako
 
-[![Integrazio maila](https://dash.yunohost.org/integration/noalyss.svg)](https://dash.yunohost.org/appci/app/noalyss) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/noalyss.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/noalyss.maintain.svg)
+[![Integrazio maila](https://dash.yunohost.org/integration/noalyss.svg)](https://ci-apps.yunohost.org/ci/apps/noalyss/) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/noalyss.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/noalyss.maintain.svg)
 
 [![Instalatu Noalyss YunoHost-ekin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=noalyss)
 
@@ -18,7 +18,7 @@ EZ editatu eskuz.
 
 Noalyss is an accounting server intended to be hosted on the Internet in order to contain the accounting of an unlimited number of companies and users who do not know each other. Each company has its own accounting files, its own users, and cannot interfere with the accounting of others, unless expressly authorized to do so.
 
-**Paketatutako bertsioa:** 9.2.0.5~ynh1
+**Paketatutako bertsioa:** 9.2.0.5~ynh2
 
 **Demoa:** <http://demo.noalyss.eu/index.php>
 
