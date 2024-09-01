@@ -18,7 +18,7 @@
 
 Noalyss is an accounting server intended to be hosted on the Internet in order to contain the accounting of an unlimited number of companies and users who do not know each other. Each company has its own accounting files, its own users, and cannot interfere with the accounting of others, unless expressly authorized to do so.
 
-**Поставляемая версия:** 9.2.0.5~ynh1
+**Поставляемая версия:** 9.2.0.5~ynh2
 
 **Демо-версия:** <http://demo.noalyss.eu/index.php>
 
