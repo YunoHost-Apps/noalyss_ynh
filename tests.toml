@@ -2,4 +2,4 @@ test_format = 1.0
 
 [default]
 
-    test_upgrade_from.620065d7.name = "Upgrade from #31"
+    test_upgrade_from.2d6d04a5.name = "Upgrade from #31"
