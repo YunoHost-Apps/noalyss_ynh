@@ -35,7 +35,7 @@ Noalyss is an accounting server intended to be hosted on the Internet in order t
 
 ## Información para desarrolladores
 
-Por favor enviar sus correcciones a la [`branch testing`](https://github.com/YunoHost-Apps/noalyss_ynh/tree/testing
+Por favor enviar sus correcciones a la [rama `testing`](https://github.com/YunoHost-Apps/noalyss_ynh/tree/testing).
 
 Para probar la rama `testing`, sigue asÍ:
 
