@@ -16,7 +16,7 @@ demo = "http://demo.noalyss.eu/index.php"
 admindoc = "https://wiki.noalyss.eu/doku.php"
 
 [integration]
-yunohost = ">= 12.1.17"
+yunohost = ">= 12.1.38"
 helpers_version = "2.1"
 architectures = "all"
 multi_instance = false
