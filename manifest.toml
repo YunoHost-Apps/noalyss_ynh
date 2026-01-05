@@ -59,7 +59,7 @@ ram.runtime = "50M"
     main.url = "/"
 
     [resources.apt]
-    packages = "postgresql, libgd-dev, php-php-gettext, php8.3-pgsql, php8.3-zip, php8.3-mbstring, php8.3-bcmath, php8.3-xml, php8.3-gmp, php8.3-gd"
+    packages = "postgresql, libgd-dev, php-php-gettext, php8.4-pgsql, php8.4-zip, php8.4-mbstring, php8.4-bcmath, php8.4-xml, php8.4-gmp, php8.4-gd"
 
     [resources.database]
     type = "postgresql"
