@@ -5,7 +5,7 @@ name = "Noalyss"
 description.en = "Accounting free software (Belgian and French accounting)"
 description.fr = "Logiciel libre de comptabilité (comptabilité Belge et Française)"
 
-version = "9.3.0.5~ynh1"
+version = "9.3.0.9~ynh1"
 
 maintainers = []
 
@@ -16,13 +16,12 @@ demo = "http://demo.noalyss.eu/index.php"
 admindoc = "https://wiki.noalyss.eu/doku.php"
 
 [integration]
-yunohost = ">= 12.0.9"
+yunohost = ">= 12.1.38"
 helpers_version = "2.1"
 architectures = "all"
 multi_instance = false
 
 ldap = false
-
 sso = false
 
 disk = "50M"
@@ -48,8 +47,8 @@ ram.runtime = "50M"
     default = "visitors"
 [resources]
         [resources.sources.main]
-        url = "https://download.noalyss.eu/noalyss-package/version-93/noalyss-9305.tar.gz"
-        sha256 = "25b7a34e96288e91a11a9601596da44f347b99a581307a793979704b41f8a9fa"
+        url = "https://download.noalyss.eu/noalyss-package/version-93/noalyss-9309.tar.gz"
+        sha256 = "510eaec4fc47c21a5cdfeaf2beae61ebc2b17854e7a85948e6f16c024e9386a2"
 
     [resources.system_user]
 
@@ -60,7 +59,7 @@ ram.runtime = "50M"
     main.url = "/"
 
     [resources.apt]
-    packages = "postgresql, libgd-dev, php-php-gettext, php8.3-pgsql, php8.3-zip, php8.3-mbstring, php8.3-bcmath, php8.3-xml, php8.3-gmp, php8.3-gd"
+    packages = "postgresql, libgd-dev, php-php-gettext, php8.4-pgsql, php8.4-zip, php8.4-mbstring, php8.4-bcmath, php8.4-xml, php8.4-gmp, php8.4-gd"
 
     [resources.database]
     type = "postgresql"
