@@ -1,5 +1,3 @@
 test_format = 1.0
 
 [default]
-
-    test_upgrade_from.2d6d04a5.name = "Upgrade from #31"
