@@ -5,7 +5,7 @@ name = "Noalyss"
 description.en = "Accounting free software (Belgian and French accounting)"
 description.fr = "Logiciel libre de comptabilité (comptabilité Belge et Française)"
 
-version = "9.3.0.9~ynh1"
+version = "10100~ynh1"
 
 maintainers = []
 
@@ -47,8 +47,8 @@ ram.runtime = "50M"
     default = "visitors"
 [resources]
         [resources.sources.main]
-        url = "https://download.noalyss.eu/noalyss-package/version-93/noalyss-9309.tar.gz"
-        sha256 = "510eaec4fc47c21a5cdfeaf2beae61ebc2b17854e7a85948e6f16c024e9386a2"
+        url = "https://download.noalyss.eu/derniere-version/noalyss-10100.tar.gz"
+        sha256 = "f0b09eed36c90c1077f8b6420b48e5cc81cbb37a5a410d491422c782e9b382ee"
 
     [resources.system_user]
 
