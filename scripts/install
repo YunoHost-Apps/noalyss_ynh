@@ -34,6 +34,15 @@ ynh_script_progression "Modifying $app config file..."
 ynh_config_add --template="noalyss.conf" --destination="$install_dir/include/config.inc.php"
 
 #=================================================
+# SETUP APPLICATION WITH CURL
+#=================================================
+ynh_script_progression "Finalizing installation..."
+
+# Create DB structure
+ynh_local_curl "/install.php?lang=fr_FR.utf8" "go=Commencer%20la%20mise%20%C3%A0%20jour%20ou%20l%27installation"
+ynh_safe_rm $install_dir/install.php
+
+#=================================================
 # END OF SCRIPT
 #=================================================
 
